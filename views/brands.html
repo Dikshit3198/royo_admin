@@ -1,0 +1,219 @@
+<div class="wrapper">
+  <div class="category">
+    <div class="toptabs">
+
+      <ul class="nav nav-tabs ">
+        <li class="nav-item">
+          <a class="nav-link active">{{localisation.brand | translate}}</a>
+        </li>
+        <!-- <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" href="#menu1">Deactivated Brands</a>
+        </li> -->
+      </ul>
+    </div>
+
+    <div class="secnav">
+      <div class="row">
+        <div class="col-md-6 col-sm-6">
+          <input type="text" placeholder="{{'Search By Name' | translate}}" ng-model="search">
+        </div>
+        <div class="col-md-6 col-sm-6">
+          <div class="topfil">
+            <ul>
+              <li>
+                <!-- <button type="button" class="simple"><img src="images/ic_import.svg">Import</button> -->
+              </li>
+              <li>
+                <button type="button" class="simple" ng-click="refresh()"><img
+                    src="img/v1_images/ic_rotate.svg">{{'REFRESH' | translate}}</button>
+              </li>
+              <!-- <li>
+                <button type="button" class="simple"><img src="img/v1_images/ic_sortby.svg">Sort By</button>
+              </li> -->
+              <li ng-if="permissions('brands', 'create') == 1">
+                <button type="button" class="bold create" style="width: 170px" data-toggle="modal"
+                  data-target="#addbrand" ng-click="add()">{{'ADD NEW' | translate}}
+                  {{localisation.brand | translate}}</button> </li>
+              <li ng-class="is_grid ? 'active' : ''">
+                <a ng-click="is_grid = 1"><img src="img/v1_images/ic_grid_selected.svg"></a>
+              </li>
+              <li ng-class="!is_grid ? 'active' : ''">
+                <a ng-click="is_grid = 0"><img src="img/v1_images/ic_list_selected.svg"></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF; padding-bottom: 20px;">
+      <div class="box " style="background-color: #FFFFFF; padding-bottom: 20px;">
+        <div class="tab-content">
+          <div class="tab-pane  active" id="home">
+
+            <div class="tableouter" ng-if="!is_grid">
+              <table class="table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>{{localisation.brand | translate}} {{NAME | translate}}</th>
+                    <!-- <th>{{localisation.brand}} Name (Arabic)</th> -->
+                    <th>{{'IMAGE' | translate}}</th>
+                    <th>{{'ACTION' | translate}}</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr ng-repeat="brand in brands | filter : {name_en: search}">
+                    <td>{{brand.id}}</td>
+                    <td>{{brand.name_en}}</td>
+                    <!-- <td>{{brand.name_ar ? brand.name_ar : 'NA'}}</td> -->
+                    <td><img src="{{compressImage(brand.image, '100x100')}}"></td>
+
+                    <td ng-if="permissions('brands', 'delete') == 1 || permissions('brands', 'update') == 1">
+                      <button type="button" ng-if="permissions('brands', 'delete') == 1" class="deact" ng-click="deleteBrand(brand)">{{'DELETE' | translate}}</button>
+                      <button type="button" ng-if="permissions('brands', 'update') == 1" class="edit" ng-click="edit(brand)" data-toggle="modal"
+                        data-target="#addbrand"><img src="img/v1_images/ic_edit.svg" style="margin-left: 5px;"></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="brandgrid" ng-if="is_grid">
+              <div class="row">
+                <div class="col-lg-3 col-md-4 col-sm-6" ng-repeat="brand in brands | filter : {name_en: search}">
+                  <div class="box">
+                    <img src="{{compressImage(brand.image, '200x200')}}">
+                    <div class="text">
+                      <strong class="bold">{{brand.name_en}}</strong>
+                      <small>#{{brand.id}}</small>
+                    </div>
+                    <div class="btns">
+                      <button type="button" ng-if="permissions('brands', 'update') == 1" class="edit" ng-click="edit(brand)" data-toggle="modal"
+                        data-target="#addbrand" style="background-color: transparent; padding: 0; border: none;"><img
+                          src="img/v1_images/ic_edit.svg"></button>
+                          <button type="button" ng-if="permissions('brands', 'delete') == 1" style="float: right; width: 100px;" class="bg-success" ng-click="deleteBrand(brand)">{{'DELETE' | translate}}</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="no-data-found" ng-if="brands.length == 0 && dataLoaded">
+              {{'NO DATA FOUND' | translate}}
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!------Modal------>
+
+<div class="modal" id="addbrand">
+  <div class="modal-dialog" style="max-width: 420px">
+    <div class="modal-content">
+
+      <div class="modal-body">
+        <div class="modhead" style="padding: 24px 30px">
+          <h2 class="bold" style="display: inline-block;">{{(is_edit ? 'Edit' : 'Add New') | translate}}
+            {{localisation.brand | translate}}</h2>
+          <button type="button" class="close" id="closeBrandModal" data-dismiss="modal"><img
+              src="img/v1_images/ic_cross.svg"></button>
+        </div>
+
+        <form role="form" id="addBrandsForm" name="addBrandsForm" ng-submit="submitAdd(addBrandsForm)" novalidate>
+
+          <div class="modbody" style="padding: 20px 30px">
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label class="bold">{{localisation.brand | translate}} {{'NAME' | translate}}<p class="star">*</p></label>
+                  <input type="text" ng-model="brandData.name[14]" name="name"
+                    placeholder="{{localisation.brand | translate}} {{'Name' | translate}}" required>
+                  <div class="error" ng-show="addBrandsForm.name.$invalid && addBrandsForm.$submitted">
+                    <small ng-show="addBrandsForm.name.$error.required">{{'PLEASE ENTER BRAND NAME' | translate}}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" ng-if="is_secondary_language == 1">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label class="bold">{{localisation.brand | translate}} {{'NAME' | translate}} ({{languages[1].name}})<p class="star">*</p></label>
+                  <input type="text" ng-model="brandData.name[15]" name="name_other"
+                    placeholder="{{localisation.brand | translate}} {{'Name' | translate}} ({{languages[1].name}})" required>
+                  <div class="error" ng-show="addBrandsForm.name_other.$invalid && addBrandsForm.$submitted">
+                    <small ng-show="addBrandsForm.name_other.$error.required">{{'PLEASE ENTER BRAND NAME' | translate}} ({{languages[1].name}}).</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group pic">
+                  <label class="bold">{{localisation.brand | translate}} {{'LOGO' | translate}} <p
+                      style="position: unset; margin-left: 0px" class="star">*</p></label>
+                      <p class="aspect-ratio">{{'Aspect Ratio' | translate}} - 4 : 3 </p>
+                  <input filestyle="" name="image" type="file" accept="image/*" ng-model="image_file" class="cursor"
+                    onchange="angular.element(this).scope().file_to_upload_for_image(this.files)"
+                    data-button-text="Single" data-class-button="btn btn-default" data-classinput="form-control inline"
+                    nv-file-select="" uploader="uploader" required="{{!is_edit}}" />
+                  <span ng-if="brand_img">
+                    <img style="width: 100%; height: 100%" src="{{compressImage(brand_img, '200x150')}}">
+                  </span>
+                  <span ng-if="!brand_img">
+                    <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                  </span>
+                  <div class="error" ng-show="addBrandsForm.image.$invalid && addBrandsForm.$submitted">
+                    <small ng-show="addBrandsForm.image.$error.required">{{'PLEASE CHOOSE LOGO' | translate}}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modfooter">
+            <button type="submit" class="bg-success bold">{{'SAVE' | translate}}</button>
+          </div>
+      </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+  .toptabs .nav-tabs .nav-link.active:after {
+    background: none;
+  }
+
+  .pic span {
+    height: 125px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    background-color: #f7f7f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .pic input {
+    position: absolute;
+    opacity: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 85% !important;
+  }
+</style>

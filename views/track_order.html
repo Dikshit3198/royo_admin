@@ -1,0 +1,29 @@
+<div class="wrapper">
+  <div class="category">
+
+    <div class="secnav">
+      <div class="row">
+        <div class="col-md-6 col-sm-6">
+          <h1 class="bold">{{'TRACK ORDER' | translate}}</h1>
+        </div>
+        <div class="col-md-6 col-sm-6" style="text-align: right;" ng-if="app_type == 1">
+          <span class="eta">Estimated Time Of Arrival : {{socketData.estimatedTimeInMinutes ? socketData.estimatedTimeInMinutes : 0}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: 20px">
+      <div class="col-md-12">
+        <div id="map2" style="height: 550px"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .eta {
+    color: #dc3545;
+    font-weight: 500;
+  }
+</style>

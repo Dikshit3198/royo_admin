@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_suppliers</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Multiple-Vendor" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ic_supplier_active">
+            <g id="Group-44" transform="translate(4.000000, 4.000000)">
+                <g id="Oval-+-Rectangle-5-Mask-Copy" transform="translate(0.000000, 3.000000)">
+                    <rect id="Rectangle" fill="#7CF4FF" x="4" y="0" width="12" height="13" rx="2"></rect>
+                    <rect id="Rectangle-Copy-29" stroke="#2CA6B1" x="0.5" y="0.5" width="15" height="12" rx="2"></rect>
+                    <g id="Group" transform="translate(2.000000, 2.585246)" stroke="#2CA6B1">
+                        <g id="Group-29">
+                            <ellipse id="Oval" cx="3.5" cy="1.9047619" rx="1.94444444" ry="1.9047619"></ellipse>
+                            <path d="M0,8.61904762 L0,7.85714286 C-1.72701359e-16,6.17398933 1.39289189,4.80952381 3.11111111,4.80952381 L3.11111111,4.80952381 L3.88888889,4.80952381 C5.60710811,4.80952381 7,6.17398933 7,7.85714286 L7,8.61904762" id="Rectangle-5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </g>
+                    </g>
+                    <g id="Group-Copy" transform="translate(9.000000, 2.000000)" stroke="#2CA6B1">
+                        <g id="Group-29">
+                            <ellipse id="Oval" cx="2.5" cy="1.42857143" rx="1.38888889" ry="1.42857143"></ellipse>
+                            <path d="M0.0265340937,5.78856812 C0.192062251,4.69444499 1.11207718,3.85714286 2.22222222,3.85714286 L2.77777778,3.85714286 C4.00507722,3.85714286 5,4.880492 5,6.14285714 L5,6.71428571" id="Rectangle-5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </g>
+                    </g>
+                </g>
+                <path d="M4.5,3.5 L11.5,3.5 L11.5,1 C11.5,0.723857625 11.2761424,0.5 11,0.5 L5,0.5 C4.72385763,0.5 4.5,0.723857625 4.5,1 L4.5,3.5 Z" id="Rectangle" stroke="#2CA6B1"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,1405 @@
+<form role="form" id="stepOneForm" name="stepOneForm" ng-submit="setSupplierDetails(stepOneForm)" prevent-enter-press
+    novalidate>
+    <div class="persinfo">
+        <div class="bx">
+
+            <label ng-if="is_single_vendor == 0 && profile === 'ADMIN' && no_supplier_recommendation == 0"
+                class="toplab bold">{{'IS RECOMMENDED' | translate}}
+                <div class="switch togglebtn">
+                    <input type="checkbox" id="togBtn" ng-checked="supplier_info.is_recommended"
+                        ng-disabled="permissions('suppliers', 'update') == 0"
+                        ng-click="recommendSupplier(supplier_info.is_recommended)">
+                    <div class="slider round">
+                        <span class="on"></span>
+                        <span class="off"></span>
+                    </div>
+                </div>
+            </label>
+            <label ng-if="enable_supplier_on_off==1" class="toplab bold mr-3">{{'OPEN' | translate}}
+                <div class="switch togglebtn">
+                    <input type="checkbox" id="togBtn" ng-checked="is_supplier_on"
+                        ng-disabled="permissions('suppliers', 'update') == 0" ng-click="supplierOnOff(is_supplier_on)">
+                    <div class="slider round">
+                        <span class="on"></span>
+                        <span class="off"></span>
+                    </div>
+                </div>
+            </label>
+
+            <h2 class="bold">{{'PERSONAL INFO' | translate}}</h2>
+
+            <div class="row">
+                <!-- <div class="col-md-4">
+                    <div class="form-group">
+                        <label>ID</label>
+                        <input type="text" value="{{supplierData.id}}" disabled>
+                    </div>
+                </div> -->
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>{{'NAME' | translate}}<span class="star">*</span></label>
+                        <input type="text" name="sup_name" placeholder="{{'NAME' | translate}}"
+                            ng-model="supplier_info.name" required
+                            ng-disabled="(disable_supplier_edit_info == 1 && profile == 'ADMIN' && disable_supplier_profile_edit == 0) || ((disable_name_address_supplier || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER')">
+                        <div class="error" ng-show="stepOneForm.sup_name.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.sup_name.$error.required">{{'PLEASE ENTER NAME' |
+                                translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="is_secondary_language == 1">
+                    <div class="form-group">
+                        <label>{{'NAME' | translate}} ({{languages[1].name}})<span class="star">*</span></label>
+                        <input type="text" name="nameAr" ng-model="supplier_info.nameAr"
+                            ng-disabled="(disable_supplier_edit_info == 1 && profile == 'ADMIN') || (disable_name_address_supplier && profile == 'SUPPLIER')"
+                            placeholder="{{'NAME' | translate}}" required>
+                        <div class="error" ng-show="stepOneForm.nameAr.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.nameAr.$error.required">{{'PLEASE ENTER NAME' |
+                                translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Company name<span class="star">*</span></label>
+                        <input type="text" ng-model="supplier_info.company_name" required>
+                    </div>
+                </div> -->
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>{{'ADDRESS' | translate}}<span class="star">*</span></label>
+                        <input type="text" name="address" ng-model="supplier_info.address"
+                            placeholder="{{'ADDRESS' | translate}}" id="searchTextField" required
+                            ng-disabled="(disable_name_address_supplier || disable_supplier_profile_edit == 1 || disable_supplier_edit_info == 1 || disable_supplier_address_edit_info ==1 ) && profile == 'SUPPLIER'">
+                        <div class="error" ng-show="stepOneForm.address.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.address.$error.required">{{'PLEASE ENETER ADDRESS.' |
+                                translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="branch_flow == 1">
+                    <div class="form-group select-category">
+                        <label>{{'BRANCH TYPE' | translate}}<span class="star">*</span></label>
+                        <select class="app" name="is_multibranch" ng-model="supplier_info.is_multibranch"
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            convert-to-number ng-change="changeBranchType(supplier_info.is_multibranch)" required>
+                            <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                            <option value="0">{{'SINGLE BRANCH' | translate}}</option>
+                            <option value="1">{{'MULTI BRANCH' | translate}}</option>
+                        </select>
+                        <div class="error" ng-show="stepOneForm.is_multibranch.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.is_multibranch.$error.required">{{'PLEASE SELECT TYPE.' |
+                                translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="hide_fields_from_vendors != 1">
+                    <div class="form-group">
+                        <label>{{'PHONE' | translate}}<span class="star">*</span></label>
+                        <input ng-if="enable_maroof_password_supplier_reg != 1" id="sup_phone" type="text" name="mobile" ng-minlength="6" ng-maxlength="15"
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            ng-model="supplier_info.phone" production-qty placeholder="{{'MOBILE' | translate}}"
+                            required>
+                            <input ng-if="enable_maroof_password_supplier_reg == 1" id="sup_phone" type="text" name="mobile"
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            ng-model="supplier_info.phone" production-qty placeholder="{{'MOBILE' | translate}}" ng-minlength="9" limit-to="9"
+                            required>
+                        <div class="error" ng-show="stepOneForm.mobile.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.mobile.$error.required">{{'PLEASE ENTER PHONE NO.' |
+                                translate}}</small>
+                            <small ng-if="enable_maroof_password_supplier_reg != 1"  ng-show="stepOneForm.mobile.$error.minlength">{{'PHONE NO. MUST BE MORE THAN 6 DIGITS' 
+                                | translate}}</small>
+                            <small ng-if="enable_maroof_password_supplier_reg != 1"  ng-show="stepOneForm.mobile.$error.maxlength">{{'PHONE NO. MUST BE LESS THAN 15 DIGITS' 
+                                | translate}}</small>
+                                <small ng-if="enable_maroof_password_supplier_reg == 1" ng-show="stepOneForm.mobile.$error.minlength">{{'Phone No. Must
+                                    Have 9 Digits'
+                                    | translate}}.</small>
+                        </div>
+                        <div class="error"
+                            ng-show="!stepOneForm.mobile.$invalid && stepOneForm.$submitted && invalid_phone_no">
+                            <small>{{'INVALID PHONE NUMBER' | translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="hide_fields_from_vendors != 1">
+                    <div class="form-group">
+                        <label>{{'EMAIL' | translate}}<span class="star">*</span></label>
+                        <input type="email" name="email" ng-model="supplier_info.email"
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1 ||disable_supplier_email_edit_info == 1) && profile == 'SUPPLIER'"
+                            placeholder="{{'EMAIL' | translate}}" required>
+                        <div class="error" ng-show="stepOneForm.email.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.email.$error.required">{{'PLEASE ENTER EMAIL' |
+                                translate}}</small>
+                            <small ng-show="stepOneForm.email.$error.email">{{'PLEASE ENTER A VALID EMAIL' |
+                                translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4"
+                    ng-if="enable_flat_user_service_charge==1 && user_service_fee == 1 && (profile == 'ADMIN' || hide_service_fee_in_supplier == 0)">
+                    <div class="form-group select-category">
+                        <label>{{'FREE DELIVERY' | translate}}<span class="star">*</span></label>
+                        <select class="app" name="is_free_delivery" ng-model="supplier_info.is_free_delivery"
+                            convert-to-number ng-change="setFreeDelivery(supplier_info.is_free_delivery)">
+                            <option value="0">{{'NO' | translate}}</option>
+                            <option value="1">{{'YES' | translate}}</option>
+                        </select>
+                        <div class="error" ng-show="stepOneForm.email.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.is_free_delivery.$error.required">{{'PLEASE ENTER FREE DELIVERY'
+                                | translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- || app_type > 10 -->
+                <div class="col-md-4" ng-if="client_code != 'bodyformula_0497' && is_dine_in == 0 && is_enabled_multiple_base_delivery_charges == 0 
+                && hide_delivery_charges == 0 && (app_type == 1 || selectedFlowTypes.includes(1) || 
+                ((app_type == 2 && ecom_agent_module == 1) || selectedFlowTypes.includes(2))) && 
+                delivery_charge_type == 0 && [0,2].includes(supplier_info.self_pickup) 
+                    && (profile === 'ADMIN' || hide_delivery_charges_supplier == 0) && is_free_delivery !== 1">
+                    <div class="form-group">
+                        <label>{{'BASE DELIVERY CHARGE' | translate}}</label>
+                        <input type="number" name="base_delivery_charges" integers
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            placeholder="{{'BASE DELIVERY CHARGE' | translate}}"
+                            ng-model="supplier_info.base_delivery_charges">
+                        <!-- <div class="error" ng-show="stepOneForm.base_delivery_charges.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.base_delivery_charges.$error.required">Please enter Base Delivery Charge</small>
+                        </div> -->
+                    </div>
+                </div>
+
+                <!-- || app_type > 10 -->
+                <div class="col-md-4" ng-if="client_code != 'bodyformula_0497' && is_dine_in == 0 && is_enabled_multiple_base_delivery_charges == 0 && hide_delivery_charges == 0 
+                && (app_type == 1 || selectedFlowTypes.includes(1) || ((app_type == 2 && ecom_agent_module == 1) || selectedFlowTypes.includes(2))) && delivery_charge_type == 0 && [0,2].includes(supplier_info.self_pickup)
+                    && (profile === 'ADMIN' || hide_delivery_charges_supplier == 0) && is_free_delivery !== 1">
+                    <div class="form-group">
+                        <label>{{'BASE DELIVERY CHARGE DISTANCE' | translate}}
+                            ({{delivery_distance_unit == 1 ? 'Mile' : 'KM'}})</label>
+                        <input type="number" name="distance_value" integers
+                            placeholder="{{'BASE DELIVERY CHARGE DISTANCE' | translate}}"
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            ng-model="supplier_info.distance_value">
+                        <!-- <div class="error" ng-show="stepOneForm.base_delivery_charges.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.base_delivery_charges.$error.required">Please enter Base Delivery Charge</small>
+                        </div> -->
+                    </div>
+                </div>
+
+                <!-- || app_type > 10 -->
+                <div class="col-md-4" ng-if="client_code != 'bodyformula_0497' && !is_hide_delivery && is_dine_in == 0 && hide_delivery_charges == 0 
+                && (app_type == 1 || selectedFlowTypes.includes(1) || ((app_type == 2 && ecom_agent_module == 1) || selectedFlowTypes.includes(2))) && [0,2].includes(supplier_info.self_pickup) 
+                    && (profile === 'ADMIN' || hide_delivery_charges_supplier == 0) && is_free_delivery !== 1">
+                    <div class="form-group">
+                        <label>{{delivery_charge_type == 1 ? ('Delivery Charges (Flat)' | translate) : ('DELIVERY CHARGES' | translate) + ' ( per ' + (delivery_distance_unit == 1 ? 'Mile' : 'KM') + '
+                            )'}}<span class="star">*</span></label>
+                        <input type="number" name="delivery_charge" integers
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            placeholder="{{delivery_charge_type == 1 ? 'Delivery Charges (Flat)' : ('DELIVERY CHARGES' | translate) + ' ( per ' + (delivery_distance_unit == 1 ? 'Mile' : 'KM') + ' )'}}"
+                            ng-model="supplier_info.delivery_charge" ng-required="!is_hide_delivery">
+                        <div class="error" ng-show="stepOneForm.delivery_charge.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.delivery_charge.$error.required">Please enter
+                                {{delivery_charge_type == 1 ? 'Delivery Charges (Flat)' : ('DELIVERY CHARGES' |
+                                translate) + ' ( per ' + (delivery_distance_unit == 1 ? 'Mile' : 'KM') + ' )'}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- || checkFlow([1]) -->
+                <div class="col-md-4" ng-if="client_code != 'bodyformula_0497' && (!is_hide_delivery || !is_hide_pickup) &&  is_dine_in == 0 && profile === 'ADMIN' 
+                    && (app_type == 1 || selectedFlowTypes.includes(1)) && is_pickup == 2">
+                    <div class="form-group select-category">
+                        <label>{{'DELIVERY MODE' | translate}}<span class="star">*</span></label>
+                        <select class="app" name="self_pickup" ng-model="supplier_info.self_pickup" convert-to-number
+                            ng-disabled="((disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER') || disable_delivery_mode"
+                            ng-change="changeSelfPickup(supplier_info.self_pickup)"
+                            ng-required="!is_hide_delivery || !is_hide_pickup">
+                            <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                            <option ng-if="!is_hide_delivery" value="0">{{'DELIVERY' | translate}}</option>
+                            <option ng-if="!is_hide_pickup" value="1">
+                                {{'SELF PICK-UP' | translate}}</option>
+                            <option ng-if="!is_hide_pickup && !is_hide_delivery" value="2">{{'BOTH' | translate}}
+                            </option>
+                        </select>
+                        <div class="error" ng-show="stepOneForm.self_pickup.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.self_pickup.$error.required">{{'PLEASE SELECT MODE' |
+                                translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-4"
+                    ng-if="enable_flat_user_service_charge==1 && user_service_fee == 1 && (profile == 'ADMIN' || hide_service_fee_in_supplier == 0)">
+                    <div class="form-group select-category">
+                        <label>{{'FLAT RESTAURANT SERVICE FEE' | translate}}<span class="star">*</span></label>
+                        <select class="app" name="is_user_service_charge_flat"
+                            ng-model="supplier_info.is_user_service_charge_flat" convert-to-number
+                            ng-change="changeServiceChargeType(supplier_info.is_user_service_charge_flat)">
+                            <option value="0">{{'NO' | translate}}</option>
+                            <option value="1">{{'YES' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4"
+                    ng-if="user_service_fee == 1 && (profile == 'ADMIN' || hide_service_fee_in_supplier == 0)">
+                    <div class="form-group">
+                        <label>{{localisation.supplier_service_fee | translate}}
+                            ({{supplier_info.is_user_service_charge_flat?'Flat':'%'}})<span
+                                class="star">*</span></label>
+                        <input type="number" name="user_service_fee" integers
+                            ng-disabled="disable_supplier_edit_info == 1 && profile == 'SUPPLIER'"
+                            placeholder="{{localisation.supplier | translate}} {{'SERVICE FEE' | translate}} (%)"
+                            ng-model="supplier_info.user_service_fee" required>
+                        <div class="error" ng-show="stepOneForm.user_service_fee.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.user_service_fee.$error.required">{{'PLEASE ENTER' | translate}}
+                                {{localisation.supplier | translate}} {{'SERVICE FEE' | translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4"
+                    ng-if="profile === 'ADMIN' && !is_hide_delivery &&  is_single_vendor == 0 && ((app_type == 1 || app_type==2 || app_type==8) || checkFlow([1])) && [0,2].includes(supplier_info.self_pickup)">
+                    <div class="form-group">
+                        <label>{{'ADMIN' | translate}}
+                            {{app_type == 1 && [0,2].includes(supplier_info.self_pickup) ? ('DELIVERY' | translate) :
+                            ''}}
+                            {{'COMMISSION' | translate}} (%)<span class="star">*</span></label>
+                        <input type="number" name="commission" min="0" max="100"
+                            ng-disabled="disable_supplier_edit_info == 1 && profile == 'SUPPLIER'"
+                            ng-disabled="supplier_info.is_subscribe == 1"
+                            placeholder="{{'ADMIN' | translate}} {{app_type == 1 && [0,2].includes(supplier_info.self_pickup) ? 'Delivery' : ''}} {{'COMMISSION' | translate}} (%)"
+                            ng-model="supplier_info.commission" ng-required="!is_hide_delivery">
+                        <div class="error" ng-show="stepOneForm.commission.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.commission.$error.required">{{'PLEASE ENETR COMMISSION' |
+                                translate}}</small>
+                            <small ng-show="stepOneForm.commission.$error.max">Invalid commission amount.</small>
+                        </div>
+                        <div style="color: green;" ng-if="supplier_info.is_subscribe == 1">
+                            <small>{{localisation.supplier}} {{'BUY SUBSCRIPTION PLAN' | translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- || checkFlow([1]) -->
+                <div class="col-md-4" ng-if="client_code != 'bodyformula_0497' && !is_hide_pickup && profile === 'ADMIN' && is_single_vendor == 0 
+                    && (app_type == 1 || selectedFlowTypes.includes(1)) && [1,2].includes(supplier_info.self_pickup)">
+                    <div class="form-group">
+                        <label>{{'ADMIN PICKUP' | translate}} {{'COMMISSION' | translate}} (%)<span
+                                class="star">*</span></label>
+                        <input type="number" name="commission" min="0" max="100"
+                            ng-disabled="disable_supplier_edit_info == 1 && profile == 'SUPPLIER'"
+                            placeholder="Admin Pickup {{'COMMISSION' | translate}} (%)"
+                            ng-model="supplier_info.pickupCommision" required>
+                        <div class="error" ng-show="stepOneForm.pickupCommision.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.pickupCommision.$error.required">{{'PLEASE ENTER PICKUP
+                                COMMISSION' | translate}}</small>
+                            <small ng-show="stepOneForm.pickupCommision.$error.max">{{'INVALID COMMISSION AMOUNT.' |
+                                translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="order_request && (disable_supplier_edit_info == 0 || profile == 'ADMIN')">
+                    <div class="form-group select-category">
+                        <label>{{localisation.prescription_value | translate}} {{'UPLOAD' | translate}}<span
+                                class="star">*</span></label>
+                        <select class="app" name="user_request_flag" ng-model="supplier_info.user_request_flag"
+                            convert-to-number ng-change="prescriptionUploadChanges(supplier_info.user_request_flag)"
+                            required>
+                            <!-- <option value="" selected disabled>{{'SELECT' | translate}}</option> -->
+                            <option value="0">{{'NO' | translate}}</option>
+                            <option value="1">{{'YES' | translate}}</option>
+                        </select>
+                        <div class="error" ng-show="stepOneForm.user_request_flag.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.user_request_flag.$error.required">{{'PLEASE SELECT' |
+                                translate}}
+                                {{localisation.prescription_value | translate}} {{'VALUE' | translate}}.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="profile == 'ADMIN' || hide_minimum_booking_amount == 0">
+                    <div class="form-group">
+                        <!-- <label>{{localisation.minimum_order_amount | translate}}</label> -->
+                        <label>{{'MINIMUM BOOKING AMOUNT' | translate}}</label>
+                        <input type="text" name="min_order" ng-model="supplier_info.min_order" integers
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            placeholder="{{'MINIMUM' | translate}} {{localisation.order | translate}} {{'AMOUNT' | translate}}">
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="enable_order_amount_for_free_delivery == 1">
+                    <div class="form-group">
+                        <label>{{'Minimum Order Amount for Free Delivery' | translate}}</label>
+                        <input type="text" name="order_amount_for_free_delivery"
+                            ng-model="supplier_info.order_amount_for_free_delivery" integers
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            placeholder="{{'MINIMUM' | translate}} {{localisation.order | translate}} {{'AMOUNT' | translate}} {{'for Free Delivery' | translate }}">
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="is_table_booking == 1 && !is_hide_dinin && !supplier_info.is_out_network">
+                    <div class="form-group select-category">
+                        <label>{{localisation.dine_in | translate}}<span class="star">*</span></label>
+                        <select class="app" name="is_dine_in" ng-model="supplier_info.is_dine_in" convert-to-number
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            ng-change="changeDineIn(supplier_info.is_dine_in)" ng-required="!is_hide_dinin">
+                            <option value="0">{{'NO' | translate}}</option>
+                            <option value="1">{{'YES' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="col-md-4" ng-if="supplier_info.is_dine_in==1 && table_book_mac_theme==1">
+                    <div class="form-group">
+                        <label>{{'TABLE BOOKING PRICE' | translate}}</label>
+                        <input type="number" name="table_booking_price" integers placeholder="TABLE BOOKING PRICE"
+                            ng-model="supplier_info.table_booking_price" ng-required="supplier_info.is_dine_in==1">
+                        <div class="error" ng-show="stepOneForm.table_booking_price.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.table_booking_price.$error.required">{{'PLEASE ENTER TABLE
+                                BOOKING PRICE' | translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="supplier_info.is_dine_in==1 && table_book_mac_theme==1">
+                    <div class="form-group">
+                        <label>{{'TABLE BOOKING (%)' | translate}}</label>
+                        <input type="number" name="table_booking_discount" integers
+                            placeholder="TABLE BOOKING PERCENTAGE" ng-model="supplier_info.table_booking_discount"
+                            ng-required="supplier_info.is_dine_in==1" max=100>
+                        <div class="error"
+                            ng-show="stepOneForm.table_booking_discount.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.table_booking_discount.$error.required">{{'PLEASE ENTER TABLE
+                                BOOKING PERCENTAGE' | translate}}</small>
+                            <small ng-show="stepOneForm.pickupCommision.$error.max">{{'INVALID TABLE BOOKING AMOUNT.' |
+                                translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-4" ng-if="is_schdule_order == 1 && !is_hide_pickup && profile == 'ADMIN'">
+                    <div class="form-group select-category">
+                        <label>{{'SCHEDULING' | translate}}<span class="star">*</span></label>
+                        <select class="app" name="is_scheduled" ng-model="supplier_info.is_scheduled" convert-to-number
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            ng-change="changeSupplierSchedule(supplier_info.is_scheduled)"
+                            ng-required="!is_hide_pickup">
+                            <option value="0">{{'NO' | translate}}</option>
+                            <option value="1">{{'YES' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="supplier_payment_method == 1">
+                    <div class="form-group select-category">
+                       <label>{{(localisation.payment + ' METHOD') | translate}}<span class="star">*</span></label></label>
+                    
+                       <select  ng-model="supplier_info.payment_method" name="payment_method" class="app"
+                       ng-change="changePaymentType(supplier_info.payment_method)" convert-to-number>
+                       <!-- <option disabled selected value="">Select</option> -->
+                       <option value="0">{{localisation.cash | translate}} {{'ON DELIVERY' | translate}}
+                       </option>
+                       <option value="1">{{'ONLINE' | translate}}</option>
+                       <option value="2" >{{'BOTH' | translate}}</option>
+                   </select>
+                 
+                       <!-- <div class="error"
+                           ng-show="addBasicSettingsForm.payment_type.$invalid && addBasicSettingsForm.$submitted">
+                           <small ng-show="addBasicSettingsForm.payment_type.$error.required">Please select payment
+                               method.</small>
+                       </div> -->
+                    </div>
+                   </div>
+
+
+                   
+
+
+                <div class="col-md-4" ng-if="supplier_country_of_origin == 1">
+                    <div class="form-group select-category">
+                        <label>{{'COUNTRY' | translate}}</label>
+                        <select data-placeholder="Choose Country" class="app" tabindex=""
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            ng-model="supplier_info.country_of_origin">
+                            <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                            <option value="{{country}}" selected={{supplier_info.country_of_origin==country}}
+                                ng-click="selectCountry(country)" ng-repeat="country in countries">{{country}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="is_currency_exchange_rate == 1">
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <input type="text" name="local_currency" ng-model="supplier_info.local_currency"
+                            ng-disabled="disable_supplier_edit_info == 1 && profile == 'SUPPLIER'"
+                            placeholder="Currency">
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="is_currency_exchange_rate == 1">
+                    <div class="form-group">
+                        <label>Currency Exchange Rate</label>
+                        <input type="text" name="currency_exchange_rate" ng-model="supplier_info.currency_exchange_rate"
+                            ng-disabled="disable_supplier_edit_info == 1 && profile == 'SUPPLIER'" integers
+                            placeholder="Currency Exchange Rate">
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="client_code != 'readychef_0309' && hide_license_number == 0">
+                    <div class="form-group">
+                        <label>{{localisation.license_number | capitalLetters |translate}}</label>
+                        <input type=" text" name="license_number" ng-model="supplier_info.license_number"
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            placeholder="{{localisation.license_number | translate}}">
+                    </div>
+                </div>
+                <div ng-class="{'col-md-3': !!supplier_info.hygiene_image_description, 'col-md-4' : !supplier_info.hygiene_image_description}" ng-if="enable_maroof_password_supplier_reg == 1">
+                    <div class="form-group">
+                        <label>{{MaroofCRNumber.supplier | translate}} {{'Maroof/CR' | translate}}<span
+                                class="star">*</span></label>
+                        <input type="number" name="MaroofCRNumber" ng-model="supplier_info.MaroofCRNumber"
+                            placeholder="{{'MAROOF/CR' | translate }} " >
+                        <div class="error"
+                            ng-show="stepOneForm.supplier_info.MaroofCRNumber.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.supplier_info.MaroofCRNumber.$error.required">{{'PLEASE ENTER
+                                VALID MAROOF/CR' | translate}}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1" ng-if="enable_maroof_password_supplier_reg == 1 && supplier_info.hygiene_image_description"><i class="fa fa-file-o fa-2x" style="cursor: pointer;color: #2ca6b1;margin-top: 55px;margin-left: -14px;" 
+                    ng-click="viewMaroofDocument(supplier_info.hygiene_image_description)" aria-hidden="true"></i></div>
+
+
+                <!-----------------------------------------Maroof docs modal starts------------------------------------->
+                <div class="modal" id="maroof_document_verification">
+                    <div class="modal-dialog" style="max-width: 560px">
+                      <div class="modal-content">
+                  
+                        <div class="modal-body">
+                          <div class="modhead" style="padding: 0px 30px">
+                            <button style="margin-left: 31px;background-image: none;background-color: rgb(44 166 177 / 0%);" type="button" class="close" data-dismiss="modal"><img src="img/v1_images/ic_cross.svg"></button>
+                          </div>
+                  
+                          <div class="document-image">
+                            <img ng-if="maroof_document" src={{maroof_document}} height="340px" width="100%">
+                          </div>
+                        </div>
+                  
+                      </div>
+                    </div>
+                  </div>
+                <!-----------------------------------------Maroof docs modal ends ------------------------------------->
+
+
+                <div class="col-md-4" ng-if="enable_maroof_password_supplier_reg == 1">
+                    <div class="form-group">
+                        <label>{{IDNumber.supplier | translate}} {{'ID Number' | translate}}<span
+                                class="star">*</span></label>
+                        <input type="number" name="IDNumber" ng-model="supplier_info.IDNumber"
+                            placeholder="{{'ID NUMBER' | translate }}" ng-minlength="10" limit-to="10" required>
+                        <div class="error"
+                            ng-show="stepOneForm.IDNumber.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.IDNumber.$error.required">{{'PLEASE ENTER VALID ID
+                                NUMBER' | translate}}</small>
+                            <small ng-show="stepOneForm.IDNumber.$error.minlength">{{'ID Number Must Have 10 Digits' | translate}}.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class=" col-md-4" ng-if="app_type == 8 && enable_service_pickup == 1">
+                    <div class="form-group select-category">
+                        <label>{{'DELIVERY MODE' | translate}}<span class="star">*</span></label>
+                        <select class="app" name="service_pickup" ng-model="supplier_info.service_pickup"
+                            convert-to-number>
+                            <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                            <option value="0">{{'HOME' | translate}}</option>
+                            <option value="1">
+                                {{'SALOON' | translate}}</option>
+                            <option value="2">
+                                {{'BOTH' | translate}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class=" col-md-4" ng-if="app_type == 8 && enable_service_for == 1">
+                    <div class="form-group select-category">
+                        <label>{{'SERVICE FOR' | translate}}<span class="star">*</span></label>
+                        <select class="app" name="service_for" ng-model="supplier_info.service_for"
+                            convert-to-number>
+                            <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                            <option value="1">
+                                {{'WOMEN' | translate}}</option>
+                            <option value="2">
+                                {{'MEN' | translate}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class=" col-md-4" ng-if="app_type == 8 && enable_service_type == 1">
+                    <div class="form-group select-category">
+                        <label>{{'SERVICE TYPE' | translate}}<span class="star">*</span></label>
+                        <select class="app" name="service_type" ng-model="supplier_info.service_type" convert-to-number>
+                            <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                            <option value="0">{{'HOME SERVICES' | translate}}</option>
+                            <option value="1">
+                                {{'SUPPLIER' | translate}}</option>
+                            <option value="2">
+                                {{'BOTH' | translate}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="enable_business_name==1">
+                    <div class="form-group">
+                        <label>{{"BUSINESS NAME" | translate}}</label>
+                        <input type=" text" name="business_name" ng-model="supplier_info.business_name"
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            placeholder="{{'Business Name' | translate}}">
+                    </div>
+                </div>
+                <div class="col-md-4" ng-if="enable_trade_name==1">
+                    <div class="form-group">
+                        <label>{{"TRADE NAME" | translate}}</label>
+                        <input type=" text" name="trade_name" ng-model="supplier_info.trade_name"
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            placeholder="{{'Trade Name' | translate}}">
+                    </div>
+                </div>
+                <div class="col-md-4" ng-if="enable_rfc_number==1">
+                    <div class="form-group">
+                        <label>{{"RFC" | translate}}</label>
+                        <input type=" text" name="rfc" ng-model="supplier_info.rfc"
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            placeholder="{{'Rfc' | translate}}">
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="supplier_gst_no && supplier_info.gst_price">
+                    <div class="form-group">
+                        <label>GST Number</label>
+                        <input type="text" name="gst_no" ng-model="supplier_info.gst_price" placeholder="GST Number"
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'">
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="is_supplier_detail == 1">
+                    <div class="form-group">
+                        <label>{{'SPECIALITY' | translate}}</label>
+                        <input type="text" name="speciality" ng-model="supplier_info.speciality"
+                            ng-disabled="(disable_supplier_edit_info == 1 || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER'"
+                            placeholder="{{'SPECIALITY' | translate}}">
+                    </div>
+                </div>
+
+                <div class="col-md-4"
+                    ng-if="is_supplier_detail == 1 && client_code != 'bodyformula_0497' && (disable_supplier_edit_info == 0 || profile == 'ADMIN')">
+                    <div class="form-group">
+                        <label>{{localisation.nationality | capitalLetters | translate}}</label>
+                        <input type="text" name="nationality" ng-model="supplier_info.nationality"
+                            placeholder="{{localisation.nationality | capitalLetters | translate}}">
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="is_supplier_detail == 1">
+                    <div class="form-group">
+                        <label>{{'FACEBOOK LINK' | translate}}</label>
+                        <input type="text" name="facebook_link" ng-model="supplier_info.facebook_link"
+                            ng-disabled="disable_supplier_profile_edit == 1 && profile == 'SUPPLIER'"
+                            placeholder="{{'FACEBOOK LINK' | translate}}">
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="is_supplier_detail == 1">
+                    <div class="form-group">
+                        <label>{{'INSTAGRAM LINK' | translate}}</label>
+                        <input type="text" name="linkedin_link" ng-model="supplier_info.linkedin_link"
+                            ng-disabled="disable_supplier_profile_edit == 1 && profile == 'SUPPLIER'"
+                            placeholder="{{'INSTAGRAM LINK' | translate}}">
+                    </div>
+                </div>
+
+                <div class="col-md-4"
+                    ng-if="is_supplier_detail == 1 && (disable_supplier_edit_info == 0 || profile == 'ADMIN')">
+                    <div class="form-group">
+                        <label>{{'BRAND' | translate}}</label>
+                        <input type="text" name="brand" ng-model="supplier_info.brand"
+                            placeholder="{{'BRAND' | translate}}">
+                    </div>
+                </div>
+
+                <div class="col-md-4"
+                    ng-if="(is_supplier_detail == 1 || is_supplier_description == 1) && (disable_supplier_edit_info == 0 || profile == 'ADMIN')">
+                    <div class="form-group">
+                        <label>{{'DESCRIPTION' | translate}}</label>
+                        <input type="text" name="description" ng-model="supplier_info.description"
+                            placeholder="{{'DESCRIPTION' | translate}}">
+                    </div>
+                </div>
+
+                <div class="col-md-4"
+                    ng-if="is_secondary_language == 1 && (is_supplier_detail == 1 || is_supplier_description == 1) && (disable_supplier_edit_info == 0 || profile == 'ADMIN')">
+                    <div class="form-group">
+                        <label>{{'DESCRIPTION' | translate}} ({{languages[1].name}})<span class="star">*</span></label>
+                        <input type="text" name="descriptionAb" ng-model="supplier_info.descriptionAb"
+                            placeholder="{{'DESCRIPTION' | translate}}" required>
+                        <div class="error" ng-show="stepOneForm.descriptionAb.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.descriptionAb.$error.required">{{'PLEASE ENTER DESCRIPTION' |
+                                translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="enable_in_out_network==1">
+                    <div class="form-group select-category">
+                        <label>{{'Is Out Network' | translate}}</label>
+                        <select class="app" name="is_out_network" ng-model="supplier_info.is_out_network"
+                            ng-change="changeNetworkType(supplier_info.is_out_network)" convert-to-number>
+                            <option value="0">{{'NO' | translate}}</option>
+                            <option value="1">{{'YES' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+                <div class="col-md-4" ng-if="enable_supplier_in_special_offer==1">
+                    <div class="form-group select-category">
+                        <label>{{'IS PRODUCT OFFER' | translate}}</label>
+                        <select class="app" name="is_product_offer" ng-model="supplier_info.is_products_offer"
+                            convert-to-number ng-change="changeProductOffer(supplier_info.is_products_offer)">
+                            <option value="0">{{'NO' | translate}}</option>
+                            <option value="1">{{'YES' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+
+
+                <div class="col-md-4" ng-if="supplier_info.is_products_offer==1">
+                    <div class="form-group">
+                        <label>{{'OFFER VALUE (%)' | translate}}</label>
+                        <input type="number" name="offerValue" integers placeholder="OFFER VALUE"
+                            ng-model="supplier_info.offerValue" ng-required="supplier_info.is_products_offer==1">
+                        <div class="error" ng-show="stepOneForm.offerValue.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.offerValue.$error.required">{{'PLEASE ENTER OFFER VALUE' |
+                                translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="is_supplier_slogan_add_edit == 1">
+                    <div class="form-group">
+                        <label>{{'SLOGAN' | translate}}<span class="star">*</span></label>
+                        <input type="text" name="slogan_en" ng-model="supplier_info.slogan_en" placeholder="Slogan"
+                            required>
+                        <div class="error" ng-show="stepOneForm.slogan_en.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.slogan_en.$error.required">Please enter
+                                {{'SLOGAN' | translate}}.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4" ng-if="is_supplier_slogan_add_edit == 1 && is_secondary_language == 1">
+                    <div class="form-group">
+                        <label>{{localisation.supplier | translate}} {{'SLOGAN' | translate}}
+                            ({{languages[1].name}})<span class="star">*</span></label>
+                        <input type="text" name="slogan_ol" ng-model="supplier_info.slogan_ol"
+                            placeholder="{{localisation.supplier | translate}} Slogan" required>
+                        <div class="error" ng-show="stepOneForm.slogan_ol.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.slogan_ol.$error.required">Please enter
+                                {{'SLOGAN' | translate}}.</small>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+                <div class="row col-md-12">
+                    <div class="col-md-4" ng-if="enable_account_number==1">
+                        <div class="form-group ">
+                            <label>{{'ACCOUNT NUMBER' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="account_number" ng-model="supplier_info.account_number"
+                                placeholder="{{'ACCOUNT NUMBER' | translate}}" required>
+                            <div class="error" ng-show="stepOneForm.account_number.$invalid && stepOneForm.$submitted">
+                                <small ng-show="stepOneForm.account_number.$error.required">{{'PLEASE
+                                    ENTER
+                                    ACCOUNT No.' |
+                                    translate}}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" ng-if="enable_transist_number==1">
+                        <div class="form-group ">
+                            <label>{{'TRANSIST NUMBER' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="transit_number" ng-model="supplier_info.transit_number"
+                                placeholder="{{'TRANSIST NUMBER' | translate}}" required>
+                            <div class="error" ng-show="stepOneForm.transit_number.$invalid && stepOneForm.$submitted">
+                                <small ng-show="stepOneForm.transit_number.$error.required">{{'PLEASE
+                                    ENTER
+                                    TRANSIST No.' |
+                                    translate}}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" ng-if="enable_institution_number==1">
+                        <div class="form-group">
+                            <label>{{'INSTITUTE NUMBER' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="institution_number" ng-model="supplier_info.institution_number"
+                                placeholder="{{'INSTITUTE NUMBER' | translate}}" required>
+                            <div class="error"
+                                ng-show="stepOneForm.institution_number.$invalid && stepOneForm.$submitted">
+                                <small ng-show="stepOneForm.institution_number.$error.required">{{'PLEASE
+                                    ENTER INSTITUTE No.' |
+                                    translate}}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+            </div>
+
+        </div>
+    </div>
+    <div class="persinfo m-top-30 placeholders"
+        ng-if="is_single_vendor == 0 && profile === 'ADMIN' && enable_food_extra_placeholders == 1">
+        <div class="bx" style="padding-bottom: 25px;">
+            <h2 class="bold" style="margin-bottom: 10px;">{{'Placeholders' | translate}}</h2>
+
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="toplab bold">{{'ONLY ON SAKADO' | translate}}
+                        <div class="switch togglebtn">
+                            <input type="checkbox" id="togBtn" ng-checked="supplier_info.Only_on_Sakado"
+                                ng-disabled="permissions('suppliers', 'update') == 0"
+                                ng-click="enablePlaceholders(supplier_info.Only_on_Sakado, 2)">
+                            <div class="slider round">
+                                <span class="on"></span>
+                                <span class="off"></span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+
+                <div class="col-md-2">
+                    <label class="toplab bold">{{'LOVED BY LOCALS' | translate}}
+                        <div class="switch togglebtn">
+                            <input type="checkbox" id="togBtn" ng-checked="supplier_info.Loved_by_Locals"
+                                ng-disabled="permissions('suppliers', 'update') == 0"
+                                ng-click="enablePlaceholders(supplier_info.Loved_by_Locals, 3)">
+                            <div class="slider round">
+                                <span class="on"></span>
+                                <span class="off"></span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+
+                <div class="col-md-2">
+                    <label class="toplab bold">{{'SWEET SPOT' | translate}}
+                        <div class="switch togglebtn">
+                            <input type="checkbox" id="togBtn" ng-checked="supplier_info.Sweet_Spot"
+                                ng-disabled="permissions('suppliers', 'update') == 0"
+                                ng-click="enablePlaceholders(supplier_info.Sweet_Spot, 4)">
+                            <div class="slider round">
+                                <span class="on"></span>
+                                <span class="off"></span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+
+                <div class="col-md-2">
+                    <label class="toplab bold">{{'GRAPE & GRAIN' | translate}}
+                        <div class="switch togglebtn">
+                            <input type="checkbox" id="togBtn" ng-checked="supplier_info.Grape_and_Grain"
+                                ng-disabled="permissions('suppliers', 'update') == 0"
+                                ng-click="enablePlaceholders(supplier_info.Grape_and_Grain, 5)">
+                            <div class="slider round">
+                                <span class="on"></span>
+                                <span class="off"></span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="toplab bold">{{'BREAKFAST IN BEIRUT' | translate}}
+                        <div class="switch togglebtn">
+                            <input type="checkbox" id="togBtn" ng-checked="supplier_info.Breakfast_in_Beirut"
+                                ng-disabled="permissions('suppliers', 'update') == 0"
+                                ng-click="enablePlaceholders(supplier_info.Breakfast_in_Beirut, 1)">
+                            <div class="slider round">
+                                <span class="on"></span>
+                                <span class="off"></span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="persinfo m-top-30" ng-if="is_enable_delivery_type == 1 && !is_hide_delivery && profile === 'ADMIN'">
+        <div class="bx" style="padding-bottom: 25px;">
+            <h2 class="bold">{{'DELIVERY TYPES' | translate}}</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group select-category">
+                        <label>{{'IS OWN DELIVERY' | translate}}</label>
+                        <select class="app" name="is_own_delivery" ng-model="supplier_info.is_own_delivery"
+                            convert-to-number ng-change="setIsOwnDelivery(supplier_info.is_own_delivery)"
+                            ng-required="!is_hide_delivery">
+                            <option value="0">{{'NO' | translate}}</option>
+                            <option value="1">{{'YES' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4" ng-if="!supplier_info.is_own_delivery">
+                    <div class="form-group select-category">
+                        <label>{{'SUPPLIER DELIVERY TYPE' | translate}}</label>
+                        <select class="app" name="selected_supplier_delivery_type"
+                            ng-model="selected_supplier_delivery_type" convert-to-number
+                            ng-change="setSupplierDeliveryType(selected_supplier_delivery_type)" required>
+                            <option value="0">{{'Normal Delivery' | translate}}</option>
+                            <option value="1">{{'Express Delivery' | translate}}</option>
+                            <option value="2">{{'Both' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row p-3" ng-if="!supplier_info.is_own_delivery">
+                <div ng-if="selected_supplier_delivery_type==0 || selected_supplier_delivery_type==2">
+                    <h6 class="bold mt-4">
+                        <small>{{'NORMAL DELIVERY' | translate}}</small>
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'PRICE' | translate}}</label>
+                                <input type="number" name="normal_delivery_price" integers
+                                    placeholder="{{'NORMAL DELIVERY PRICE' | translate}}"
+                                    ng-model="normal_delivery.price"
+                                    ng-required="selected_supplier_delivery_type==0 || selected_supplier_delivery_type==2">
+                                <div class="error"
+                                    ng-show="stepOneForm.normal_delivery_price.$invalid && stepOneForm.$submitted && (selected_supplier_delivery_type==0 || selected_supplier_delivery_type==2)">
+                                    <small ng-show="stepOneForm.normal_delivery_price.$error.required">{{'PLEASE ENTER
+                                        PRICE' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'BUFFER TIME' | translate}}</label>
+                                <input type="number" name="normal_delivery_buffer_time" integers
+                                    placeholder="{{'NORMAL DELIVERY TIME BUFFER' | translate}}"
+                                    ng-model="normal_delivery.buffer_time"
+                                    ng-required="selected_supplier_delivery_type==0 || selected_supplier_delivery_type==2">
+                                <div class="error"
+                                    ng-show="stepOneForm.normal_delivery_buffer_time.$invalid && stepOneForm.$submitted && (selected_supplier_delivery_type==0 || selected_supplier_delivery_type==2)">
+                                    <small ng-show="stepOneForm.normal_delivery_buffer_time.$error.required">{{'PLEASE
+                                        ENTER TIME BUFFER' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div ng-if="selected_supplier_delivery_type==1 || selected_supplier_delivery_type==2">
+                    <h6 class="bold mt-4">
+                        <small>{{'EXPRESS DELIVERY' | translate}}</small>
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'PRICE' | translate}}</label>
+                                <input type="number" name="express_delivery_price" integers
+                                    placeholder="{{'EXPRESS DELIVERY PRICE' | translate}}"
+                                    ng-model="express_delivery.price"
+                                    ng-required="selected_supplier_delivery_type==1 || selected_supplier_delivery_type==2">
+                                <div class="error"
+                                    ng-show="stepOneForm.express_delivery_price.$invalid && stepOneForm.$submitted && (selected_supplier_delivery_type==1 || selected_supplier_delivery_type==2)">
+                                    <small ng-show="stepOneForm.express_delivery_price.$error.required">{{'PLEASE ENTER
+                                        PRICE' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'BUFFER TIME' | translate}}</label>
+                                <input type="number" name="express_delivery_buffer_time" integers
+                                    placeholder="{{'EXPRESS DELIVERY TIME BUFFER' | translate}}"
+                                    ng-model="express_delivery.buffer_time"
+                                    ng-required="selected_supplier_delivery_type==1 || selected_supplier_delivery_type==2">
+                                <div class="error"
+                                    ng-show="stepOneForm.express_delivery_buffer_time.$invalid && stepOneForm.$submitted && (selected_supplier_delivery_type==1 || selected_supplier_delivery_type==2)">
+                                    <small ng-show="stepOneForm.express_delivery_buffer_time.$error.required">{{'PLEASE
+                                        ENTER TIME BUFFER' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="persinfo m-top-30" ng-if="is_enabled_multiple_base_delivery_charges == 1
+     && !is_hide_delivery && hide_delivery_fields_for_suppliers != 1">
+        <div class="bx" style="padding-bottom: 25px;">
+
+            <h2 class="bold">{{'BASE DELIVERY CHARGES' | translate}}</h2>
+
+            <div class="row" ng-repeat="charge in supplier_info.baseDeliveryCharges track by $index">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>{{'BASE DELIVERY CHARGE' | translate}}</label>
+                        <input type="number" name="base_charge{{$index}}" integers
+                            placeholder="{{'BASE DELIVERY CHARGE' | translate}}"
+                            ng-model="charge.base_delivery_charges">
+                        <!-- <div class="error"
+                                ng-show="stepOneForm{{$index}}.base_charge{{$index}}.$invalid && stepOneForm{{$index}}.$submitted">
+                                <small
+                                    ng-show="stepOneForm{{$index}}.base_charge{{$index}}.$error.required">{{'PLEASE ENTER DELIVERY CHARGE' | translate}}</small>
+                            </div> -->
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>{{'BASE DELIVERY CHARGE DISTANCE' | translate}}
+                            ({{delivery_distance_unit == 1 ? 'Mile' : 'KM'}})</label>
+                        <input type="number" name="base_distance{{$index}}" integers
+                            placeholder="{{'BASE DELIVERY CHARGE DISTANCE' | translate}} ({{delivery_distance_unit == 1 ? 'Mile' : 'KM'}})"
+                            ng-model="charge.distance_value">
+                        <!-- <div class="error"
+                                ng-show="stepOneForm{{$index}}.base_distance{{$index}}.$invalid && stepOneForm{{$index}}.$submitted">
+                                <small ng-show="deliveryChargeForm{{$index}}.base_distance{{$index}}.$error.required">
+                                    {{'PLEASE ENTER DELIVERY CHARGE DISTANCE' | translate}}</small>
+                            </div> -->
+                    </div>
+                </div>
+
+                <div ng-if="supplier_info.baseDeliveryCharges.length > 1" class="col-md-2">
+                    <div class="form-group">
+                        <button type="button" ng-click="removeDeliveryCharge($index)" class="geofnc">{{'REMOVE' |
+                            translate}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="buttonsupdet">
+                        <button type="button" ng-click="addDeliveryCharge()" class="bold nxt">{{'ADD MORE' |
+                            translate}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="persinfo m-top-30" ng-if="hide_trade_document_supplier_registration == 1">
+        <div class="bx ">
+            <h2 class="bold">{{'Others Details' | translate}}</h2>
+            <div class="form-group">
+                <textarea rows="5" name="others" ng-model="supplier_info.others"
+                    placeholder="{{'OTHERS DETAILS' | translate}}" required></textarea>
+
+            </div>
+        </div>
+
+
+        <div class="col-md-5 document-image persinfo">
+            <div class=" col-md-12">
+                <div class="form-group pic">
+                    <label>{{localisation.trade_license | translate}}</label>
+
+                    <input filestyle="" type="file" accept="image/*" name="trade_license" class="cursor"
+                        style="width: 242px;" onchange="angular.element(this).scope().upload_trade_license(this.files)"
+                        data-button-text="Single" data-class-button="btn btn-default"
+                        data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                    <span ng-if="supplier_info.trade_license" style="height: 135px;">
+                        <img style="width: 100%; height: 100%; object-fit: contain;" id="trade_license"
+                            ng-src="{{supplier_info.trade_license.url}}">
+                    </span>
+                    <span ng-if="!supplier_info.trade_license">
+                        <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 document-image persinfo">
+            <div class="col-md-12">
+                <div class="form-group pic">
+                    <label>{{localisation.photo_identification | translate}}</label>
+                    <input filestyle="" type="file" accept="image/*" name="photo_identification" class="cursor"
+                        style="width: 242px;"
+                        onchange="angular.element(this).scope().upload_photo_identification(this.files)"
+                        data-button-text="Single" data-class-button="btn btn-default"
+                        data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                    <span ng-if="supplier_info.photo_identification" style="height: 135px;">
+                        <img style="width: 100%; height: 100%; object-fit: contain;" id="photo_identification"
+                            src="{{supplier_info.photo_identification.url}}">
+                    </span>
+                    <span ng-if="!supplier_info.photo_identification">
+                        <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    </div>
+    </div>
+
+
+    <div class="persinfo m-top-30" ng-if="hide_trade_document_supplier_registration == 1">
+        <div class="bx ">
+            <h2 class="bold">{{'Bank Details' | translate}}</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>{{'BANK NAME' | translate}}<span class="star">*</span></label>
+                        <input type="text" name="bank_name" placeholder="{{'BANK NAME' | translate}}"
+                            ng-model="supplier_info.bank_name" required
+                            ng-disabled="(disable_supplier_edit_info == 1 && profile == 'ADMIN' && disable_supplier_profile_edit == 0) || ((disable_name_address_supplier || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER')">
+                        <div class="error" ng-show="stepOneForm.bank_name.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.bank_name.$error.required">{{'PLEASE ENTER BANK NAME' |
+                                translate}}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>{{'ACCOUNT NUMBER' | translate}}<span class="star">*</span></label>
+                        <input type="text" name="account_number" placeholder="{{'ACCOUNT NUMBER' | translate}}"
+                            ng-model="supplier_info.account_number" required
+                            ng-disabled="(disable_supplier_edit_info == 1 && profile == 'ADMIN' && disable_supplier_profile_edit == 0) || ((disable_name_address_supplier || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER')">
+                        <div class="error" ng-show="stepOneForm.account_number.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.account_number.$error.required">{{'PLEASE ENTER ACCOUNT NUMBER'
+                                |
+                                translate}}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>{{'IBAN' | translate}}<span class="star">*</span></label>
+                        <input type="text" name="iban" placeholder="{{'IBAN' | translate}}"
+                            ng-model="supplier_info.iban" required
+                            ng-disabled="(disable_supplier_edit_info == 1 && profile == 'ADMIN' && disable_supplier_profile_edit == 0) || ((disable_name_address_supplier || disable_supplier_profile_edit == 1) && profile == 'SUPPLIER')">
+                        <div class="error" ng-show="stepOneForm.iban.$invalid && stepOneForm.$submitted">
+                            <small ng-show="stepOneForm.iban.$error.required">{{'PLEASE ENTER IBAN' |
+                                translate}}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <div class="devare m-top-30"
+        ng-if="is_dine_in == 0 && !is_hide_delivery && (profile === 'ADMIN' || hide_delivery_radius_vendor == 0)">
+        <div class="bx ">
+            <h2 class="bold">{{'DELIVERY AREA' | translate}}</h2>
+            <!-- <label><input type="radio" name="name" value="0" ng-model="delivery_type"><span
+                    ng-click="changeDeliverType(0)"></span>No Restrictions for
+                delivering Orders.
+            </label> -->
+
+            <label>
+                <!-- <input type="radio" name="delivery_area" value="1" checked="{{delivery_type == 1}}" convert-to-number
+                    ng-model="delivery_type" required>
+                <span ng-click="changeDeliverType(1)"></span> -->
+                <a ng-click="changeDeliverType(1)" style="cursor: default;">
+                    <p ng-if="[1,2,3,4].includes(app_type)">
+                        {{"ENTER A RADIUS FROM STORES'S CENTRAL LOCATION IN WHICH YOU WANT TO DELIVER" | translate}}</p>
+                    <p ng-if="[5,6,7,8,9,10].includes(app_type) || app_type > 10">
+                        {{"ENTER A RADIUS FROM STORES'S CENTRAL LOCATION IN WHICH YOU WANT TO GIVE SERVICE" |
+                        translate}}
+                    </p>
+                </a>
+                <div class="devrad m-top-20" ng-if="delivery_type == 1" style="margin-left: 0px;">
+                    <a class="view-on-map" ng-click="viewDeliveryRadius()">{{'View On Map' | translate}}</a>
+                    <div class="from-group">
+                        <label class="bold">{{'Enter Delivery Radius' | translate}}
+                            ({{delivery_distance_unit == 1 ? 'Miles' : 'KM'}})</label>
+                        <input type="text" integers ng-model="delivery_radius"
+                            ng-change="changeDeliveryRadius(delivery_radius)" name="radius"
+                            ng-disabled="enable_static_delivery_radius==1">
+                    </div>
+                    <p class="m-top-20">{{'NOTE' | translate}} :
+                        {{'YOUR STORE WILL SERVE WITHIN THE RADIUS YOU ENTER.' | translate}}
+                    </p>
+                </div>
+            </label>
+
+            <!-- <label><input type="radio" name="delivery_area" value="2" checked="{{delivery_type == 2}}" convert-to-number
+                    ng-model="delivery_type" required>
+                <span ng-click="changeDeliverType(2)"></span>
+                <a ng-click="changeDeliverType(2)">
+                    {{'CREATE GEOFENCE TO DEFINE THE AREA FOR DELIVERY' | translate}}
+                </a>
+                <div style="margin-left: 40px; margin-top: 10px;" ng-if="delivery_type == 2">
+                    <button ng-disabled="!is_geofence || permissions('suppliers', 'update') == 0" ng-class="!is_geofence || permissions('suppliers', 'update') == 0 ? 'disabled' : ''" type="button"
+                        data-toggle="modal" class="button-primary"
+                        data-target="#geo">{{'OPEN MAP' | translate}}</button>
+                    <p ng-if="!is_geofence" class="location-blocked">
+                        {{'LOCATION SERVICE IS BLOCKED IN YOUR BROWSER, PLEASE ALLOW LOCATION AND TRY AGAIN' | translate}}
+                    </p>
+                </div>
+            </label> -->
+
+            <div class="error" ng-show="stepOneForm.delivery_area.$invalid && stepOneForm.$submitted">
+                <small ng-show="stepOneForm.delivery_area.$error.required">{{'PLEASE SELECT DELIVERY AREA.' |
+                    translate}}</small>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="buttonsupdet" 
+    ng-if="permissions('suppliers', 'update') == 1 && (profile=='ADMIN' || enable_supplier_add_edit_delete_restriction==0 )" >
+        <!-- <button type="button" class="bold skip">Cancel</button> -->
+        <p ng-if="enable_updation_vendor_approval==1 && profile==='SUPPLIER'">
+            {{vendorUpdateList.length ?'Your updation request is pending':''}}</p>
+        <button type="submit" class="bold nxt">{{'SAVE' | translate}}</button>
+    </div>
+
+</form>
+
+
+<div class="persinfo m-top-30" ng-if="is_dine_in == 0 && is_tax_geofence == 1">
+    <div class="bx" style="padding-bottom: 45px;">
+
+        <h2 class="bold">{{'GEOFENCE AREA' | translate}}</h2>
+
+        <form ng-repeat="geo in geofence_areas track by $index" role="form" id="geofenceForm{{$index}}"
+            name="geofenceForm" ng-submit="setGeofenceData(geofenceForm, $index)" prevent-enter-press novalidate>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <button type="button" ng-click="initGeofence($index)" class="geofnc">{{'SELECT AREA' |
+                            translate}}</button>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>{{localisation.tax | translate}} (%)<span class="star">*</span></label>
+                        <input type="number" name="tax{{$index}}" integers placeholder="{{'TAX' | translate}} (%)"
+                            ng-model="geo.tax" required>
+                        <div class="error"
+                            ng-show="geofenceForm{{$index}}.tax{{$index}}.$invalid && geofenceForm{{$index}}.$submitted">
+                            <small ng-show="geofenceForm{{$index}}.tax{{$index}}.$error.required">{{'PLEASE ENTER TAX' |
+                                translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>{{'DELIVERY CHARGES' | translate}}<span class="star">*</span></label>
+                        <input type="number" name="delivery_charges{{$index}}" integers
+                            placeholder="{{'DELIVERY CHARGES' | translate}}" ng-model="geo.delivery_charges" required>
+                        <div class="error"
+                            ng-show="geofenceForm{{$index}}.delivery_charges{{$index}}.$invalid && geofenceForm{{$index}}.$submitted">
+                            <small ng-show="geofenceForm{{$index}}.delivery_charges{{$index}}.$error.required">
+                                {{'PLEASE ENTER DELIVERY CHARGES' | translate}}</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <button type="submit" class="geofnc">{{geo.id ? 'UPDATE AREA' : 'ADD AREA' |
+                            translate}}</button>
+                    </div>
+                </div>
+
+                <div ng-if="!$last" class="col-md-2">
+                    <div class="form-group">
+                        <button type="button" ng-click="removeArea($index)" class="geofnc">{{'REMOVE' |
+                            translate}}</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<div class="modal " id="geo">
+    <div class="modal-dialog modal-lg" style="max-width: 1200px">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                    <h2 class="bold" style="text-align: center;">{{'ADD GEOFENCE' | translate}}</h2>
+                    <button type="button" class="close" data-dismiss="modal" id="close_geofence"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="geo" style="padding: 0px">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div id="geo_map" style="height: 600px; width: 100%"></div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="btns">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <button type="button" class=" bold" style="background-color: #BEBEBE;"
+                                            data-dismiss="modal">{{'CANCEL'}}</button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button ng-click="setGeofence()" type="button" class="bg-success bold">{{'SAVE'
+                                            | translate}}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal " id="view_delivery_area">
+    <div class="modal-dialog" style="max-width: 60%">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                    <h2 class="bold" style="text-align: center;">{{'SELECT DELIVERY RADIUS' | translate}}</h2>
+                    <button type="button" class="close" data-dismiss="modal" id="close_geofence"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="geo" style="padding: 0px">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="delivery_geo_map" style="height: 600px; width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modfooter">
+                    <button type="button" data-dismiss="modal" ng-click="saveSelectedSupplierLocation()"
+                        class="bg-success bold">{{'DONE' | translate}}</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .geo .btns {
+        margin-top: 5px;
+        width: 250px;
+        float: right;
+        margin-bottom: 25px;
+    }
+
+    .bx .disabled {
+        opacity: 0.6;
+        cursor: default;
+    }
+
+    .location-blocked {
+        margin-top: 10px;
+        font-style: italic;
+        font-size: 14px;
+        color: #ce1d1d;
+    }
+
+    .view-on-map {
+        color: #ffffff !important;
+        font-size: 14px;
+        border: none;
+        padding: 5px 14px;
+        border-radius: 4px;
+        vertical-align: middle;
+        border: 1px solid var(--primary-color);
+        font-size: 14px;
+        background-color: var(--primary-color);
+        float: right;
+    }
+
+    .geofnc {
+        color: #ffffff !important;
+        border: 1px solid var(--primary-color) !important;
+        font-size: 16px !important;
+        background-color: var(--primary-color) !important;
+        padding: 5px 14px !important;
+        border-radius: 4px !important;
+        background-image: none !important;
+        width: 100% !important;
+        text-align: center !important;
+        margin-top: 30px;
+    }
+
+    .placeholders .toplab {
+        float: left;
+    }
+</style>

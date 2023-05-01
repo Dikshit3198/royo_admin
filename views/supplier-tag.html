@@ -1,0 +1,257 @@
+<div class="container-fluid back">
+
+</div>
+
+
+<div class="container">
+    <div class="row profile">
+        <div class="col-4">
+
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper" ng-if="!is_assiging">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'Tags' | translate}}</h1>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)" ng-if="permissions('promotions', 'create') == 1">
+                                <button type="button" class="bold create" data-toggle="modal"
+                                    ng-click="changeView(true)"
+                                    data-target="#tagFormRef">{{'ADD TAG' | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{'NAME' | translate}}</th>
+                                <th>{{'IMAGE' | translate}}</th>
+                                <th>{{'ACTION' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="tag in supplierTagsList">
+                                <td>{{tag.id}}</td>
+                                <td>{{tag.name || 'N/A'}}</td>
+                                <td>
+                                    <img src="{{tag.tag_image}}">
+                                </td>
+                                <td>
+                                    <p class="delete" ng-click="deleteSupplierTag(tag)">
+                                        {{'Delete'}}
+                                    </p>
+                                    <p class="delete" ng-click="openUpdateTag(tag)">
+                                        {{'Update'}}
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="supplierTagsList.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+
+
+                    <div ng-if="supplierTagsList.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="container" ng-if="is_assiging">
+    <div class="row profile">
+        <div class="col-md-12">
+            <div class="row suppro" style="margin-bottom: 15px; margin-top: 20px;">
+
+                <div class="col-md-6" style="margin-bottom: 15px;" ng-init="parentIndex = $index">
+                    <div class="form-group">
+                        <div class="box">
+                            <h1 class="text-center m-4">
+                                {{'Supplier Tags' | translate}}
+                            </h1>
+                            <p class="text-center" ng-click="markAll()">
+                                {{!mark_all?'Mark All':'Un Mark All'}}
+                            </p>
+
+                            <div class="scroll">
+                                <ul class="items">
+                                    <li ng-repeat="tag in supplierTagsList track by $index">
+                                        {{tag.name}}
+                                        <input type="checkbox" class="checkbx" ng-click="selectTag(tag)"
+                                            ng-checked="tag.checked">
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <div class="submit-plan text-center mt-3">
+                                    <button type="submit" ng-click="assignTags()">{{'Assign Tags' | translate}}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal" id="tagFormRef">
+    <div class="modal-dialog" style="max-width: 320px;">
+        <div class="modal-content">
+            <div class="modal-body" ng-if="!is_updating">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{'ADD SUPPLIER TAG' | translate}}</h3>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <form role="form" id="tagForm" name="tagForm" ng-submit="addSupplierTag(tagForm)" novalidate>
+                        <div class="form-group">
+                            <label>{{'NAME' | translate}}<span class="star">*</span></label>
+                            <input type="text" limit-to="60" name="name" ng-model="supplier_tag.name"
+                                placeholder="{{'Name' | translate}}" required>
+                            <div class="error" ng-show="tagForm.name.$invalid && tagForm.$submitted">
+                                <small ng-show="tagForm.name.$error.required">Please enter
+                                    name.</small>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="form-group">
+                                <input filestyle="" type="file" accept="image/*" name="image2"
+                                    ng-model="supplier_tag.tag_image" class="cursor" style="width: 242px; height: 77%;"
+                                    onchange="angular.element(this).scope().file_to_upload_for_supplier_tag(this.files)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                            </div>
+                            <span ng-if="supplier_tag.tag_image">
+                                <img style="height: 160px; width: 100%;" src="{{supplier_tag.tag_image}}">
+                            </span>
+                            <span ng-if="!supplier_tag.tag_image">
+                                <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                            </span>
+                            <div class="error" ng-show="!supplier_tag.tag_image && tagForm.$submitted">
+                                <small ng-show="!supplier_tag.tag_image">Please upload tag image.</small>
+                            </div>
+                        </div>
+                        <div class="submit-plan text-center mt-3">
+                            <button type="submit">{{'SUBMIT' | translate}}</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+            <div class="modal-body" ng-if="is_updating">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{'UPDATE SUPPLIER TAG' | translate}}</h3>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <form role="form" id="tagForm" name="tagForm" ng-submit="updateSupplierTag(tagForm)" novalidate>
+                        <div class="form-group">
+                            <label>{{'NAME' | translate}}<span class="star">*</span></label>
+                            <input type="text" limit-to="60" name="name" ng-model="supplier_tag.name"
+                                placeholder="{{'Name' | translate}}" required>
+                            <div class="error" ng-show="tagForm.name.$invalid && tagForm.$submitted">
+                                <small ng-show="tagForm.name.$error.required">Please enter
+                                    name.</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group">
+                                <input filestyle="" type="file" accept="image/*" name="image2"
+                                    ng-model="supplier_tag.tag_image" class="cursor" style="width: 242px; height: 77%;"
+                                    onchange="angular.element(this).scope().file_to_upload_for_supplier_tag(this.files)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                            </div>
+                            <span ng-if="supplier_tag.tag_image">
+                                <img style="height: 160px; width: 100%;" src="{{supplier_tag.tag_image}}">
+                            </span>
+                            <span ng-if="!supplier_tag.tag_image">
+                                <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                            </span>
+                            <div class="error" ng-show="!supplier_tag.tag_image && tagForm.$submitted">
+                                <small ng-show="!supplier_tag.tag_image">Please upload tag image.</small>
+                            </div>
+                        </div>
+                        <div class="submit-plan text-center mt-3">
+                            <button type="submit">{{'SUBMIT' | translate}}</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+
+
+
+<style>
+    .delete {
+        cursor: pointer;
+    }
+
+    .delete:hover {
+        text-decoration: underline;
+        font-weight: 600;
+    }
+
+    .checkbx {
+        appearance: auto;
+        position: absolute;
+        right: 8px;
+        bottom: 16px;
+    }
+</style>

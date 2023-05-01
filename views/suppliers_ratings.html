@@ -1,0 +1,85 @@
+<div class="repbtm m-top-40">
+    <div ng-if="enable_search_filter_in_supplier_ratings" class="secnav ">
+    <div class="row">
+        <div class="col-md-6 col-sm-6">
+            <input style="width: 330px" type="text" placeholder="{{'SEARCH BY ORDER NO. / SUPPLIER NAME' | translate}}"
+                ng-model="search.text" ng-keypress="searchOrder($event)">
+        </div>
+    </div>
+</div>
+
+<div>
+
+    <div class="">
+        <div class="tableouter">
+            <table>
+                <thead>
+                    <tr>
+                        <th>{{localisation.order | translate}} {{'ID' | translate}}</th>
+                        <th>{{localisation.supplier}}</th>
+                        <th>{{'CUSTOMER' | translate}}</th>
+                        <th>{{'DATE' | translate}}</th>
+                        <th>{{'RATE' | translate}}</th>
+                        <th>{{'REVIEW' | translate}}</th>
+                        <th>{{'STATUS' | translate}}</th>
+                        <th>{{'ACTION' | translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="ratedSupplier in supplierRatingList">
+                        <th>{{ratedSupplier.order_id}}</th>
+                        <th>{{ratedSupplier.supplier_name}}</th>
+                        <th>{{ratedSupplier.user_name}}</th>
+                        <th> <span style="font-weight: 600;">
+                                {{ratedSupplier.rated_on | date: 'MMM d, y' : 'UTC'}}
+                            </span> <br>
+                            <span style="font-weight: 600;">
+                                {{ratedSupplier.rated_on | date: 'hh:mm a' : 'UTC'}}
+                            </span></th>
+                        <th>{{ratedSupplier.rating}}</th>
+                        <th>{{ratedSupplier.comment}}</th>
+                        <th>{{ratedSupplier.is_approved == 0 ? 'BLOCK' : 'UNBLOCK' | translate}} </th>
+                        <th>
+                            <button ng-click="blockUnblockRating(ratedSupplier)"
+                                class="btn btn-sm">{{ratedSupplier.is_approved == 0 ? 'UNBLOCK' : 'BLOCK' | translate}}
+                            </button>
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="no-data-found" ng-if="supplierRatingList.length == 0 && dataLoaded">
+                {{'NO DATA FOUND' | translate}}
+            </div>
+
+            <div ng-if="supplierRatingList.length > 0 && dataLoaded" class="row pagination">
+                <ul ng-if="pager.pages && pager.pages.length">
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                    </li>
+                    <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                        <a ng-click="setPage(page)">{{page}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<style>
+    .tableouter button {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+</style>

@@ -1,0 +1,77 @@
+<div class="wrapper">
+    <div class="category">
+
+        <a class="backbtn" style="float: right" ui-sref="profile.agent({page: '1'})"><img
+                src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'TRACK' | translate}} {{localisation.agents | translate}}</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="secnav m-top-20" style="margin-bottom: 30px;">
+            <div class="row">
+                <div class="col-md-3 col-sm-4">
+                    <input type="text" placeholder="{{'Search'|translate}}" name="search" ng-model="search_agent"
+                        ng-keypress="searchAgent($event)">
+                </div>
+                <div class="col-md-9 col-sm-8">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)"
+                                ng-if="profile === 'ADMIN' && is_single_vendor == 0 && ([1].includes(app_type) || flow_data_values.includes(1))"
+                                style="position: relative" class="select-category">
+                                <label class="rprt" style="opacity: 1;"> {{'ADMIN LEVEL' | translate}}
+                                    <div class="switch togglebtn"
+                                        style="display: inline-block; margin-left: 10px; vertical-align: middle;">
+                                        <input type="checkbox" id="togBtn" ng-checked="is_admin"
+                                            ng-click="toggleAdmin(is_admin)">
+                                        <div class="slider round">
+                                            <span class="on"></span>
+                                            <span class="off"></span>
+                                        </div>
+                                    </div>
+                                </label>
+                            </li>
+                            <li ng-if="profile === 'ADMIN' && is_single_vendor == 0 && is_admin == 0"
+                                style="position: relative" class="select-category">
+                                <label style="position: absolute;top: -25px;">{{'FILTER BY' | translate}}
+                                    {{localisation.supplier | translate}}</label>
+                                <select style="width: 260px" class="app" ng-model="selected_supplier_filter"
+                                    ng-options="supplier.supplier_name for supplier in suppliers"
+                                    ng-change="changeSupplier(selected_supplier_filter)">
+                                    <option selected value="">{{'ALL' | translate}}</option>
+                                </select>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content padding-left padding-right clearfix">
+                        <div id="map" style="height: 900px"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .agent-info {
+        padding: 8px 5px;
+    }
+
+    .agent-info .link {
+        margin-top: 10px;
+        font-weight: 500;
+    }
+</style>

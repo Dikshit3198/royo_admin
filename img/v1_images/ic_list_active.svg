@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_list_active</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-18-Copy-2">
+            <rect id="Rectangle" fill="#9B8B5F" x="0" y="0" width="24" height="24" rx="3"></rect>
+            <g id="Group-17" transform="translate(3.750000, 6.750000)" fill="#F3F5F9">
+                <rect id="Rectangle" x="0" y="0" width="16.5" height="1.5" rx="0.75"></rect>
+                <rect id="Rectangle-Copy-19" x="0" y="4.5" width="9.75" height="1.5" rx="0.75"></rect>
+                <rect id="Rectangle-Copy-20" x="0" y="9" width="14.25" height="1.5" rx="0.75"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

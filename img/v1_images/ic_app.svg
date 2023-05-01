@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_app</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-52" transform="translate(6.000000, 4.000000)">
+            <g id="Group-51-Copy">
+                <g id="Group-48-Copy" transform="translate(0.000000, 4.000000)">
+                    <path d="M13.3333333,1.40967881 L13.3333333,16.3845298 C13.3333333,16.844767 12.9602373,17.2178631 12.5,17.2178631 L0.569158987,17.2178631 L13.3333333,1.40967881 Z" id="Rectangle-Copy-34" fill="#B6F9FF"></path>
+                    <path d="M1.66666667,0 L13.3333333,0 C14.2538079,-1.69088438e-16 15,0.746192084 15,1.66666667 L15,18.3333333 C15,19.2538079 14.2538079,20 13.3333333,20 L1.66666667,20 C0.746192084,20 3.0447682e-15,19.2538079 8.8817842e-16,18.3333333 L0,1.66666667 C-1.12725625e-16,0.746192084 0.746192084,1.05726686e-15 1.66666667,8.8817842e-16 Z M2.5,2.5 C2.03976271,2.5 1.66666667,2.87309604 1.66666667,3.33333333 L1.66666667,15.8333333 C1.66666667,16.2935706 2.03976271,16.6666667 2.5,16.6666667 L12.5,16.6666667 C12.9602373,16.6666667 13.3333333,16.2935706 13.3333333,15.8333333 L13.3333333,3.33333333 C13.3333333,2.87309604 12.9602373,2.5 12.5,2.5 L2.5,2.5 Z" id="Combined-Shape" fill="#2CA6B1"></path>
+                    <g id="Group-47" transform="translate(5.000000, 0.833333)" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.833333333">
+                        <path d="M2.08333333,0.416666667 L4.63724772,0.416666667" id="Line-4"></path>
+                        <path d="M0.416666667,0.416666667 L0.968933105,0.416666667" id="Line-4-Copy"></path>
+                    </g>
+                    <circle id="Oval" fill="#FFFFFF" cx="7.5" cy="18.3333333" r="1"></circle>
+                </g>
+                <g id="Group-50" transform="translate(5.000000, 0.000000)">
+                    <circle id="Oval" stroke="#2CA6B1" fill="#FFFFFF" cx="8" cy="8" r="8"></circle>
+                    <g id="Group-49" transform="translate(3.000000, 9.000000)" fill="#2CA6B1">
+                        <path d="M2,0 L8,0 C9.1045695,-2.02906125e-16 10,0.8954305 10,2 L10,2.73684211 C10,3.43446495 9.43446495,4 8.73684211,4 L1.26315789,4 C0.565535053,4 8.5434158e-17,3.43446495 0,2.73684211 L0,2 C-1.3527075e-16,0.8954305 0.8954305,2.02906125e-16 2,0 Z" id="Combined-Shape"></path>
+                    </g>
+                </g>
+            </g>
+            <circle id="Oval" stroke="#2CA6B1" fill="#2CA6B1" cx="13" cy="6" r="2"></circle>
+        </g>
+    </g>
+</svg>

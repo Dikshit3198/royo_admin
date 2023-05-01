@@ -1,0 +1,395 @@
+<div class="wrapper">
+  <div class="category">
+
+    <div class="secnav">
+      <div class="row">
+        <div class="col-md-6 col-sm-6">
+          <h1 class="bold">{{localisation.catalogue | translate}} <span style="color: #ff2020; font-size: 13px;">{{activeSubscription ? "" : "(Sorry but your subscription is expired)"}}</span></h1>
+        </div>
+        <!-- <div class="col-md-6 col-sm-6">
+          <button ng-if="generic_category.length && !categoryData[0].arr.length" class="button-primary"
+            ng-click="genericProducts()" style="width: 260px">{{localisation.products | translate}} Without
+            Category</button>
+        </div> -->
+
+        <div class="col-md-6 col-sm-6" ng-if="profile === 'ADMIN' && is_single_vendor == 0 && app_type < 11">
+          <button class="import" data-toggle="modal" data-target="#csvModel"
+            ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+            ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"><img
+              src="img/v1_images/ic_import.svg">{{'IMPORT' | translate}}</button>
+        </div>
+        <button ng-if="is_single_menu" class="button-primary"
+          ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+          ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+          ng-click="toProduct('ADD')" style="width: 150px;margin-right: 10px;">+
+          {{'ADD' | translate}}
+          {{localisation.product | translate}} </button>
+      </div>
+    </div>
+
+    <div class="suppro m-top-30">
+      <div  class="row" style="padding-bottom: 10px">
+        <div ng-if='activeSubscription' style="margin-bottom: 40px;" class="Catalogue-item catalogue-transition col-lg-4 col-md-6 col-12"
+          ng-repeat="data in categoryData track by $index" ng-init="parentIndex = $index">
+          <div class="box">
+            <div class="top">
+              <h2 class="bold">{{data.name | translate}}</h2>
+              <ul>
+
+                <li style="margin-right: 15px;" ng-if="(category_sequence == 1 && is_single_vendor == 1) || (supplier_category_sequence == 1 && parentIndex == 0 && profile === 'SUPPLIER')"><a href=""
+                    data-toggle="modal" ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                    ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                    ng-click="setCatOrder(data)" data-target="#orderCatModal"><i class="fa fa-sort" aria-hidden="true"
+                      style="color: var(--primary-color);"></i></a></li>
+                <li style="margin-right: 15px;" ng-if="parentIndex == 0 && enable_admin_cat_sorting == 1"><a href=""
+                    data-toggle="modal"
+                    ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                    ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                    ng-click="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === 0) ? setCatOrder(data) : ''"
+                    data-target="#orderCatModal"><i class="fa fa-sort" aria-hidden="true"
+                      style="color: var(--primary-color);"></i></a></li>
+                <li
+                  ng-if="(enable_supplier_add_edit_delete_restriction==0 || profile == 'ADMIN') && parentIndex == 0 && permissions('catalogue', 'create') == 1 && (profile == 'ADMIN' || (['SUPPLIER','BRANCH'].includes(profile) && allow_supplier_category_edit == 1 && disable_supplier_main_category_add_edit == 0))">
+                  <a href=""
+                    ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                    ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                    ng-click="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) ?  addEditCat('production.category', {}, 'ADD') : ''"><img
+                      src="img/v1_images/ic_add.svg"></a>
+                </li>
+                <li ng-if="parentIndex == 0"><a href=""
+                    ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                    ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                    ui-sref="{{(profile == 'SUPPLIER' ? restriction_view_only_for_restaurant == 0 : true) ? 'production.category' : ''}}"><img
+                      src="img/v1_images/ic_table.svg"></a></li>
+
+                <li
+                  ng-if="(enable_supplier_add_edit_delete_restriction==0 || profile == 'ADMIN') && parentIndex > 0 && permissions('catalogue', 'create') == 1 && (profile == 'ADMIN' || (['SUPPLIER','BRANCH'].includes(profile) && (allow_supplier_category_edit == 1 || disable_supplier_main_category_add_edit == 1)))">
+                  <a href=""
+                    ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                    ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                    ng-click="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) ? addEditSubCat(parentIndex, 'ADD', false) : ''"><img
+                      src="img/v1_images/ic_add.svg"></a>
+                </li>
+
+                <li ng-if="parentIndex > 0"><a href=""
+                    ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                    ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                    ng-click="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) ? listSubCat(parentIndex, false) : ''"><img
+                      src="img/v1_images/ic_table.svg"></a></li>
+
+              </ul>
+            </div>
+
+            <ul class="items">
+              <li class="cursor"
+                ng-class="parentIndex == selected_parentIndex && childIndex == selected_childIndex ? 'active' : '' && (profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                ng-repeat="category in data.arr" ng-init="childIndex = $index"
+                ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                ng-click="selectCat(parentIndex, childIndex, category)">{{category.name}}
+                <a href=""
+                  ng-if="(enable_supplier_add_edit_delete_restriction==0 || profile == 'ADMIN') && (profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) && parentIndex == 0 && permissions('catalogue', 'update') == 1 && (profile == 'ADMIN' || (profile == 'SUPPLIER' && allow_supplier_category_edit == 1 && disable_supplier_main_category_add_edit == 0))"
+                  ng-click="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) ? addEditCat('production.category', {cat_id: category.id}, 'EDIT') : null"><img
+                    src="img/v1_images/ic_edit_cart.svg"></a>
+                <a href=""
+                  ng-if="(enable_supplier_add_edit_delete_restriction==0 || profile == 'ADMIN') && (profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) && parentIndex > 0 && permissions('catalogue', 'update') == 1 && (profile == 'ADMIN' || (profile == 'SUPPLIER' && (allow_supplier_category_edit == 1 || disable_supplier_main_category_add_edit == 1)))"
+                  ng-click="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) ? addEditSubCat(parentIndex, 'EDIT', false, category.id) : null"><img
+                    src="img/v1_images/ic_edit_cart.svg"></a>
+              </li>
+            </ul>
+
+          </div>
+          <a href="" class="create m-top-20 bold"
+            ng-if="(enable_supplier_add_edit_delete_restriction==0 || profile == 'ADMIN') &&  (profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) && no_subcategory == 0 && selected_parentIndex == parentIndex && data.arr.length && category_selected != 1 &&  products.length == 0 && data.arr[selected_childIndex].is_question == 0 && permissions('catalogue', 'create') == 1 && (profile == 'ADMIN' || (['SUPPLIER','BRANCH'].includes(profile) && allow_supplier_category_edit == 1))"
+            ng-click="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) ? addEditSubCat(parentIndex, 'ADD', true) : null">
+            {{'CREATE SUB-CATEGORY' | translate}}</a>
+        </div>
+
+        <!-- <div class="col-md-4" style="margin-top: 20px;"
+          ng-if="is_product && categoryData[0].arr.length && (app_type < 11 || (app_type > 10 && (flow_data.length == 1 || categoryData.length > 1)))"> -->
+        <div ng-if='activeSubscription' class="col-md-4" style="margin-top: 20px;"
+          ng-if="!is_single_menu &&is_product && categoryData[0].arr.length">
+          <div class="box">
+            <div class="top">
+              <h2 class="bold">{{localisation.products | translate}}</h2>
+              <ul>
+                <li style="margin-right: 12px;" ng-if="category_sequence == 1 && is_single_vendor == 1"><a href=""
+                    ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                    ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                    ng-click="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) ? setProductOrder(products) : ''"><i
+                      class="fa fa-sort" aria-hidden="true" style="color: var(--primary-color);"></i></a></li>
+                <li
+                  ng-if="((permissions('catalogue', 'create') == 1 && profile == 'ADMIN') || 
+                  (permissions('product', 'create') == 1 && ((profile == 'SUPPLIER' || profile == 'BRANCH') && 
+                  restrict_supplier_add_edit_product == 0)))"
+                  ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                  ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                  ng-click="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) ? toProduct('ADD'): ''">
+                  <a href=""><img src="img/v1_images/ic_add.svg"></a>
+                </li>
+                <li ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                  ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                  ng-if="((profile == 'ADMIN') || (permissions('product', 'list') == 1 && profile == 'SUPPLIER')) || profile == 'BRANCH'"
+                  ng-click="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) ? toProduct('LIST'): ''">
+                  <a href=""><img src="img/v1_images/ic_table.svg"></a>
+                </li>
+              </ul>
+              <button type="button" id="OpenProductOrder" style="display: none;" data-toggle="modal"
+                ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                data-target="#orderProductModal"><img src="img/v1_images/ic_cross.svg"></button>
+            </div>
+
+            <ul class="items">
+              <li ng-repeat="product in products" class="ellipsis"><span data-toggle="tooltip"
+                  title="{{product.names[0].name}}">{{product.name_en}}</span>
+                <!-- {{product.names[0].name}} -->
+                <a href=""
+                  ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                  ng-if="(enable_supplier_add_edit_delete_restriction==0 || profile == 'ADMIN') && ((profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) && (permissions('catalogue', 'update') == 1 && profile == 'ADMIN') || (permissions('product', 'update') == 1 && profile == 'SUPPLIER'))"
+                  ng-click="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) ? toProduct('EDIT', product.id): ''"><img
+                    src="img/v1_images/ic_edit_cart.svg"></a>
+              </li>
+              <div class="no-items-found" ng-if="products.length == 0 && dataLoaded">
+                <img src="img/v1_images/shopping-cart.svg">
+                <br>
+                <p>{{'NO DATA FOUND' | translate}}</p>
+              </div>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- Import Csv -->
+  <div class="modal fade" id="csvModel" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" style="margin-top: 10%" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="csvModelLabel">{{'Import Csv' | translate}}</h5>
+          <a class="download" ng-click="downloadSampleFile()"> <span>{{'Download Sample File' | translate}}</span> </a>
+        </div>
+        <div class="csv-body modal-body">
+          <div ng-show="!isCsv" class="area">
+            <input type="file" id="upload" />
+            <label for="upload"><strong>{{'Choose a file' | translate}}</strong><span class="box__dragndrop">{{'or drag it here' | translate}}</span>.</label>
+          </div>
+          <div ng-show="isCsv" class="area" style="opacity: 1;">
+            <label>{{selectedCsv.name}}</label><br>
+            <a ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+              ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+              ng-click="removeCsv()" class="remove-csv">remove</a>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="close-csv-btn" type="button" ng-click="removeCsv()" class="btn btn-secondary"
+            ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+            ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+            data-dismiss="modal">{{'Close'| translate}}</button>
+          <button type="button" class="btn btn-primary" ng-class="{'disabled': !isCsv}"
+            ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+            ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+            ng-click="uploadCsv()">{{'Upload' | translate}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="orderCatModal" ng-if="items.length">
+  <div class="modal-dialog" style="max-width: 560px">
+    <div class="modal-content">
+
+      <div class="modal-body cat-order">
+        <div ng-app="Royo" ng-controller="SupplierProfileSetupTwoCtrl">
+          <h2 class="text-center" style="margin: 15px 0px;">{{'DRAG N DROP TO SET ORDER' | translate}}</h2>
+          <table class="table table-bordered" ng-if="!isProductOrder && items.length">
+            <tr>
+              <th>{{localisation.categories | translate}}</th>
+            </tr>
+            <tbody ui-sortable="{ 'ui-floating': true , 'axis': 'y'}" ng-model="items">
+              <tr ng-repeat="item in items">
+                <td>{{ item }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- <ul ui-sortable="{ 'ui-floating': true , 'axis': 'y'}" ng-model="items">
+                      <li ng-repeat="item in items">{{ item }}</li>
+                    </ul> -->
+          <table class="table table-bordered" ng-if="isProductOrder">
+            <tr>
+              <th>{{localisation.product}}</th>
+            </tr>
+            <tbody ui-sortable="{ 'ui-floating': true , 'axis': 'y'}" ng-model="items">
+              <tr ng-repeat="item in items">
+                <td>{{ item }}hf</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button type="button" id="closeCatOrder" class="close" data-dismiss="modal"
+          ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+          ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"><img
+            src="img/v1_images/ic_cross.svg"></button>
+        <div class="submit-seq">
+          <button ng-if="!is_assigned" ng-click="SubmitCatSequence()"
+            ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+            ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+            class="asgn-btn">{{'Submit' | translate}}</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="orderProductModal" ng-if="items.length">
+  <div class="modal-dialog" style="max-width: 560px">
+    <div class="modal-content">
+
+      <div class="modal-body product-order">
+        <div ng-app="Royo" ng-controller="SupplierProfileSetupTwoCtrl">
+          <h2 class="text-center" style="margin: 15px 0px;">{{'DRAG N DROP TO SET ORDER' | translate}}</h2>
+          <table class="table table-bordered">
+            <tr>
+              <th>{{localisation.product}}</th>
+            </tr>
+            <tbody ui-sortable="{ 'ui-floating': true , 'axis': 'y'}" ng-model="items">
+              <tr ng-repeat="item in items">
+                <td>{{ item.split('.')[0] }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button type="button" id="closeProductOrder" class="close" data-dismiss="modal"
+          ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+          ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"><img
+            src="img/v1_images/ic_cross.svg"></button>
+        <div class="submit-seq">
+          <button ng-if="!is_assigned" ng-click="SubmitProductSequence()"
+            ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+            ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+            class="asgn-btn">{{'SUBMIT' |
+            translate}}</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<style>
+  .catalogue-transition {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .import {
+    width: 260px;
+    height: 34px;
+    width: 110px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+    color: var(--primary-color) !important;
+    border: 1px solid var(--primary-color);
+    background-color: #ffffff;
+  }
+
+  .csv-body {
+    background-color: #e9eaeb;
+    padding: 20px !important;
+  }
+
+  .area {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    border: 2px dashed #000;
+    background-image: url("../../img/import.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 64px 64px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    filter: alpha(opacity=50);
+    -khtml-opacity: 0.5;
+    -moz-opacity: 0.5;
+    opacity: 0.5;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .area:hover,
+  .area.dragging,
+  .area.uploading {
+    filter: alpha(opacity=100);
+    -khtml-opacity: 1;
+    -moz-opacity: 1;
+    opacity: 1;
+  }
+
+  .area input {
+    width: 400%;
+    height: 100%;
+    margin-left: -380%;
+    border: none;
+    cursor: pointer;
+  }
+
+  .area input:focus {
+    outline: none;
+  }
+
+  .download {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--primary-color) !important;
+  }
+
+  .download:hover {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+
+  .csv-body.modal-body label {
+    position: absolute;
+    bottom: 20px;
+    left: 0px;
+    width: 100%;
+  }
+
+  .remove-csv {
+    color: #ff2020 !important;
+    font-size: 12px;
+    position: absolute;
+    left: 0px;
+    bottom: 5px;
+    width: 100%;
+  }
+
+  .Option button {
+    border: none;
+    float: right;
+    background: transparent;
+  }
+
+  .Option button img {
+    height: 25px;
+  }
+
+  .asgn-btn {
+    width: auto;
+    border: 1px solid var(--primary-color);
+    border-radius: 4px;
+    display: block;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: var(--primary-color);
+    color: #fff;
+  }
+</style>

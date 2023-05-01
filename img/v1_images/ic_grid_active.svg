@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_grid_view</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-50.0%" y="-50.0%" width="200.0%" height="200.0%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.12 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-18-Copy-2" filter="url(#filter-1)" transform="translate(4.000000, 2.000000)" fill="#2CA6B1">
+            <rect id="Rectangle" x="0" y="0" width="24" height="24" rx="3"></rect>
+        </g>
+        <g id="Group-20" transform="translate(8.000000, 7.000000)" fill="#F5F7FB">
+            <rect id="Rectangle" x="0" y="0" width="7.5" height="6" rx="1.5"></rect>
+            <rect id="Rectangle-Copy-22" x="0" y="7.5" width="7.5" height="6" rx="1.5"></rect>
+            <rect id="Rectangle-Copy-21" x="9" y="0" width="7.5" height="6" rx="1.5"></rect>
+            <rect id="Rectangle-Copy-23" x="9" y="7.5" width="7.5" height="6" rx="1.5"></rect>
+        </g>
+    </g>
+</svg>

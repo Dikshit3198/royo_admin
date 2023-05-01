@@ -1,0 +1,593 @@
+<div class="wrapper">
+	<div class="dashboard">
+		<!-- <select class="event app" ng-model="days_selected" ng-change="ChangeDataAccTime(days_selected)">
+            <option value="0">Today</option>
+            <option value="1">Weekly</option>
+            <option value="2">Monthly</option>
+        </select> -->
+
+		<div class="dashtopbx">
+			<div class="row" ng-if="supplier_name">
+				<div class="col-md-12">
+					<h1 class="sup-name">{{supplier_name}}</h1>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6">
+                        <!-- ng-click="permissions('orders', 'list') == 1 ? navigate('orders.ordersManager', {status: 0}) : ''" -->
+					<div
+						class="box" style="border-bottom: 4px solid #5DBCEC;">
+						<!-- <img src="img/v1_images/ic_list_active.svg"> -->
+						<p class="bold">{{localisation.dashboard_pending_orders | translate}}</p>
+						<h3>{{dash_data.pending_orders}}</h3>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">
+                        <!-- ng-click="permissions('orders', 'list') == 1 ? navigate('orders.ordersManager', {status: 1}) : ''" -->
+					<div
+						class="box" style="border-bottom: 4px solid #00FE7D;">
+						<!-- <img src="img/v1_images/ic_list_active.svg"> -->
+						<p class="bold">{{localisation.dashboard_active_orders | translate}}</p>
+						<h3>{{dash_data.active_orders}}</h3>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">
+                        <!-- ng-click="permissions('orders', 'list') == 1 ? navigate('orders.ordersManager', {status: 2, order_status: 5}) : ''" -->
+					<div
+						class="box" style="border-bottom: 4px solid #00B68E;">
+						<!-- <img src="img/v1_images/ic_list_active.svg"> -->
+						<p class="bold">{{localisation.delivered_orders | translate}}</p>
+						<h3>{{dash_data.completed_orders}}</h3>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">
+                        <!-- ng-click="permissions('orders', 'list') == 1 ? navigate('orders.ordersManager', {status: 2, order_status: 8}) : ''" -->
+					<div
+						class="box" style="border-bottom: 4px solid #FFA25A;">
+						<!-- <img src="img/v1_images/ic_list_active.svg"> -->
+						<p class="bold">{{localisation.cancelled_orders | translate}}</p>
+						<h3>{{dash_data.cancelled_orders}}</h3>
+					</div>
+				</div>
+			</div>
+
+			<!-- <div class="row" ng-if="profile == 'ADMIN' && !supplier_id">
+				<div class="col-lg-3 col-md-4 col-sm-6">
+					<div ng-if="is_single_vendor == 0"
+						ui-sref="{{permissions('suppliers', 'list') == 1 ? 'profile.supplier' : ''}}" class="box"
+						style="border-bottom: 4px solid #5DBCEC;">
+						<p class="bold">{{localisation.suppliers | translate}}</p>
+						<h3>{{dash_data.registered_suppliers}}</h3>
+					</div>
+					<div ng-if="is_single_vendor == 1"
+						ui-sref="{{permissions('suppliers', 'list') == 1 ? profile.supplierSetup.step_one({id: single_vendor_id, tab: 1}) : ''}}"
+						class="box" style="border-bottom: 4px solid #5DBCEC; height: 88px">
+						<h3 style="font-size: 20px; font-weight: 500; margin-top: 13px;">{{'MY PROFILE' | translate}}
+						</h3>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">
+					<div ui-sref="{{permissions('catalogue', 'list') == 1 ? 'production.category' : ''}}" class="box"
+						style="border-bottom: 4px solid #00FE7D;">
+						<p class="bold">{{localisation.categories | translate}}</p>
+						<h3>{{dash_data.total_categories}}</h3>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">
+					<div ng-if="is_single_vendor == 0"
+						ui-sref="{{permissions('catalogue', 'list') == 1 ? 'production.products' : ''}}" class="box"
+						style="border-bottom: 4px solid #00B68E;">
+						<p class="bold">{{localisation.products | translate}}</p>
+						<h3>{{dash_data.total_products}}</h3>
+					</div>
+					<div ng-if="is_single_vendor == 1 && branch_data && branch_data.is_multibranch == 1"
+						ui-sref="{{permissions('catalogue', 'list') == 1 ? 'production.supplierProducts({id: single_vendor_id, multi_b: 1})' : ''}}"
+						class="box" style="border-bottom: 4px solid #00B68E;">
+						<p class="bold">{{localisation.products | translate}}</p>
+						<h3>{{dash_data.total_products}}</h3>
+					</div>
+					<div ng-if="is_single_vendor == 1 && branch_data && branch_data.is_multibranch == 0"
+						ui-sref="{{permissions('catalogue', 'list') == 1 ? 'production.supplierProducts({id: single_vendor_id, b_id: branch_data.default_branch_id, multi_b: 0})' : ''}}"
+						class="box" style="border-bottom: 4px solid #00B68E;">
+						<p class="bold">{{localisation.products | translate}}</p>
+						<h3>{{dash_data.total_products}}</h3>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6">
+					<div ui-sref="{{permissions('promotions', 'list') == 1 ? 'promo.listpromo' : ''}}" class="box"
+						style="border-bottom: 4px solid #FFA25A;">
+						<p class="bold">{{'PROMOTIONS' | translate}}</p>
+						<h3>{{dash_data.active_offers}}</h3>
+					</div>
+				</div>
+			</div> -->
+		</div>
+
+		<!-- <div class="dashgra m-top-30">
+			<div class="row dash">
+				<div class="form-group">
+					<div class="col-md-12">
+						<input name="filter" id="datepicker_dasboard" placeholder="Filter By Date">
+						<button class="filter-button" style="margin-left: 10px"
+							ng-click="getGraphData()">{{'FILTER BY DATE' | translate}}</button>
+					</div>
+				</div>
+			</div>
+			<div class="row dashboard-box-outter">
+				<div class="col-md-6 col-sm-6">
+					<div class="box">
+						<div class="top">
+							<h3 class="bold">{{'REVENUE' | translate}}</h3>
+							<div class="detail">
+								<h4 style="text-align: right;">{{localisation.total_revenue | translate}}
+									({{localisation.delivered_orders | translate}}) : <span>
+										{{currency}}{{dash_data.total_revenue ? (dash_data.total_revenue).toFixed(price_decimal_length) : zero_value.toFixed(price_decimal_length)}}</span>
+								</h4>
+								<h4 style="text-align: right; margin-top: 8px;">{{'REVENUE' | translate}} ({{start_date | date}} - {{end_date | date}}) : <span>{{currency}}{{dash_data.total_revenue_by_date ? (dash_data.total_revenue_by_date).toFixed(price_decimal_length) : zero_value.toFixed(price_decimal_length)}}</span></h4>
+							</div>
+						</div>
+						<div class="btm mt-3">
+							<canvas class="chart chart-bar" chart-data="totalRevenue" chart-labels="labels"
+								chart-options="options" chart-dataset-override="datasetOverride">
+							</canvas>
+							<div class="nodata" ng-if="no_revenue">
+								<p style="font-weight: bold;"> {{'NO DATA FOUND' | translate}} </p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6 col-sm-6">
+					<div class="box">
+						<div class="top">
+							<h3 class="bold">{{localisation.orders | translate}}</h3>
+							<div class="detail">
+								<h4 style="text-align: right;">{{'TOTAL' | translate}} {{localisation.orders | translate}}
+									({{'PLACED' | translate}}) : <span>{{dash_data.total_orders}}</span></h4>
+								<h4 style="text-align: right; margin-top: 8px;">{{localisation.orders | translate}} ({{start_date | date}} - {{end_date | date}}) : <span>{{dash_data.total_order_by_date}}</span></h4>
+							</div>
+						</div>
+						<div class="btm mt-3">
+							<canvas class="chart chart-bar" chart-data="totalOrders" chart-labels="labels"
+								chart-options="options" chart-dataset-override="datasetOverride">
+							</canvas>
+							<div class="nodata" ng-if="no_orders">
+								<p style="font-weight: bold;"> {{'NO DATA FOUND' | translate}} </p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div> -->
+
+		<!-- <div class="dashpenord m-top-30" ng-if="!supplier_id && permissions('orders', 'list') == 1">
+			<div class="toptabs">
+				<ul class="nav nav-tabs" style="display: inline-flex">
+					<li class="nav-item"> <a class="nav-link" ng-class="tabStatus == 0 ? 'active' : ''"
+							ng-click="changeTab(0)">{{localisation.dashboard_pending | translate}}</a> </li>
+					<li class="nav-item"> <a class="nav-link" ng-class="tabStatus == 1 ? 'active' : ''"
+							ng-click="changeTab(1)">{{localisation.dashboard_active | translate}}</a></li>
+				</ul>
+
+				<ul class="view">
+					<li ng-class="is_grid ? 'active' : ''">
+						<a ng-click="is_grid = true"><img src="img/v1_images/ic_grid_selected.svg"></a>
+					</li>
+					<li ng-class="!is_grid ? 'active' : ''">
+						<a ng-click="is_grid = false"><img src="img/v1_images/ic_list_selected.svg"></a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="tableouter" ng-if="!is_grid">
+				<table class="m-top-15">
+					<thead>
+						<tr>
+							<th>{{localisation.order_id | translate}}</th>
+							<th>{{localisation.products | translate}}</th>
+							<th ng-if="profile == 'ADMIN' || hide_user_info_supplier == 0">{{'CONTACT USER' | translate}}</th>
+							<th>{{'User Address' | translate}}</th>
+							<th>{{localisation.order_date | translate}}</th>
+							<th>{{'EXPECTED ON' | translate}}</th>
+							<th>{{localisation.order_price | translate}}</th>
+							<th ng-if="profile === 'ADMIN' && is_single_vendor == 0">
+								{{localisation.supplier | translate}}</th>
+							<th>{{'DETAIL' | translate}}</th>
+							<th>{{localisation.payment | translate}}</th>
+							<th ng-if="permissions('orders', 'update') == 1">{{'STATUS' | translate}}</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr ng-repeat="order in orders">
+							<td class="order-id" ui-sref="orders.ordersDescription({order_id:order.id, tab: tabStatus})">{{order.id}}
+							</td>
+							<td>
+								<ul>
+									<li ng-repeat="product in order.product">{{product.product_name}} x
+										{{product.quantity}}</li>
+								</ul>
+							</td>
+							<td ng-if="profile == 'ADMIN' || hide_user_info_supplier == 0">{{order.mobile_no}}</td>
+							<td>{{order.customer_address}}</td>
+							<td>
+								<span>
+									{{order.created_on | date: 'MMM d, y' : 'UTC'}}
+								</span><br>
+								<span>
+									{{order.created_on | date: 'hh:mm a' : 'UTC'}}
+								</span>
+							</td>
+							<td>
+								<span>
+									{{order.schedule_date | date: 'MMM d, y' : 'UTC'}}
+								</span><br>
+								<span>
+									{{order.schedule_date | date: 'hh:mm a' : 'UTC'}}
+								</span>
+							</td>
+							<td>{{currency}}{{(order.net_amount).toFixed(price_decimal_length)}}
+							</td>
+							<td ng-if="profile === 'ADMIN' && is_single_vendor == 0">{{order.supplier}}</td>
+							<td>
+								<button type="button" class="bg-success"
+									ui-sref="orders.ordersDescription({order_id:order.id, tab: tabStatus})">{{'VIEW' | translate}}</button>
+							</td>
+							<td>
+								<span ng-if="order.payment_type == 1">{{'ONLINE' | translate}}
+									({{order.payment_source}})</span>
+								<span ng-if="order.payment_type == 0">{{localisation.cash | translate}}</span>
+								<span ng-if="order.payment_type == 2">{{'FREE' | translate}}</span>
+							</td>
+							<td ng-if="permissions('orders', 'update') == 1">
+								<span
+									ng-if="tabStatus == 0 && permissions('orders', 'update') == 1 && !['zelle','cashapp'].includes(order.payment_source) && (profile == 'ADMIN' ||  disable_supplier_order_accept == 0)">
+									<button type="button" class="bg-secondary"
+										ng-click="ConfirmOrderUpdate(2, order)">{{'REJECT' | translate}}</button>
+									<button type="button" class="bg-success"
+										ng-click="ConfirmOrderUpdate(1, order)">{{(app_type == 2 ? 'APPROVE' : 'CONFIRM') | translate}}</button>
+								</span>
+
+								<span
+									ng-if="tabStatus == 0 && permissions('orders', 'update') == 1 && ['zelle','cashapp'].includes(order.payment_source) && profile == 'ADMIN'">
+									<button type="button" class="bg-success" ng-click="viewPaymentreceipt(order)">View
+										{{localisation.payment | translate}}
+										Receipt</button>
+								</span>
+
+								<span ng-if="tabStatus == 1 && permissions('orders', 'update') == 1">
+									<select ng-change="updateOrderStatus(order.status, order.id)"
+										ng-model="order.status" convert-to-number>
+										<option value="1" ng-selected="order.status == 1"
+											ng-disabled="[10,3,5,11].includes(order.status)">
+											{{1 | status : false : order.type : order.category[0].terminology : order.is_dine_in}}</option>
+										<option value="11" ng-selected="order.status == 11"
+											ng-disabled="[10,3,5].includes(order.status)">
+											{{11 | status : false : order.type : order.category[0].terminology : order.is_dine_in}}
+										</option>
+										<option ng-if="[2,8].includes(app_type)" value="10"
+											ng-selected="order.status == 10" ng-disabled="[3,5].includes(order.status)">
+											{{10 | status : false : order.type : order.category[0].terminology : order.is_dine_in}}
+										</option>
+										<option ng-if="order.self_pickup == 0" value="3" ng-selected="order.status == 3"
+											ng-disabled="order.status == 5 || (profile == 'SUPPLIER' && disable_supplier_delivery_status == 1)">
+											{{3 | status : false : order.type : order.category[0].terminology : order.is_dine_in}}</option>
+										<option ng-if="order.self_pickup == 1" value="10"
+											ng-selected="order.status == 10" ng-disabled="order.status == 5">
+											{{10 | status : false : order.type : order.category[0].terminology : order.is_dine_in}}
+										</option>
+										<option ng-if="profile == 'ADMIN' || disable_supplier_delivery_status == 0" value="5" ng-selected="order.status == 5">
+											{{5 | status : false : order.type : order.category[0].terminology : order.is_dine_in}}
+										</option>
+									</select>
+								</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="no-data-found" ng-if="orders.length == 0 && is_data_loaded">
+					{{'NO DATA FOUND' | translate}}
+				</div>
+			</div>
+
+			<div class="grid" ng-if="is_grid">
+				<div class="row">
+					<div class="col-md-6" ng-repeat="order in orders">
+						<div class="box m-top-15">
+							<div class="cursor" ui-sref="orders.ordersDescription({order_id:order.id, tab: tabStatus})">
+								<div class="top" style="padding: 0;">
+									<h6><span
+											style="text-transform: uppercase">{{localisation.order_id | translate}}</span>
+										-
+										<small style="color: var(--primary-color);" class="bold">{{order.id}}</small></h6>
+									<h6><span
+											style="text-transform: uppercase">{{localisation.order_date | translate}}</span>
+										-
+										<small
+											class="bold">{{order.created_on | date: 'MMM d, y . hh:mm a' : 'UTC'}}</small>
+									</h6>
+								</div>
+								<div class="mid" style="display: flow-root;">
+									<p style="display: flex;">
+										<img ng-repeat="product in order.product" src="{{product.image_path}}">
+										<span style="width: 280px; margin-bottom: -6px" class="ellipsis"
+											data-toggle="tooltip"
+											title="{{order.product[0].product_name}} x {{order.product[0].quantity}}">{{order.product[0].product_name}}
+											x
+											{{order.product[0].quantity}}
+											<b ng-click="selectProduct(order)" data-toggle="modal"
+												data-target="#prodcuts" style="margin-left: 0px; cursor: pointer;"
+												ng-if="order.product.length > 1">
+												&nbsp; more</b>
+										</span>
+									</p>
+									<p>{{localisation.payment | translate}} -
+										<b ng-if="order.payment_type == 1">{{'ONLINE' | translate}}
+											({{order.payment_source}})</b>
+										<b ng-if="order.payment_type == 0">{{localisation.cash | translate}}</b>
+										<b ng-if="order.payment_type == 2">{{'FREE' | translate}}</b>
+									</p>
+								</div>
+							</div>
+							<div class="btm">
+								<div class="row" style="width:100%;">
+									<div class="col-md-6">
+										<p>{{localisation.order_price | translate}} -
+											{{currency}}{{(order.net_amount).toFixed(price_decimal_length)}}
+										</p>
+										<br>
+										<p ng-if="profile == 'ADMIN' && is_single_vendor == 0" style="font-weight: 500; font-size: 12px">
+											{{localisation.supplier | translate}} -
+											{{order.supplier}}</p>
+										<br>
+										<p ng-if="profile == 'ADMIN' || hide_user_info_supplier == 0" style="font-weight: 500; font-size: 12px">{{'CONTACT USER' | translate}} -
+											{{order.mobile_no}}</p>
+										<br>
+										<p style="font-weight: 500; font-size: 12px">{{'User Address' | translate}} -
+											{{order.customer_address}}</p>
+									</div>
+
+									<div class="col-md-6" style="text-align: right; padding-top: 10px;">
+										<span
+											ng-if="tabStatus == 0 && permissions('orders', 'update') == 1 && !['zelle','cashapp'].includes(order.payment_source) && (profile == 'ADMIN' ||  disable_supplier_order_accept == 0)">
+											<button type="button" class="bg-secondary"
+												ng-click="ConfirmOrderUpdate(2, order)">{{'REJECT' | translate}}</button>
+											<button type="button" class="bg-success"
+												ng-click="ConfirmOrderUpdate(1, order)">{{(app_type == 2 ? 'APPROVE' : 'CONFIRM') | translate}}</button>
+										</span>
+
+										<span
+											ng-if="tabStatus == 0 && permissions('orders', 'update') == 1 && ['zelle','cashapp'].includes(order.payment_source) && profile == 'ADMIN'">
+											<button type="button" class="bg-success"
+												ng-click="viewPaymentreceipt(order)">View
+												{{localisation.payment | translate}}
+												Receipt</button>
+										</span>
+
+										<span ng-if="tabStatus == 1 && permissions('orders', 'update') == 1">
+											<select ng-model="order.status"
+												ng-change="updateOrderStatus(order.status, order.id)" convert-to-number>
+												<option value="1" ng-selected="order.status == 1"
+													ng-disabled="[10,3,5,11].includes(order.status)">
+													{{1 | status : false : order.type : order.category[0].terminology : order.is_dine_in}}
+												</option>
+												<option value="11" ng-selected="order.status == 11"
+													ng-disabled="[10,3,5].includes(order.status)">
+													{{11 | status : false : order.type : order.category[0].terminology : order.is_dine_in}}
+												</option>
+												<option value="10" ng-selected="order.status == 10"
+													ng-disabled="[3,5].includes(order.status)">
+													{{10 | status : false : order.type : order.category[0].terminology : order.is_dine_in}}
+												</option>
+												<option ng-if="order.self_pickup == 0" value="3"
+													ng-selected="order.status == 3" ng-disabled="order.status == 5 || (profile == 'SUPPLIER' && disable_supplier_delivery_status == 1)">
+													{{3 | status : false : order.type : order.category[0].terminology : order.is_dine_in}}
+												</option>
+												<option ng-if="profile == 'ADMIN' || disable_supplier_delivery_status == 0" value="5" ng-selected="order.status == 5">
+													{{5 | status : false : order.type : order.category[0].terminology : order.is_dine_in}}
+												</option>
+											</select>
+										</span>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="no-data-found" style="margin-top: 0px" ng-if="orders.length == 0 && is_data_loaded">
+					{{'NO DATA FOUND' | translate}}
+				</div>
+			</div>
+
+			<button type="button" ng-if="dash_data.pending_orders > 6 && tabStatus == 0" class="tableview bold"
+				ui-sref="orders.ordersManager({status: 0})">{{'VIEW ALL' | translate}}</button>
+			<button type="button" ng-if="dash_data.active_orders > 6 && tabStatus == 1" class="tableview bold"
+				ui-sref="orders.ordersManager({status: 1})">{{'VIEW ALL' | translate}}</button>
+		</div> -->
+	</div>
+</div>
+
+<div class="modal" id="prodcuts">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
+
+				<div class="modhead" style="border: none;">
+					<button type="button" class="close" data-dismiss="modal"><img
+							src="img/v1_images/ic_cross.svg"></button>
+					<h3>{{localisation.products | translate}}</h3>
+				</div>
+
+				<div class="modbody list-products" style="border: none;">
+					<ul>
+						<li ng-repeat="product in selectedProducts">
+							<img src="{{product.image_path}}">
+							<p>{{product.product_name}} x {{product.quantity}}</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal" id="prep_time">
+	<div class="modal-dialog" style="max-width: 500px;">
+		<div class="modal-content">
+			<div class="modal-body">
+
+				<div class="modhead" style="border: none;">
+					<button type="button" class="close" data-dismiss="modal"><img
+							src="img/v1_images/ic_cross.svg"></button>
+					<h3>{{localisation.order | translate}} {{'CONFIRMATION' | translate}}</h3>
+				</div>
+
+				<div class="modbody list-products" style="border: none;">
+					<div class="row">
+						<div class="col-md-5">
+							<div class="form-group timeslot" style="padding: 0px; border: none;">
+								<label>{{localisation.preparation_time | translate}}</label>
+								<div class="input" clock-picker data-autoclose="true">
+									<input autocomplete="off" type="text" ng-model="prep_time" id="preptime" readonly>
+									<span class="inputtag"><img src="img/v1_images/timeg.png"></span>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-7 modfooter" style="background-color: #ffffff;">
+							<button type="submit" class="bg-success bold" style="width: 250px; margin-top: 10px;"
+								ng-click="orderConfirmation(1, selected_order, 1)">{{'ADD' | translate}} {{localisation.preparation_time | translate}}</button>
+						</div>
+
+					</div>
+				</div>
+				<div class="modfooter" style="padding: 15px 15px">
+					<button type="submit" class="bg-success bold" style="width: 250px;"
+						ng-click="orderConfirmation(1, selected_order, 0)">{{'CONTINUE WITH DEFAULT' | translate}}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal" id="zelle_confirmation">
+	<div class="modal-dialog" style="max-width: 550px;">
+		<div class="modal-content">
+			<div class="modal-body">
+
+				<div class="modhead" style="border: none;">
+					<button type="button" class="close" data-dismiss="modal"><img
+							src="img/v1_images/ic_cross.svg"></button>
+					<h3>{{'ORDER CONFIRMATION' | translate}}</h3>
+				</div>
+
+				<div class="modbody" style="border: none;">
+					<div class="receipt">
+						<img src="{{zelle_order.zelle_receipt_url}}">
+					</div>
+				</div>
+
+				<div class="modfooter" style="padding: 15px 15px">
+					<button type="button" class="bg-secondary" data-dismiss="modal"
+						ng-click="ConfirmOrderUpdate(2, zelle_order)">{{'REJECT' | translate}}</button>
+					<button type="button" class="bg-success" data-dismiss="modal"
+						ng-click="ConfirmOrderUpdate(1, zelle_order)">{{(app_type == 2 ? 'APPROVE' : 'CONFIRM') | translate}}</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<success-modal message="'Order status has been updated'"></success-modal>
+
+
+<style>
+	.mid li {
+		width: 50%;
+		font-size: 14px;
+	}
+
+	.modhead h3 {
+		color: #3c3c3cd9;
+		font-weight: 600;
+		margin-bottom: -20px;
+	}
+
+	.list-products img {
+		height: 50px;
+		width: 50px;
+		border-radius: 50%;
+	}
+
+	.list-products p {
+		display: inline-flex;
+		margin-left: 15px;
+		color: #585858d9;
+		font-weight: 600;
+	}
+
+	.list-products ul li {
+		margin-bottom: 16px;
+	}
+
+	.list-products ul li:last-child {
+		margin-bottom: 0px !important;
+	}
+
+	.list-products ul {
+		box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.12);
+		padding: 20px;
+	}
+
+	.sup-name {
+		font-size: 18px;
+		font-weight: 500;
+		text-transform: uppercase;
+		color: var(--primary-color);
+		margin-bottom: 20px;
+	}
+
+	.detail {
+		float: right;
+	}
+
+	.detail h4 {
+		font-size: 14px;
+		font-weight: 400;
+	}
+
+	.detail h4 span {
+		font-weight: 500;
+	}
+
+	.filter-button {
+		color: #ffffff;
+		border-radius: 8px;
+		background-color: var(--primary-color);
+		border: none;
+		font-size: 14px;
+		padding: 9px 25px;
+	}
+
+	.filter-button:hover {
+		background-color: #1997a3;
+	}
+
+	.dash input {
+		color: #5d5d5d !important;
+		font-weight: 500;
+		width: 295px !important;
+		border: 1px solid #c0c0c0 !important;
+	}
+
+	.receipt {
+		text-align: center;
+	}
+
+	.receipt img {
+		width: 100%;
+		height: 480px;
+		object-fit: contain;
+	}
+</style>

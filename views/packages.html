@@ -1,0 +1,732 @@
+<!--BreadCrumb Div-->
+<div class="row wrapper border-bottom white-bg page-heading ng-scope breadcrumb-div">
+    <div class="col-lg-10">
+        <h2>Packages & Promotions</h2>
+        <ol class="breadcrumb">
+            <li ui-sref="index.dashboard">
+                <a>Home</a>
+            </li>
+            <li>
+                <a>Production</a>
+            </li>
+            <li class="active">
+                <strong>Packages & Promotions</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2 padding-top-select">
+
+        <div class="input-group pull-right">
+            <button class="btn btn-primary" ng-click="changeView(1)" ng-hide="is_view_city">View Added Promotions
+            </button>
+            <button class="btn btn-primary" ng-click="changeView(0)" ng-show="is_view_city">Add New Promotion
+            </button>
+        </div>
+    </div>
+</div>
+
+<!--Add Package Div-->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins breadcrumb-div">
+            <div class="ibox-content padding-left padding-right clearfix">
+                <div class="col-lg-7 base-currency-div">
+                    <div class="clearfix breadcrumb-div cat-selection">
+                        <div class="cat-sel padding-left">
+                            <!-- <p class="no-float-label">Category</p> -->
+                            <select class="form-control chosen-select" data-placeholder="Choose Category" tabindex="4"
+                                ng-model="selected_category" ng-options="category.name for category in categories"
+                                ng-change="onSelectCategory(selected_category.id)">
+                            </select>
+                        </div>
+                        <!-- <div class="cat-sel padding-left padding-right">
+                            <p class="no-float-label">Sub Category</p>
+                            <select class="form-control chosen-select"
+                                    data-placeholder="Choose Sub Category"
+                                    tabindex="4" ng-model="selected_sub_cat"
+                                    ng-options="sub_category.name for sub_category in sub_categories"
+                                    ng-change="onSelectSubCategory(selected_sub_cat.id, 1)">
+                            </select>
+                        </div>
+                        <div class="cat-sel padding-right">
+                            <p class="no-float-label">Detailed Sub Category</p>
+                            <select class="form-control chosen-select"
+                                    data-placeholder="Choose Category"
+                                    tabindex="4" ng-model="selected_det_sub_cat"
+                                    ng-options="det_cat.name for det_cat in det_sub_categories"
+                                    ng-change="changeDetCat(selected_det_sub_cat, 1)">
+                            </select>
+                        </div> -->
+                        <div class="cat-sel form-group padding-left" ng-repeat="cat in dynamicSubCategories"
+                            ng-init="parentIndex = $index">
+                            <select class="form-control chosen-select" data-placeholder="Choose Category" tabindex="4"
+                                ng-model="selectedCategory[childIndex]" ng-init="childIndex = $index"
+                                ng-options="subCat.name for subCat in cat"
+                                ng-change="changeSubCatId(selectedCategory[childIndex], parentIndex)">
+                                <option value="" selected disabled>Select</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5 base-currency-div">
+                    <div class="clearfix breadcrumb-div cat-selection">
+                        <div class="cat-sel padding-left">
+                            <p class="no-float-label">{{localisation.suppliers}}</p>
+                            <select class="form-control chosen-select" data-placeholder="Choose Category" tabindex="4"
+                                ng-model="selected_supplier" ng-options="supplier.name for supplier in supplier_list"
+                                ng-change="onSelectSupplier(selected_supplier.id)">
+                            </select>
+                        </div>
+                        <div class="cat-sel padding-left padding-right">
+                            <p class="no-float-label">Branch</p>
+                            <select class="form-control chosen-select" data-placeholder="Choose Category" tabindex="4"
+                                ng-model="selected_branch" ng-options="branch.branch_name for branch in branches"
+                                ng-change="listBranchProducts(selected_supplier, selected_category, selected_branch)">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 base-currency-div clearfix">
+                    <p>Select Promotion Type : </p>
+                    <select class="form-control chosen-select select-auto" data-placeholder="Choose Package"
+                        ng-change="changePackageType(selected_package)" tabindex="4" ng-model="selected_package"
+                        ng-options="package.name for package in packages">
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Packages (X+Y+Z) For X1-->
+<div ng-hide="change_view" ng-if="change_view==0&&changePkg==1" class="row">
+
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Buy X+Y+Z For X1 </h5>
+                <div ibox-tools></div>
+            </div>
+            <div class="ibox-content padding-left padding-right clearfix">
+
+                <form role="form" validate-form="" novalidate="" name="addCategoriesForm" enctype="multipart/form-data"
+                    ng-submit="submitAdd()">
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4" ng-repeat="input in inputs">
+                            <label class="small font-noraml">{{input.placeholder}}</label>
+                            <input type="text" class="form-control" placeholder="{{input.placeholder}}"
+                                ng-model="outputs.inputs[$index]" required="required">
+                            </input>
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4" ng-repeat="input in inputs_desc">
+                            <label class="small font-noraml">{{input.placeholder}}</label>
+                            <textarea type="text" class="form-control" placeholder="{{input.placeholder}}"
+                                ng-model="outputs.inputs_desc[$index]" required="required">
+                                        </textarea>
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Package Image 1</label>
+                            <input filestyle="" type="file" accept="image/*" name="image1" ng-model="category_image"
+                                class="form-control"
+                                onchange="angular.element(this).scope().file_to_upload_for_image(this.files)"
+                                data-button-text="Single" data-class-button="btn btn-default"
+                                data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+
+                        </div>
+
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Package Image 2</label>
+                            <input filestyle="" type="file" accept="image/*" name="image2" ng-model="category_icon"
+                                class="form-control"
+                                onchange="angular.element(this).scope().file_to_upload_for_image(this.files)"
+                                data-button-text="Single" data-class-button="btn btn-default"
+                                data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Package Image 3</label>
+                            <input filestyle="" type="file" accept="image/*" name="image3" ng-model="category_image"
+                                class="form-control"
+                                onchange="angular.element(this).scope().file_to_upload_for_image(this.files)"
+                                data-button-text="Single" data-class-button="btn btn-default"
+                                data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+
+                        </div>
+
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Package Image 4</label>
+                            <input filestyle="" type="file" accept="image/*" name="image4" ng-model="category_icon"
+                                class="form-control"
+                                onchange="angular.element(this).scope().file_to_upload_for_image(this.files)"
+                                data-button-text="Single" data-class-button="btn btn-default"
+                                data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Currency</label>
+                            <select class="form-control chosen-select" data-placeholder="Choose Currency" tabindex="4"
+                                ng-model="selected_currency"
+                                ng-options="currency.currency_name for currency in currencies">
+                            </select>
+                        </div>
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">SKU</label>
+                            <input type="text" class="form-control" placeholder="SKU" ng-model="product.sku"
+                                required="required">
+                            </input>
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4" ng-repeat="input in inputs_unit">
+                            <label class="small font-noraml">{{input.placeholder}}</label>
+                            <input type="text" class="form-control" placeholder="{{input.placeholder}}"
+                                ng-model="msr_unit[$index]" required="required">
+                            </input>
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4" ng-show="is_barcode">
+                            <label class="small font-noraml">Bar Code</label>
+                            <input type="text" class="form-control" placeholder="Bar Code" ng-model="product.barcode">
+                            </input>
+                        </div>
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Start - End Date</label>
+                            <input date-range-picker class="form-control date-picker" type="text"
+                                ng-model="datePicker.date" placeholder="From Date - To Date" required="required"
+                                readonly />
+
+                        </div>
+
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Commission</label>
+                            ( <input type="radio" id="radio1" ng-click="show = 1" ng-model="commission_type" value="1"
+                                tabindex="1" /><span class="small">&nbsp;%</span>
+                            <input type="radio" id="radio2" ng-click="show = 2" ng-model="commission_type" value="0"
+                                tabindex="2" /><span class="small">&nbsp;Value</span> )
+                            <input type="text" production-qty class="form-control" ng-if="show==1"
+                                placeholder="Commission" ng-model="product.commission" min="0" max="100"
+                                required="required">
+                            <input type="text" production-qty class="form-control" ng-if="show==2"
+                                placeholder="Commission" ng-model="product.commission" required="required">
+                        </div>
+
+                    </div>
+
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Advertisement Price</label>
+                            <input type="text" class="form-control" placeholder="Price" ng-model="product.totalPrice"
+                                required="required">
+                            </input>
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        <!--col-md-6-->
+                        <div class="form-group">
+                            <div class="lists">
+                                <ul class="list" title="Products">
+                                    <li class="item" ng-repeat="item in listA" ng-click="moveToListB(item)"><span
+                                            class="item-contents"
+                                            ng-animate-ref="{{ item.product_id }}">{{ item.name + " - " + item.sku }}
+
+                                        </span></li>
+                                </ul>
+
+                                <div class="list-medium">
+                                    <span><i class="fa fa-exchange"></i></span>
+                                </div>
+
+                                <ul class="list" title="Selected Products">
+                                    <li class="item" ng-repeat="item in listB" ng-click="moveToListA(item)">
+                                        <span class="item-contents"
+                                            ng-animate-ref="{{ item.product_id }}">{{ item.name + " - " + item.sku }}
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!--<div class="form-group has-feedback col-md-2">-->
+                        <!--<label class="small font-noraml">Advertisement Price</label>-->
+                        <!--<input type="number" class="form-control"-->
+                        <!--placeholder="Price"-->
+                        <!--ng-model="product.totalPrice"-->
+                        <!--required="required">-->
+                        <!--</input>-->
+                        <!--</div>-->
+                    </div>
+
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary" ng-disabled="is_disabled_add">Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Buy X Get X-->
+<div ng-hide="change_view" ng-if="change_view==0&&changePkg==2" class="row">
+
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Buy X Get X </h5>
+                <div ibox-tools></div>
+            </div>
+            <div class="ibox-content padding-left padding-right clearfix">
+
+                <form role="form" validate-form="" novalidate="" name="addCategoriesForm" enctype="multipart/form-data"
+                    ng-submit="submitAddPromo(0)">
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4" ng-repeat="input in inputs">
+                            <label class="small font-noraml">{{input.placeholder}}</label>
+                            <input type="text" class="form-control" placeholder="{{input.placeholder}}"
+                                ng-model="outputs.inputs[$index]" required="required">
+                            </input>
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4" ng-repeat="input in inputs_desc">
+                            <label class="small font-noraml">{{input.placeholder}}</label>
+                            <textarea type="text" class="form-control" placeholder="{{input.placeholder}}"
+                                ng-model="outputs.inputs_desc[$index]" required="required">
+                                        </textarea>
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Package Image</label>
+                            <input filestyle="" type="file" accept="image/*" name="image1" ng-model="category_image"
+                                class="form-control"
+                                onchange="angular.element(this).scope().file_to_upload_for_image(this.files)"
+                                data-button-text="Single" data-class-button="btn btn-default"
+                                data-classinput="form-control inline" nv-file-select="" uploader="uploader" required />
+
+                        </div>
+
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Start - End Date</label>
+                            <input date-range-picker class="form-control date-picker" type="text"
+                                ng-model="datePicker.date" placeholder="From Date - To Date" required="required"
+                                readonly />
+
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">{{localisation.product}} X</label>
+                            <select class="form-control chosen-select" data-placeholder="Choose Currency" tabindex="4"
+                                ng-model="selected_product_2" ng-change="onProductChange(selected_product_2, 1)"
+                                ng-options="product.name for product in listA">
+                            </select>
+                        </div>
+
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">{{localisation.product}} Y</label>
+                            <select class="form-control chosen-select" data-placeholder="Choose Currency" tabindex="4"
+                                ng-model="selected_product_2" ng-options="product.name for product in listA">
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary" ng-disabled="is_disabled_add">Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Buy X Get Y-->
+<div ng-hide="change_view" ng-if="change_view==0&&changePkg==3" class="row">
+
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Buy X Get Y </h5>
+                <div ibox-tools></div>
+            </div>
+            <div class="ibox-content padding-left padding-right clearfix">
+
+                <form role="form" validate-form="" novalidate="" name="addCategoriesForm" enctype="multipart/form-data"
+                    ng-submit="submitAddPromo(1)">
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4" ng-repeat="input in inputs">
+                            <label class="small font-noraml">{{input.placeholder}}</label>
+                            <input type="text" class="form-control" placeholder="{{input.placeholder}}"
+                                ng-model="outputs.inputs[$index]" required="required">
+                            </input>
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4" ng-repeat="input in inputs_desc">
+                            <label class="small font-noraml">{{input.placeholder}}</label>
+                            <textarea type="text" class="form-control" placeholder="{{input.placeholder}}"
+                                ng-model="outputs.inputs_desc[$index]" required="required">
+                                        </textarea>
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Package Image</label>
+                            <input filestyle="" type="file" accept="image/*" name="image1" ng-model="category_image"
+                                class="form-control"
+                                onchange="angular.element(this).scope().file_to_upload_for_image(this.files)"
+                                data-button-text="Single" data-class-button="btn btn-default"
+                                data-classinput="form-control inline" nv-file-select="" uploader="uploader" required />
+
+                        </div>
+
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Start - End Date</label>
+                            <input date-range-picker class="form-control date-picker" type="text"
+                                ng-model="datePicker.date" placeholder="From Date - To Date" required="required"
+                                readonly />
+
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">{{localisation.product}} X</label>
+                            <select class="form-control chosen-select" data-placeholder="Choose Currency" tabindex="4"
+                                ng-model="selected_product_1" ng-change="onProductChange(selected_product_1, 2)"
+                                ng-options="product.name for product in listA">
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="clearfix product_y">
+                        <div class="clearfix">
+
+                            <div class="col-lg-8 panel-add-data base-currency-div">
+                                <div class="cat-sel form-group padding-left">
+                                    <!-- <p class="no-float-label">Category</p> -->
+                                    <select class="form-control chosen-select" data-placeholder="Choose Category"
+                                        tabindex="4" ng-model="selected_sup_cat"
+                                        ng-options="category.name for category in sup_categories"
+                                        ng-change="onSelectSupCategory(selected_sup_cat)">
+                                    </select>
+                                </div>
+
+                                <!-- <div class="cat-sel form-group padding-left">
+                                    <p class="no-float-label">Sub Category</p>
+                                    <select class="form-control chosen-select" data-placeholder="Choose Category"
+                                        tabindex="4" ng-model="selected_sup_sub_cat"
+                                        ng-options="subcategory.name for subcategory in sup_sub_categories"
+                                        ng-change="onSelectSupSubCategory(selected_sup_sub_cat)">
+                                    </select>
+                                </div>
+                                <div class="cat-sel form-group padding-left">
+                                    <p class="no-float-label">Detailed Sub Category</p>
+                                    <select class="form-control chosen-select" data-placeholder="Choose Category"
+                                        tabindex="4" ng-model="selected_sup_det_sub_cat"
+                                        ng-options="detsubcategory.name for detsubcategory in sup_det_sub_categories"
+                                        ng-change="onSelectSupDetSubCategory(selected_sup_det_sub_cat)">
+                                    </select>
+                                </div> -->
+
+                                <div class="cat-sel form-group padding-left" ng-repeat="cat in dynamicSupSubCategories"
+                                    ng-init="parentIndex = $index">
+                                    <select class="form-control chosen-select" data-placeholder="Choose Category"
+                                        tabindex="4" ng-model="selectedSupCategory[childIndex]" ng-init="childIndex = $index"
+                                        ng-options="subCat.name for subCat in cat"
+                                        ng-change="changeSupSubCatId(selectedSupCategory[childIndex], parentIndex)">
+                                        <option value="" selected disabled>Select</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">{{localisation.product}} Y</label>
+                            <select class="form-control chosen-select" data-placeholder="Choose Currency" tabindex="4"
+                                ng-model="selected_product_3" ng-change="onProductChange(selected_product_3, 3)"
+                                ng-options="product.name for product in y_products">
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary" ng-disabled="is_disabled_add">Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Min Amount Purchase Get Y Service-->
+<div ng-hide="change_view" ng-if="change_view==0&&changePkg==4" class="row">
+
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Min Amount Purchase Get Y Service </h5>
+                <div ibox-tools></div>
+            </div>
+            <div class="ibox-content padding-left padding-right clearfix">
+
+                <form role="form" validate-form="" novalidate="" name="addCategoriesForm" enctype="multipart/form-data"
+                    ng-submit="submitAddPromo(2)">
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4" ng-repeat="input in inputs">
+                            <label class="small font-noraml">{{input.placeholder}}</label>
+                            <input type="text" class="form-control" placeholder="{{input.placeholder}}"
+                                ng-model="outputs.inputs[$index]" required="required">
+                            </input>
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4" ng-repeat="input in inputs_desc">
+                            <label class="small font-noraml">{{input.placeholder}}</label>
+                            <textarea type="text" class="form-control" placeholder="{{input.placeholder}}"
+                                ng-model="outputs.inputs_desc[$index]" required="required">
+                                        </textarea>
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Package Image</label>
+                            <input filestyle="" type="file" accept="image/*" name="image1" ng-model="category_image"
+                                class="form-control"
+                                onchange="angular.element(this).scope().file_to_upload_for_image(this.files)"
+                                data-button-text="Single" data-class-button="btn btn-default"
+                                data-classinput="form-control inline" nv-file-select="" uploader="uploader" required />
+
+                        </div>
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Start - End Date</label>
+                            <input date-range-picker class="form-control date-picker" type="text"
+                                ng-model="datePicker.date" placeholder="From Date - To Date" required="required"
+                                readonly />
+
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">Amount</label>
+                            <input type="number" class="form-control" placeholder="Amount"
+                                ng-model="product.product_amount" required="required">
+                            </input>
+                        </div>
+
+                        <div class="form-group has-feedback col-md-4">
+                            <label class="small font-noraml">{{localisation.product}} Y</label>
+                            <select class="form-control chosen-select" data-placeholder="Choose Currency" tabindex="4"
+                                ng-model="selected_product_4" ng-change="onProductChange(selected_product_4, 4)"
+                                ng-options="product.name for product in listA">
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary" ng-disabled="is_disabled_add">Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--List Added Promos Div-->
+<div ng-show="change_view" class="row">
+
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5 ng-show="pkg_stat">Added Packages</h5>
+                <h5 ng-hide="pkg_stat">Added Promos</h5>
+
+                <div class="input-group pull-right">
+                    <button type="button" class="btn btn-primary btn-xs" ng-hide="pkg_stat" ng-click="changeGetView(1)">
+                        Show Packages
+                    </button>
+                    <button type="button" class="btn btn-primary btn-xs" ng-show="pkg_stat" ng-click="changeGetView(0)">
+                        Show Promotions
+                    </button>
+                </div>
+                <!--<div ibox-tools></div>-->
+            </div>
+            <div
+                class="ibox-content padding-left padding-right clearfix bg-transparent padding-bottom padding-top-add-panel">
+
+                <div ng-show="pkg_stat" class="row">
+                    <div class="col-lg-12">
+                        <div class="ibox float-e-margins btn-bottom">
+                            <div class="ibox-content">
+                                <div class="table-responsive">
+
+                                    <table datatable="ng" id="datatable_table_pkg_1"
+                                        class="table table-striped table-bordered table-hover dataTables-example no-margin-btm">
+                                        <thead>
+                                            <tr>
+                                                <th ng-hide="noDataFound" class="fix-clmn-nbr"
+                                                    ng-repeat="column in cols">
+                                                    {{column}}
+                                                </th>
+                                                <th style="text-transform: uppercase" ng-hide="noDataFound">{{localisation.product}}s</th>
+                                                <th ng-hide="noDataFound" class="amount_subs fix-clmn"
+                                                    ng-hide="noDataFound">ACTION
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="row in rows">
+                                                <td class="fix-clmn-nbr" ng-repeat="column in cols">
+                                                    {{row[column]}}
+                                                </td>
+                                                <td>
+                                                    <ul class="unstyled numbers-add">
+                                                        <li class="padding-product"
+                                                            data-ng-repeat="product in row.products">
+                                                            <div class="label label-success">
+                                                                {{product.name}}
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                                <td class="fix-clmn">
+                                                    <button type="button" class="btn btn-primary btn-xs btn-edit"
+                                                    ui-sref="production.pkg_pricing({id:row.id,product:row.name,b_id:selected_branch.id,tool:row.user_tool,type:'package'})">
+                                                    View Price List
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary btn-xs btn-active"
+                                                        ng-hide="row.is_live" ng-click="activatePackage(row.id, 1)">
+                                                        Activate
+                                                    </button>
+                                                    <button type="button" class="btn btn-success btn-xs btn-del-sup"
+                                                        ng-show="row.is_live" ng-click="activatePackage(row.id, 0)">
+                                                        Deactivate
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger btn-xs btn-deact_del"
+                                                        ng-click="deletePackage(row.id)">
+                                                        Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <!--<tr>
+                                            <td colspan="{{setColspan}}" ng-if="noDataFound">No Package Found !
+                                            </td>
+                                        </tr>-->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-hide="pkg_stat" class="row">
+                    <div class="col-lg-12">
+                        <div class="ibox float-e-margins btn-bottom">
+                            <div class="ibox-content">
+                                <div class="table-responsive">
+
+                                    <table datatable="ng" id="datatable_table_pkg_2"
+                                        class="table table-striped table-bordered table-hover dataTables-example no-margin-btm">
+                                        <thead>
+                                            <tr>
+                                                <th ng-hide="noPromoDataFound" class="fix-clmn-nbr"
+                                                    ng-repeat="column in cols_promo">
+                                                    {{column}}
+                                                </th>
+                                                <th style="text-transform: uppercase" ng-hide="noPromoDataFound">{{localisation.product}}s</th>
+                                                <th ng-hide="noPromoDataFound" class="amount_subs fix-clmn"
+                                                    ng-hide="noPromoDataFound">ACTION
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="row in rows_promo">
+                                                <td class="fix-clmn-nbr" ng-repeat="column in cols_promo">
+                                                    {{row[column]}}
+                                                </td>
+                                                <td>
+                                                    <ul class="unstyled no-padding">
+                                                        <li class="padding-product">
+                                                            <div class="label label-success">
+                                                                {{row.product1}}
+                                                            </div>
+                                                        </li>
+                                                        <li class="padding-product">
+                                                            <div class="label label-success">
+                                                                {{row.product2}}
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                                <td class="fix-clmn">
+                                                    <button type="button" class="btn btn-primary btn-xs btn-edit"
+                                                    ui-sref="production.pricing({id:row.id,product:row.name,tool:row.user_tool})">
+                                                    View Price List
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger btn-xs"
+                                                        ng-click="deletePromo(row.id)">
+                                                        Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <!--<tr>
+                                            <td colspan="{{setColspan}}" ng-if="noPromoDataFound">No Promotion Found !
+                                            </td>
+                                        </tr>-->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<spin-loader></spin-loader>
+
+<style>
+    .list,
+    .item-contents {
+        width: auto !important;
+        min-width: 200px;
+    }
+</style>

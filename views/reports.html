@@ -1,0 +1,50 @@
+<div class="wrapper">
+  <div class="category">
+    <div class="toptabs">
+      <ul class="nav nav-tabs ">
+        <li ng-if="profile === 'ADMIN'" class="nav-item"> <a class="nav-link "
+            ng-class="active_report_tab == 1 ? 'active' : ''"
+            ui-sref="reports.reportsTab.user">{{localisation.user + ' REPORT' | translate}}</a> </li>
+        <li class="nav-item"> <a class="nav-link " ng-class="active_report_tab == 2 ? 'active' : ''"
+            ui-sref="reports.reportsTab.order">{{localisation.order_report | translate}} </a> </li>
+        <li ng-if="profile === 'ADMIN' && is_single_vendor == 0" class="nav-item"> <a class="nav-link text_capital"
+            ng-class="active_report_tab == 3 ? 'active' : ''"
+            ui-sref="reports.reportsTab.supplier">{{localisation.supplier_report |capitalLetters | translate}}</a>
+            <!-- {{(localisation.supplier + ' REPORT') | translate}} -->
+        </li>
+        <li
+          ng-if="hide_agent_module == 0 && (app_type != 2 || (app_type == 2 && ecom_agent_module == 1)) && is_pickup != 1 && is_dine_in == 0  && (profile === 'ADMIN' || (hide_agent_supplier == 0 && profile === 'SUPPLIER'))"
+          class="nav-item"> <a class="nav-link" ng-class="active_report_tab == 4 ? 'active' : ''"
+            ui-sref="reports.reportsTab.agent">{{localisation.agent_report | translate}} </a>
+        </li>
+        <li class="nav-item"> <a class="nav-link" style="text-transform: capitalize;"
+            ng-class="active_report_tab == 5 ? 'active' : ''"
+            ui-sref="reports.reportsTab.product">
+            {{localisation.product_report | capitalLetters | translate}}
+          </a>
+        </li>
+        <!-- <li ng-if="profile === 'ADMIN'" class="nav-item"> <a class="nav-link" style="text-transform: capitalize;"
+            ng-class="active_report_tab == 6 ? 'active' : ''"
+            ui-sref="reports.reportsTab.subscription">{{'Subscription Reports' | translate}}</a>
+        </li> -->
+        <li ng-if="profile === 'ADMIN' && is_user_subscription == 1" class="nav-item"> <a class="nav-link" style="text-transform: capitalize;"
+            ng-class="active_report_tab == 7 ? 'active' : ''"
+            ui-sref="reports.reportsTab.user-subs-revenue">{{localisation.user | translate}} {{'Subscription Revenue' | translate}}</a>
+        </li>
+        <li ng-if="profile === 'ADMIN' && is_subscription_plan == 1" class="nav-item"> <a class="nav-link"
+            style="text-transform: capitalize;" ng-class="active_report_tab == 8 ? 'active' : ''"
+            ui-sref="reports.reportsTab.supplier-subs-revenue">{{'Supplier Subscription Revenue' | translate}}</a>
+        </li>
+        <li class="nav-item" ng-if="profile === 'ADMIN' && enable_extra_product_service == 1"> <a class="nav-link" style="text-transform: capitalize;"
+          ng-class="active_report_tab == 9 ? 'active' : ''"
+          ui-sref="reports.reportsTab.inventory">
+          {{'Inventory Report'| translate}}
+        </a>
+      </li>
+      </ul>
+    </div>
+
+    <div ui-view></div>
+
+  </div>
+</div>

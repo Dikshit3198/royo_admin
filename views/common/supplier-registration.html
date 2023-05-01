@@ -1,0 +1,957 @@
+<div class="registraction_page_outter" ng-if="show_login">
+    <div class="bck" ng-class="hide_back == 1 ? 'login_back' : ''">
+
+        <a ng-if="enable_back_link" href="" class="backbtn" ui-sref="login"><img
+                src="img/v1_images/ic_dropdown.svg">{{'Back' | translate}}</a>
+        <a ng-if="!enable_back_link" href="{{back_website_link}}" class="backbtn"><img
+                src="img/v1_images/ic_dropdown.svg">{{'Back' | translate}}</a>
+        <div class="text-right" ng-if="languages.length > 1 && is_secondary_language_enable">
+            <label>{{'Language' | translate}}</label>
+            <select class="app" ng-model="lang" ng-change="changeLanguage(lang)">
+                <option value="{{lang.code}}" ng-repeat="lang in languages">{{lang.name | translate}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="logo">
+        <div style="text-align: center;">
+            <div class="registraction_logo col-md-12">
+                <img ng-if="login_app_image" src="{{compressImage(login_app_image, '150x100', true)}}">
+            </div>
+            <!-- <img ng-if="login_app_image" style="border-radius: 8px; object-fit: contain;" width="120px" height="90px"
+                src="{{login_app_image}}"> -->
+            <div class="registraction_user_name" ng-if="business_name"
+                ng-style="{'backgroundColor': logo_data.background}" style="text-align: center">
+                <p ng-style="{'color': logo_data.theme_color, 'fontFamily': logo_data.font_family}"
+                    style="padding: 0px; margin-top: 0px;">{{business_name}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="wrapper" ng-if="show_login && view == 0">
+        <div class="category">
+            <div class="addban">
+                <div class="persinfo">
+                    <form role="form" prevent-enter-press class="supplier-reg" id="addSupplierForm"
+                        name="addSupplierForm" ng-submit="registerSupplier(addSupplierForm)" novalidate>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h1 class="bold">
+                                    {{localisation.supplier | translate}} {{'REGISTRATION' | translate}}
+                                </h1>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{localisation.supplier | translate}} {{'NAME' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input type="text" name="name" ng-model="supplier.name"
+                                        placeholder="{{localisation.supplier | translate}} {{'Name' | translate}}"
+                                        required>
+                                    <div class="error"
+                                        ng-show="addSupplierForm.name.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.name.$error.required">{{'PLEASE ENTER' |
+                                            translate}}
+                                            {{localisation.supplier | translate}} {{'NAME' | translate}}.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{localisation.supplier | translate}} {{'EMAIL' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input type="email" name="email" ng-model="supplier.email"
+                                        placeholder="{{localisation.supplier | translate}} {{'Email' | translate}}"
+                                        required>
+                                    <div class="error"
+                                        ng-show="addSupplierForm.email.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.email.$error.required">{{'PLEASE ENTER' |
+                                            translate}}
+                                            {{localisation.supplier | translate}} {{'EMAIL' | translate}}.</small>
+                                        <small ng-show="addSupplierForm.email.$error.email">{{'PLEASE ENTER A VALID' |
+                                            translate}}
+                                            {{localisation.supplier | translate}} {{'EMAIL' | translate}}.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" ng-if="enable_maroof_password_supplier_reg == 1">
+                                <div class="form-group">
+                                    <label>{{localisation.supplier | translate}} {{'PASSWORD' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input type="password" name="password" ng-model="supplier.password" required
+                                        placeholder="{{'Password' | translate }}" ng-minlength="6" ng-maxlength="16">
+                                    <!-- ng-pattern="/^(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,20}$/"> -->
+                                    <div class="error"
+                                        ng-show="addSupplierForm.password.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.password.$error.required">{{'PLEASE ENTER' |
+                                            translate}}
+                                            {{localisation.supplier | translate}} {{'PASSWORD' | translate}}.</small>
+                                        <small
+                                            ng-show="addSupplierForm.password.$error.minlength || addSupplierForm.password.$error.maxlength">
+                                            Password must be 6-16 characters long.</small>
+                                        <!-- <small
+                                            ng-show="!addSupplierForm.password.$valid">{{'Password should be at least 8 characters
+                                            long and should contain one number,one character and one special
+                                            character' | translate}}
+                                             </small> -->
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-5" ng-if="enable_maroof_password_supplier_reg == 1">
+                                <div class="form-group">
+                                    <label>{{MaroofCRNumber.supplier | translate}} {{'Maroof/CR' |
+                                        translate}}</label>
+                                    <input style="width: 107%;" type="number" name="MaroofCRNumber" ng-model="supplier.MaroofCRNumber"
+                                        placeholder="{{'MAROOF/CR' | translate }} "> 
+                                </div>
+                            </div>
+                            <div ng-if="!!supplier.MaroofCRNumber" class="col-md-1">
+                                <div class="form-group" style="margin-top: 56px;">
+                                </div>
+
+                                <div class="document-image persinfo">
+                                    <div class="col-md-12">
+                                        <div class="form-group pic">
+                                            <i class="fa fa-upload" style="font-size: 1.5em;margin-left: -9px" aria-hidden="true"></i>
+                                            <input filestyle="" type="file" accept="image/*" name="image1"
+                                                class="cursor" style="width: 242px;"
+                                                onchange="angular.element(this).scope().file_to_upload_for_maroof_doc(this.files)"
+                                                data-button-text="Single" data-class-button="btn btn-default"
+                                                data-classinput="form-control inline" nv-file-select=""
+                                                uploader="uploader" />
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" ng-if="enable_maroof_password_supplier_reg == 1">
+                                <div class="form-group">
+                                    <label>{{IDNumber.supplier | translate}} {{'ID Number' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input limit-to="10" type="number" name="IDNumber" ng-model="supplier.IDNumber"
+                                        placeholder="{{'ID NUMBER' | translate }}" ng-minlength="10" required>
+                                    <div class="error"
+                                        ng-show="addSupplierForm.IDNumber.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.IDNumber.$error.required">{{'PLEASE ENTER VALID
+                                            ID NUMBER' | translate}}</small>
+                                            <small ng-if="enable_maroof_password_supplier_reg == 1" ng-show="addSupplierForm.IDNumber.$error.minlength">{{'ID Number Must Have 10 Digits' | translate}}.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{localisation.supplier | translate}} {{'PHONE' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input ng-if="enable_maroof_password_supplier_reg != 1" id="supp_phone" type="tel" production-qty name="phone"
+                                        ng-model="supplier.mobile" ng-minlength="6" ng-maxlength="15"
+                                        ng-change="changePhone(supplier.mobile)"
+                                        placeholder="{{localisation.supplier | translate}} {{'Phone' | translate}}"
+                                        required>
+                                    <input ng-if="enable_maroof_password_supplier_reg == 1" id="supp_phone" type="tel" production-qty name="phone"
+                                        ng-model="supplier.mobile" ng-minlength="9" limit-to="9"
+                                        ng-change="changePhone(supplier.mobile)"
+                                        placeholder="{{localisation.supplier | translate}} {{'Phone' | translate}}"
+                                        required>
+                                    <div class="error"
+                                        ng-show="addSupplierForm.phone.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.phone.$error.required">{{'PLEASE ENTER' |
+                                            translate}}
+                                            {{localisation.supplier | translate}} {{'Phone' | translate}}.</small>
+                                        <small ng-if="enable_maroof_password_supplier_reg != 1" ng-show="addSupplierForm.phone.$error.minlength">{{'PHONE NO. MUST BE
+                                            MORE THAN 6 DIGITS'
+                                            | translate}}.</small>
+                                        <small ng-if="enable_maroof_password_supplier_reg != 1" ng-show="addSupplierForm.phone.$error.maxlength">{{'PHONE NO. MUST BE
+                                            LESS THAN 15 DIGITS'
+                                            | translate}}.</small>
+                                        <small ng-if="enable_maroof_password_supplier_reg == 1" ng-show="addSupplierForm.phone.$error.minlength">{{'Phone No. Must
+                                            Have 9 Digits'
+                                            | translate}}.</small>
+                                    </div>
+                                    <div class="error"
+                                        ng-show="!addSupplierForm.phone.$invalid && addSupplierForm.$submitted && invalid_phone_no">
+                                        <small>{{'INVALID PHONE NUMBER' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{localisation.supplier | translate}} {{'ADDRESS' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input type="text" name="address" ng-model="address" id="addressSearchTextField"
+                                        onfocus="this.setAttribute('autocomplete','new-address')" required
+                                        placeholder=" {{localisation.supplier | translate}} {{'ADDRESS' | translate}}">
+                                    <div class="error"
+                                        ng-show="addSupplierForm.address.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.address.$error.required">{{'PLEASE ENTER' |
+                                            translate}}
+                                            {{localisation.supplier | translate}} {{'ADDRESS' | translate}}.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" ng-if="enable_business_name==1">
+                                <div class="form-group">
+                                    <label>{{'BUSINESS NAME' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="business_name" ng-model="supplier.business_name"
+                                        placeholder="{{'Business Name' | translate}}" id="addressSearchTextField"
+                                        required>
+                                    <div class="error"
+                                        ng-show="addSupplierForm.business_name.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.business_name.$error.required">{{'PLEASE ENTER'
+                                            | translate}}
+                                            {{'Business Name' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" ng-if="enable_trade_name==1">
+                                <div class="form-group">
+                                    <label>{{'TRADE NAME' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="trade_name" ng-model="supplier.trade_name"
+                                        placeholder="{{'Trade Name' | translate}}" id="addressSearchTextField" required>
+                                    <div class="error"
+                                        ng-show="addSupplierForm.trade_name.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.trade_name.$error.required">{{'PLEASE ENTER'
+                                            | translate}}
+                                            {{'Trade Name' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" ng-if="enable_rfc_number == 1">
+                                <div class="form-group">
+                                    <label>{{'RFC' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="rfc" ng-model="supplier.rfc"
+                                        placeholder="{{'Rfc' | translate}}" id="addressSearchTextField" required>
+                                    <div class="error"
+                                        ng-show="addSupplierForm.rfc.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.rfc.$error.required">{{'PLEASE ENTER'
+                                            | translate}}
+                                            {{'RFC' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" ng-if="branch_flow == 1 && enable_branch_flow_in_signup == 1">
+                                <div class="form-group select-category">
+                                    <label>{{'BRANCH TYPE' | translate}}<span class="star">*</span></label>
+                                    <select class="app" name="is_multibranch" ng-model="supplier.is_multibranch"
+                                        convert-to-number ng-change="changeBranchType(supplier.is_multibranch)"
+                                        required>
+                                        <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                        <option value="0">{{'SINGLE BRANCH' | translate}}</option>
+                                        <option value="1">{{'MULTI BRANCH' | translate}}</option>
+                                    </select>
+                                    <div class="error"
+                                        ng-show="addSupplierForm.is_multibranch.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.is_multibranch.$error.required">{{'Please select
+                                            Branch Type.
+                                            | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" ng-if="supplier_gst_no">
+                                <div class="form-group">
+                                    <label>GST Number</label>
+                                    <input type="text" name="gst_no" ng-model="supplier.gst_price"
+                                        placeholder="GST Number">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" ng-if="app_type == 1">
+                                <div class="form-group select-category">
+                                    <label>{{'DELIVERY MODE' | translate}}<span class="star">*</span></label>
+                                    <select class="app" name="self_pickup" ng-model="supplier.self_pickup"
+                                        convert-to-number ng-change="changeSelfPickup(supplier.self_pickup)" required>
+                                        <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                        <option value="0">{{'DELIVERY' | translate}}</option>
+                                        <option value="1">{{'SELF PICK-UP' | translate}}</option>
+                                        <option value="2">{{'BOTH' | translate}}</option>
+                                    </select>
+                                    <div class="error"
+                                        ng-show="addSupplierForm.self_pickup.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.self_pickup.$error.required">{{'PLEASE SELECT
+                                            DELIVERY MODE'}}</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6"
+                                ng-if="show_dine_opt_vendor_reg == 1 && is_table_booking == 1 && !is_hide_dinin">
+                                <div class="form-group select-category">
+                                    <label>{{localisation.dine_in | translate}}<span class="star">*</span></label>
+                                    <select class="app" name="is_dine_in" ng-model="supplier.is_dine_in"
+                                        convert-to-number ng-change="changeDineIn(supplier.is_dine_in)"
+                                        ng-required="!is_hide_dinin">
+                                        <option value="0">{{'NO' | translate}}</option>
+                                        <option value="1">{{'YES' | translate}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-8" ng-if="['rajatcustom_0723','yourbutler_0029'].includes(client_code)">
+                                <div class="form-group">
+                                    <label>{{'Introduction' | translate}}<span class="star">*</span></label>
+
+                                    <textarea rows="5" name="desc" ng-model="supplier.description"
+                                        placeholder="{{'Introduction' | translate}}" required></textarea>
+                                    <div class="error"
+                                        ng-show="addSupplierForm.desc.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.desc.$error.required">{{'PLEASE ENTER' |
+                                            translate}}
+                                            {{'Introduction' | translate}}.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="row col-md-12">
+                                <div class="col-md-6" ng-if="enable_account_number==1">
+                                    <div class="form-group ">
+                                        <label>{{'ACCOUNT NUMBER' | translate}}</label>
+                                        <input type="text" name="account_number" ng-model="supplier.account_number"
+                                            placeholder="{{'ACCOUNT NUMBER' | translate}}" required>
+                                        <div class="error"
+                                            ng-show="addSupplierForm.account_number.$invalid && addSupplierForm.$submitted">
+                                            <small ng-show="addSupplierForm.account_number.$error.required">{{'PLEASE
+                                                ENTER
+                                                ACCOUNT No.' |
+                                                translate}}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6" ng-if="enable_transist_number==1">
+                                    <div class="form-group ">
+                                        <label>{{'TRANSIST NUMBER' | translate}}</label>
+                                        <input type="text" name="transit_number" ng-model="supplier.transit_number"
+                                            placeholder="{{'TRANSIST NUMBER' | translate}}" required>
+                                        <div class="error"
+                                            ng-show="addSupplierForm.transit_number.$invalid && addSupplierForm.$submitted">
+                                            <small ng-show="addSupplierForm.transit_number.$error.required">{{'PLEASE
+                                                ENTER
+                                                TRANSIST No.' |
+                                                translate}}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6" ng-if="enable_institution_number==1">
+                                    <div class="form-group">
+                                        <label>{{'INSTITUTE NUMBER' | translate}}</label>
+                                        <input type="text" name="institution_number"
+                                            ng-model="supplier.institution_number"
+                                            placeholder="{{'INSTITUTE NUMBER' | translate}}" required>
+                                        <div class="error"
+                                            ng-show="addSupplierForm.institution_number.$invalid && addSupplierForm.$submitted">
+                                            <small
+                                                ng-show="addSupplierForm.institution_number.$error.required">{{'PLEASE
+                                                ENTER INSTITUTE No.' |
+                                                translate}}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="container" ng-if="enable_additional_registration_info==1">
+                                <div class="row profile">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{localisation.supplier | translate}}
+                                                {{'ORIGINAL NAME' | translate}}</label>
+                                            <input type="text" name="home_chef_orignal_name"
+                                                ng-model="supplier.home_chef_orignal_name" id="home_chef_orignal_name"
+                                                placeholder="{{'ORIGINAL NAME'}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{'HOME ADDRESS' | translate}}</label>
+                                            <input type="text" name="home_address" ng-model="supplier.home_address"
+                                                id="home_address" placeholder="{{'HOME ADDRESS'}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{'LICENSE ISSUE DATE' | translate}}</label>
+                                            <input type="date" name="license_issue_date"
+                                                ng-model="supplier.license_issue_date" id="license_issue_date"
+                                                placeholder="{{'LICENSE ISSUE DATE'}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{'LICENSE END DATE' | translate}}</label>
+                                            <input type="date" name="license_end_date"
+                                                ng-model="supplier.license_end_date" id="license_end_date"
+                                                placeholder="{{'LICENSE END DATE'}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{'LICENSE NUMBER' | translate}}</label>
+                                            <input type="text" name="license_number" ng-model="supplier.license_number"
+                                                id="license_number" placeholder="{{'LICENSE NUMBER'}}">
+                                        </div>
+                                    </div>
+
+                                    <div class="document-image persinfo">
+                                        <div class="col-md-12">
+                                            <div class="form-group pic">
+                                                <label>{{'LICENSE DOCUMENT' | translate}}</label>
+                                                <input filestyle="" type="file" accept="image/*" name="image1"
+                                                    class="cursor" style="width: 242px;"
+                                                    onchange="angular.element(this).scope().file_to_upload_for_image_license(this.files)"
+                                                    data-button-text="Single" data-class-button="btn btn-default"
+                                                    data-classinput="form-control inline" nv-file-select=""
+                                                    uploader="uploader" />
+                                                <span ng-if="supplier.license_document" style="height: 135px;">
+                                                    <img style="width: 100%; height: 100%; object-fit: contain;"
+                                                        id="croppr" src="{{supplier.license_document}}">
+                                                </span>
+                                                <span ng-if="!supplier.license_document">
+                                                    <img src="img/v1_images/ic_dummy.png"
+                                                        style="width: auto; height: auto;">
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-12" style="margin-top: 20px;"
+                                ng-if="hide_document_upload_supplier_registration == 1">
+                                <div class="form-control select-category" style="border-radius: 8px;">
+                                    <label>{{localisation.upload_documents | translate}}<span class="bold"
+                                            ng-if="client_code == 'homefreshmeals_0027'"> (SSN/SIN)</span><span
+                                            ng-if="client_code == 'meezzaa_0687'" style="top: 8px;"
+                                            class="star">*</span>
+                                        <p class="bold" ng-if="display_supplier_doc_note == 1">
+                                            {{'Note: Please upload:' | translate}}<br>
+                                            * {{'Evidence of Fiscal Situation (SAT)' | translate}}<br>
+                                            * {{'Compliance opinion (SAT)' | translate}}<br>
+                                            * {{'Power of attorney of the Legal Representative (for companies)' |
+                                            translate}}<br>
+                                            * {{'INE of the Legal Representative (companies)' | translate}}<br>
+                                            * {{'Bank Coverage. (Bank details of the restaurant)' | translate}}<br>
+                                            * {{'Restaurant logo (png format.)' | translate}}
+
+                                        </p>
+                                    </label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="area">
+                                                <input type="file" id="upload" />
+                                                <label class="upload-text" for="upload"><strong>{{'CHOOSE A FILE' |
+                                                        translate}}</strong><span class="box__dragndrop">
+                                                        {{'OR DRAG IT HERE' | translate}}</span>.</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="gallery" ng-repeat="file in files">
+                                                <a ng-If="!file.isVideo">
+                                                    <img src="{{file.url}}" alt="Cinque Terre" width="600" height="400">
+                                                </a>
+                                                <a ng-If="file.isVideo == 1 && !!file.isVideo">
+                                                    <video controls height="150px" width="100%">
+                                                        <source src="{{file.url}}">
+                                                    </video>
+                                                </a>
+                                                <a ng-If="file.isVideo == 2">
+                                                    <img src="img/v1_images/pdf_ic.jpg" alt="PDF" width="600"
+                                                        height="400">
+                                                </a>
+                                                <div class="desc">{{file.name}}</div>
+                                                <div class="remove-file"><a ng-click="removeFile(file.id)"><i
+                                                            class="fa fa-times" aria-hidden="true"></i></a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 document-image persinfo"
+                                ng-if="hide_trade_document_supplier_registration == 1">
+                                <div class="col-md-12">
+                                    <div class="form-group pic">
+                                        <label>{{localisation.trade_license | translate}}</label>
+
+                                        <input filestyle="" type="file" accept="image/*" name="trade_license"
+                                            class="cursor" style="width: 242px;"
+                                            onchange="angular.element(this).scope().upload_trade_license(this.files)"
+                                            data-button-text="Single" data-class-button="btn btn-default"
+                                            data-classinput="form-control inline" nv-file-select=""
+                                            uploader="uploader" />
+                                        <span ng-if="supplier.trade_license" style="height: 135px;">
+                                            <img style="width: 100%; height: 100%; object-fit: contain;"
+                                                id="trade_license" ng-src="{{supplier.trade_license.url}}">
+                                        </span>
+                                        <span ng-if="!supplier.trade_license">
+                                            <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 document-image persinfo"
+                                ng-if="hide_trade_document_supplier_registration == 1">
+                                <div class="col-md-12">
+                                    <div class="form-group pic">
+                                        <label>{{localisation.photo_identification | translate}}</label>
+                                        <input filestyle="" type="file" accept="image/*" name="photo_identification"
+                                            class="cursor" style="width: 242px;"
+                                            onchange="angular.element(this).scope().upload_photo_identification(this.files)"
+                                            data-button-text="Single" data-class-button="btn btn-default"
+                                            data-classinput="form-control inline" nv-file-select=""
+                                            uploader="uploader" />
+                                        <span ng-if="supplier.photo_identification" style="height: 135px;">
+                                            <img style="width: 100%; height: 100%; object-fit: contain;"
+                                                id="photo_identification" src="{{supplier.photo_identification.url}}">
+                                        </span>
+                                        <span ng-if="!supplier.photo_identification">
+                                            <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row suppro" style="margin-bottom: 15px; margin-top: 20px;">
+
+                            <div class="col-md-5" style="margin-bottom: 15px;"
+                                ng-class="show_static_food_image_admin == 1 ? 'col-md-6' : ''"
+                                ng-repeat="catData in categoryData track by $index" ng-init="parentIndex = $index">
+                                <div class="form-group">
+                                    <div class="box">
+                                        <div class="top">
+                                            <h2 class="bold">
+                                                {{parentIndex > 0 ? catData.category.name : (localisation.categories |
+                                                translate)}}<span ng-if="enable_maroof_password_supplier_reg == 1" class="star" style="top: 23px;">*</span>
+                                            </h2>
+                                            <!-- <label
+                                                ng-if="catData.category.checked || parentIndex == 0">{{'Mark All' | translate}}<input
+                                                    type="checkbox" ng-click="markAll(parentIndex)"
+                                                    ng-model="catData.mark_all">
+                                                <span style="margin-left: 8px; top: 2px;"></span>
+                                            </label> -->
+                                        </div>
+                                        <div class="scroll">
+                                            <ul class="items">
+                                                <li ng-class="((category.sub_category).length && disable_supplier_registration_sub_category == 0) ? 'cursor' : ''"
+                                                    ng-click="viewSubCat(parentIndex, category)"
+                                                    ng-repeat="category in catData.arr track by $index"
+                                                    ng-init="childIndex = $index">
+                                                    {{category.name | translate}}
+                                                    <label ng-if="catData.category.checked || parentIndex == 0"><input
+                                                            type="checkbox" ng-click="selectCat(category)"
+                                                            ng-checked="category.checked">
+                                                        <span></span>
+                                                    </label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" ng-if="show_static_food_image_admin == 1 && categoryData.length">
+                                <div class="form-group">
+                                    <img src="/img/food_illustration.png">
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="container" ng-if="show_tags_for_suppliers == 1">
+                            <div class="row profile">
+                                <div class="col-md-12">
+                                    <div class="row suppro" style="margin-bottom: 15px; margin-top: 20px;">
+
+                                        <div class="col-md-6 p-0" style="margin-bottom: 15px;"
+                                            ng-init="parentIndex = $index">
+                                            <div class="form-group">
+                                                <div class="box">
+                                                    <h1 class="text-center m-4">
+                                                        {{localisation.tags | translate}}
+                                                    </h1>
+                                                    <p class="text-right cursor mr-4" ng-click="markAllTags()">
+                                                        {{!mark_all_tags?'Mark All':'Un Mark All' | translate}}
+                                                        <label class="ml-3"><input type="checkbox"
+                                                                ng-click="markAllTags()" ng-checked="mark_all_tags">
+                                                            <span></span>
+                                                        </label>
+                                                    </p>
+
+                                                    <div class="scroll">
+                                                        <ul class="items">
+                                                            <li ng-repeat="tag in supplierTagsList track by $index">
+                                                                {{tag.name}}
+                                                                <!-- <input type="checkbox" class="checkbx"
+                                                                    ng-click="selectTag(tag)" ng-checked="tag.checked"> -->
+                                                                <label><input type="checkbox" ng-click="selectTag(tag)"
+                                                                        ng-checked="tag.checked">
+                                                                    <span></span>
+                                                                </label>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+                        <div class="container" ng-if="enable_zone_geofence == 1">
+                            <div class="row profile">
+                                <div class="col-md-12">
+                                    <div class="row suppro" style="margin-bottom: 15px; margin-top: 20px;">
+
+                                        <div class="col-md-6 p-0" style="margin-bottom: 15px;"
+                                            ng-init="parentIndex = $index">
+                                            <div class="form-group">
+                                                <div class="box">
+                                                    <h1 class="text-center m-4">
+                                                        {{'Zones' | translate}}
+                                                    </h1>
+                                                    <p class="text-right cursor mr-4" ng-click="markAllZone()">
+                                                        {{!mark_all_zones?'Mark All':'Un Mark All' | translate}}
+                                                        <label class="ml-3"><input type="checkbox"
+                                                                ng-click="markAllZone()" ng-checked="mark_all_zones">
+                                                            <span></span>
+                                                        </label>
+                                                    </p>
+
+                                                    <div class="scroll">
+                                                        <ul class="items">
+                                                            <li ng-repeat="zone in zoneGeofenceList track by $index">
+                                                                {{zone.name}}
+                                                                <label><input type="checkbox"
+                                                                        ng-click="selectZone(zone)"
+                                                                        ng-checked="zone.checked">
+                                                                    <span></span>
+                                                                </label>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+                        <div class="row">
+                            <div class="col-md-12 mb-4 mt-4" style="text-align: center">
+                                <span class="suppro">
+                                    <!-- <input type="checkbox" class="checkbx" ng-click="acceptTnC($event)"> -->
+                                    <label style="float: none"><input type="checkbox" ng-click="acceptTnC($event)"
+                                            ng-checked="is_tnc_checked">
+                                        <span></span>
+                                    </label>
+                                    <span class="ml-2 tnc_txt">
+                                        <span style="color: var(--primary-color)">
+                                            {{localisation.accept_our | translate}}
+                                            <a style="color: var(--primary-color)" ui-sref="terms"
+                                                target="_blank">{{'TERMS & CONDITIONS'|translate}}</a>
+                                            <span ng-if="display_privacy_on_supplier_reg == 1">
+                                                &
+                                                <a style="color: var(--primary-color)" ui-sref="privacy"
+                                                    target="_blank">{{'PRIVACY POLICY'|translate}}</a>
+                                            </span>
+                                        </span>
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="col-md-12" style="text-align: right">
+                                <button type="submit" style="float: none; margin: 0px; text-align: center"
+                                    class="submit">{{'REGISTER' | translate}}</button>
+                            </div>
+                        </div>
+
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- -------------------------Supplier OTP after registration starts------------------------- -->
+
+<div class="modal fade" id="optModal" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" style="margin-top: 10%" role="document">
+        <div class="modal-content">
+            <div class="csv-body modal-body">
+                <form role="form" prevent-enter-press class="supplier-reg" id="supplierOtpForm" name="supplierOtpForm"
+                    ng-submit="registerSupplierWithOtp(supplierOtpForm)" novalidate>
+                    <div class="col-md-6">
+
+                        <div class="form-group" style="margin-top: 45px;display: none;">
+                            <label>{{'PHONE NUMBER' | translate}}<span class="star" >*</span></label>
+                            <input id="supp_mobile" type="tel" production-qty name="mobileNo" disabled
+                                ng-model="verifyViaOtp.mobileNo" ng-minlength="6" ng-maxlength="15"
+                                placeholder="{{'PHONE NUMBER' | translate}}" required>
+                            <div class="error"
+                                ng-show="supplierOtpForm.mobileNo.$invalid && supplierOtpForm.$submitted">
+                                <small ng-show="supplierOtpForm.mobileNo.$error.required">{{'PLEASE ENTER' |
+                                    translate}}
+                                    {{localisation.supplier | translate}} {{'Phone' | translate}}.</small>
+                                <small ng-show="supplierOtpForm.mobileNo.$error.minlength">{{'PHONE NO. MUST BE MORE
+                                    THAN 6 DIGITS'
+                                    | translate}}.</small>
+                                <small ng-show="supplierOtpForm.mobileNo.$error.maxlength">{{'PHONE NO. MUST BE LESS
+                                    THAN 15 DIGITS'
+                                    | translate}}.</small>
+                            </div>
+                            <!-- <div class="error"
+                                    ng-show="!supplierOtpForm.mobileNo.$invalid && supplierOtpForm.$submitted">
+                                    <small>{{'INVALID PHONE NUMBER' | translate}}</small>
+                                </div> -->
+                        </div>
+                        <div class="form-group" style="position: relative">
+                            <label>{{'OTP' | translate}}<span class="star">*</span></label>
+                            <input  id="verify_otp" type="text" production-qty name="verifyotp"
+                                ng-model="verifyViaOtp.verifyotp" placeholder="{{'OTP' | translate}}" required>
+                            <div class="error"
+                                ng-show="supplierOtpForm.verifyotp.$invalid && supplierOtpForm.$submitted">
+                                <small ng-show="supplierOtpForm.verifyotp.$error.required">{{'PLEASE ENTER' |
+                                    translate}} {{'OTP' | translate}}.</small>
+                            </div><br/>
+                            <button ng-click="resendCode()" ng-disabled="countdown != 0" class="btn btn-primary" style="margin-left: 14px;margin-top: 10px;">Resend code</button>   {{countdown > 0 ? ' in ' + countdown + ' seconds' : ''}} 
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">{{'Submit' |
+                            translate}}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- -------------------------Supplier OTP after registration ends------------------------- -->
+
+
+<div class="success" ng-if="show_login && view == 1">
+    <p>{{'Your application has been successfully submitted' | translate}}</p>
+    <div class="bck" ng-class="hide_back == 1 ? 'login_back' : ''">
+        <a ng-if="enable_back_link" href="" class="backbtn" ui-sref="login">{{'Back' | translate}}</a>
+        <a ng-if="!enable_back_link" href="{{back_website_link}}" class="backbtn">{{'Back' | translate}}</a>
+    </div>
+
+</div>
+</div>
+<success-modal message="message"></success-modal>
+
+<style>
+    .registraction_user_name p {
+        margin-bottom: 20px;
+        text-transform: capitalize;
+    }
+
+    .registraction_logo img {
+        width: 100%;
+        height: 100px;
+        /* background: #000; */
+        max-width: 100%;
+        object-fit: contain;
+        margin-bottom: 20px;
+    }
+
+    /* .registraction_page_outter {
+        width: 62%;
+        margin: 40px auto;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.5);
+        padding: 40px;
+    } */
+
+    .save {
+        color: #ffffff;
+        border-radius: 4px;
+        background-color: var(--primary-color);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+        border: none;
+        font-size: 14px;
+        padding: 9px 25px;
+    }
+
+    .area {
+        margin: 5px;
+        width: 100%;
+        height: 200px;
+        position: relative;
+        border: 2px dashed #000;
+        background-image: url("../../img/import.png");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 64px 64px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        filter: alpha(opacity=50);
+        -khtml-opacity: 0.5;
+        -moz-opacity: 0.5;
+        opacity: 0.5;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .area:hover,
+    .area.dragging,
+    .area.uploading {
+        filter: alpha(opacity=100);
+        -khtml-opacity: 1;
+        -moz-opacity: 1;
+        opacity: 1;
+    }
+
+    /* div.gallery {
+        margin: 5px;
+        border: 1px solid #ccc;
+        float: left;
+        width: 46%;
+        position: relative;
+    } */
+
+    div.gallery:hover {
+        border: 1px solid #777;
+    }
+
+    div.gallery img {
+        width: 100%;
+        height: 145px;
+    }
+
+    /* div.desc {
+        padding: 10px;
+        text-align: center;
+        font-size: 10px;
+    } */
+
+    /* .remove-file {
+        position: absolute;
+        top: -6px;
+        right: -9px;
+        color: red;
+        background: #fff;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        text-align: center;
+        line-height: 25px;
+        box-shadow: 0px 6px 6px 1px rgba(0, 0, 0, 0.2);
+    } */
+
+    .upload-text {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .area input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        cursor: pointer;
+        text-indent: 800px;
+        padding: 0px;
+        opacity: 0;
+    }
+
+
+
+
+
+
+    div.gallery {
+        margin: 5px;
+        border: 1px solid #ccc;
+        float: left;
+        width: 210px;
+        position: relative;
+        height: 200px;
+        max-width: 100%;
+    }
+
+    div.desc {
+        padding: 10px 15px;
+        text-align: center;
+        font-size: 12px;
+        overflow: hidden;
+    }
+
+    .remove-file {
+        position: absolute;
+        top: -6px;
+        right: -9px;
+        color: red;
+        background: #fff;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        text-align: center;
+        line-height: 25px;
+        box-shadow: 0px 2px 6px 1px rgb(0 0 0 / 14%);
+    }
+
+    .registraction_page_outter {
+        width: 850px;
+        margin: 40px auto;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px 0px rgb(0 0 0 / 22%);
+        padding: 40px;
+        max-width: 100%;
+    }
+
+    .checkbx {
+        appearance: auto;
+        right: 8px;
+        bottom: 16px;
+        width: 16px !important;
+        height: 16px !important;
+    }
+</style>

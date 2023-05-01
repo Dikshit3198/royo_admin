@@ -1,0 +1,161 @@
+<div class="container-fluid back">
+
+</div>
+
+
+<div class="container">
+    <div class="row profile">
+        <div class="col-4">
+
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'Orderwise Gateways' | translate}}</h1>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)" ng-if="permissions('promotions', 'create') == 1">
+                                <button type="button" class="bold create" data-toggle="modal"
+                                    ng-click="changeView(true)"
+                                    data-target="#addOrderwiseGatewaysRef">{{'ADD ORDER WISE GATEWAYS' | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{'ORDER TYPE' | translate}}</th>
+                                <th>{{'PAYMENT GATEWAYS' | translate}}</th>
+                                <th>{{'ACTION' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in orderWiseGateways">
+                                <td>{{item.id}}</td>
+                                <td>
+                                    <span ng-if="item.order_type==0">{{'PICK UP'}}</span>
+                                    <span ng-if="item.order_type==1">{{'DELIVERY'}}</span>
+                                    <span ng-if="item.order_type==2">{{'DININ'}}</span>
+                                </td>
+                                <td>{{item.payment_gateways}}</td>
+                                <td>
+                                    <span class="delete" ng-click="deleteOrderwiseGateways(item)">
+                                        {{'Delete'}}
+                                    </span><br />
+                                    <span class="delete" ng-click="updateOrderwiseGateways(item)">
+                                        {{'Update'}}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="orderWiseGateways.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="addOrderwiseGatewaysRef">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{is_updating?'UPDATE':'ADD'}}&nbsp;{{'ORDER WISE GATEWAYS' | translate}}</h3>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <form role="form" id="addOrderwiseGatewaysForm" name="addOrderwiseGatewaysForm"
+                        ng-submit="addOrderwiseGateways(addOrderwiseGatewaysForm)" novalidate>
+                        <div class="form-group">
+                            <label>{{'ORDER TYPE' | translate}}<span class="star">*</span></label>
+                            <select class="app" ng-model="orderwise_gateways.order_type"
+                                placeholder="{{'ORDER TYPE' | translate}}" name="order_type" required>
+                                <option value="0">{{'PICK UP' | translate}}</option>
+                                <option value="1">{{'DELIVERY' | translate}}</option>
+                                <option value="2" ng-if="is_table_booking == 1 && is_dine_in">{{'DININ' | translate}}</option>
+                            </select class="app">
+                            <div class="error"
+                                ng-show="addOrderwiseGatewaysForm.order_type.$invalid && addOrderwiseGatewaysForm.$submitted">
+                                <small ng-show="addOrderwiseGatewaysForm.order_type.$error.required">Please Select Order
+                                    Type.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{'SELECT PAYMENT GATEWAYS' | translate}}</label>
+                            <div class="row">
+                                <div class="col-md-4" ng-repeat="gateway in all_payment_gateways">
+                                    <label><input type="checkbox" class="checkbx mr-2" ng-click="selectGateway(gateway)"
+                                            ng-checked="gateway.checked">{{gateway.name}}</label>
+                                </div>
+                            </div>
+                            <div class="error"
+                                ng-show="addOrderwiseGatewaysForm.payment_gateways.$invalid && addOrderwiseGatewaysForm.$submitted">
+                                <small ng-show="addOrderwiseGatewaysForm.payment_gateways.$error.required">Please Select
+                                    Order
+                                    Type.</small>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="submit-plan">
+                            <button type="submit">{{'SUBMIT' | translate}}</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+
+
+
+<style>
+    .delete {
+        cursor: pointer;
+    }
+
+    .delete:hover {
+        text-decoration: underline;
+        font-weight: 600;
+    }
+
+    .checkbx {
+        appearance: auto;
+        right: 8px;
+        bottom: 16px;
+        width: 16px !important;
+        height: 16px !important;
+    }
+</style>

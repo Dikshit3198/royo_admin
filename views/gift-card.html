@@ -1,0 +1,259 @@
+<div class="wrapper promotion_page">
+    <div class="category" ng-if="!is_add">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'GIFT CARD' | translate}}</h1>
+                </div>
+            </div>
+        </div>
+        <div class="secnav m-top-20">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <!-- <input type="text" placeholder="Search By Name" name="search" ng-model="search" style="width: 235px"
+                        ng-keypress="searchPromo($event)"> -->
+                </div>
+                <div class="col-lg-8 col-md-12 col-sm-12">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)" ng-if="permissions('promotions', 'create') == 1">
+                                <button type="button" class="bold create" ng-click="changeView(true)">+ {{'ADD GIFT CARD' | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mainbanner promocod m-top-30">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-6" ng-repeat="gift in gift_cards">
+                    <div class="bx">
+                        <div class="top back text-center"
+                            style="background-image: url(img/v1_images/promo_back.png); color: #fff; border-radius: 4px 4px 0px 0px; cursor: default;">
+                            <i ng-if="permissions('promotions', 'update') == 1" class="fa fa-edit edit-promo"
+                                ng-click="editGiftCard(gift)"></i>
+                            <i ng-if="permissions('promotions', 'delete') == 1" class="fa fa-trash delete-promo"
+                                ng-click="deleteGiftCard(gift.id)"></i>
+                            <p class="bold">{{gift.description}}</p>
+                            <h2 class="bold">{{lang == 'en' ? gift.names[0].name : gift.names[1].name}}</h2>
+                            <p>{{gift.price_type == 1 ? (gift.percentage_value + '% ' + ('Off' | translate )) : (currency + gift.price + ' Off')}}
+                            </p>
+                        </div>
+                        <div class="btm">
+                            <ul>
+                                <li>{{'VALID FROM' | translate}} : {{gift.from_date | date}}</li>
+                                <li>{{'VALID UPTO' | translate}} :{{gift.to_date | date}}</li>
+                                <li ng-if="gift.quantity">{{'QUANTITY' | translate}}: {{gift.quantity}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="no-data-found" ng-if="gift_cards.length == 0 && dataLoaded">
+                {{'NO DATA FOUND' | translate}}
+            </div>
+
+            <div ng-if="gift_cards.length > 0 && dataLoaded" class="row pagination">
+                <ul ng-if="pager.pages && pager.pages.length">
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                    </li>
+                    <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                        <a ng-click="setPage(page)">{{page}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="category" ng-if="is_add" style="width: 80%; margin: 0 auto">
+
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{(is_edit ? 'EDIT' : 'ADD') | translate}} {{'Gift Card'|translate}}</h1>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <a href="" class="backbtn" ng-click="changeView(false)" style="float: right"><img
+                            src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="addban m-top-30 innpad">
+            <div class="persinfo">
+                <form role="form" id="addGiftCardForm" name="addGiftCardForm" enctype="multipart/form-data"
+                    ng-submit="addGiftCard(addGiftCardForm)" novalidate>
+
+                    <div class="row select-category">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'NAME' | translate}}<span class="star">*</span></label>
+                                <input type="text" limit-to="60" name="name" ng-model="gift.names[0].name"
+                                    placeholder="{{'NAME' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addGiftCardForm.name.$invalid && addGiftCardForm.$submitted">
+                                    <small ng-show="addGiftCardForm.name.$error.required">{{'PLEASE ENTER NAME' | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="is_secondary_language == 1">
+                            <div class="form-group">
+                                <label>{{'NAME' | translate}} ({{languages[1].name}})<span class="star">*</span></label>
+                                <input type="text" limit-to="60" name="name_other" ng-model="gift.names[1].name"
+                                    placeholder="{{'NAME' | translate}} ({{languages[1].name}})" required>
+                                <div class="error"
+                                    ng-show="addGiftCardForm.name_other.$invalid && addGiftCardForm.$submitted">
+                                    <small ng-show="addGiftCardForm.name_other.$error.required">{{'PLEASE ENTER NAME' | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'DESCRIPTION' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="description" limit-to="150" ng-model="gift.description"
+                                    placeholder="{{'DESCRIPTION' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addGiftCardForm.description.$invalid && addGiftCardForm.$submitted">
+                                    <small ng-show="addGiftCardForm.description.$error.required">{{'PLEASE ENTER DESCRIPTION' | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'PRICE' | translate}}<span class="star">*</span></label>
+                                <input type="number" name="price" integers ng-model="gift.price"
+                                    placeholder="{{'PRICE' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addGiftCardForm.price.$invalid && addGiftCardForm.$submitted">
+                                    <small ng-show="addGiftCardForm.price.$error.required">{{'PLEASE ENTER PRICE' | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label style="display: inline-block;">{{'DISCOUNT' | translate}}<span class="star">*</span></label>
+                                <div class="labelrad">
+                                    <label>
+                                        <input type="radio" name="discount" value="1" required convert-to-number
+                                            ng-model="gift.price_type"><span></span>%
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="discount" value="0" required convert-to-number
+                                            ng-model="gift.price_type"><span></span>{{localisation.flat | translate}}
+                                    </label>
+                                </div>
+                                <input name="gift_discount" ng-if="gift.price_type == 1" type="number" integers
+                                    ng-model="gift.percentage_value" placeholder="Discount" min="1" max="100" required>
+                                <input name="gift_discount" ng-if="gift.price_type == 0" type="number" integers
+                                    ng-model="gift.percentage_value" placeholder="Discount" min="1" required>
+                                <div class="error"
+                                    ng-show="addGiftCardForm.gift_discount.$invalid && addGiftCardForm.$submitted">
+                                    <small ng-show="addGiftCardForm.gift_discount.$error.required">{{'PLEASE ENTER DISCOUNT' | translate}}</small>
+                                    <small ng-show="addGiftCardForm.gift_discount.$error.min">{{'PROMO DISCOUNT MUST BE MORE THAN 0' | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'QUANTITY' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="quantity" production-qty limit-to="4" ng-model="gift.quantity"
+                                    placeholder="{{'QUANTITY' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addGiftCardForm.quantity.$invalid && addGiftCardForm.$submitted">
+                                    <small ng-show="addGiftCardForm.quantity.$error.required">{{'PLEASE ENTER QUANTITY' | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group pro" style="position: relative">
+                                <label>{{'VALIDITY' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="gift_validity" ng-model="validity" id="datepicker"
+                                    style="padding-left: 45px;" placeholder="{{'VALIDITY' | translate}}" readonly required>
+                                <span class="inputtag calender"
+                                    ng-style="addGiftCardForm.gift_validity.$invalid && addGiftCardForm.$submitted ? {'bottom' : '32px'} : {'bottom' : '10px'}"><img
+                                        src="/img/v1_images/calendar.svg"></span>
+                                <div class="error"
+                                    ng-show="addGiftCardForm.$submitted && addGiftCardForm.gift_validity.$invalid">
+                                    <small ng-show="addGiftCardForm.gift_validity.$error.required">{{'PLEASE SELECT VALIDITY' | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button m-top-20">
+                        <button type="submit" class="bold nxt">{{'DONE' | translate}}</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .delete-promo {
+        position: absolute;
+        right: 12px;
+        top: 10px;
+        font-size: 21px;
+        z-index: 9;
+        cursor: pointer;
+    }
+
+    .edit-promo {
+        position: absolute;
+        left: 12px;
+        top: 10px;
+        font-size: 22px;
+        z-index: 9;
+        cursor: pointer;
+    }
+
+    .calender {
+        bottom: 10px;
+        position: absolute;
+        left: 10px;
+    }
+
+    .promo {
+        margin-bottom: 20px;
+    }
+
+    .promo h1 {
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: #00000099;
+        font-size: 16px;
+    }
+
+    .promo .box p {
+        border: 1px solid #0000001f;
+        border-radius: 4px;
+        padding: 4px 8px;
+        color: #494949;
+    }
+</style>

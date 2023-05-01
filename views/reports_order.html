@@ -1,0 +1,355 @@
+<div class="reporttop m-top-30"
+    style="border: 1px solid rgba(18,17,17,0.1); border-radius: 4px;	background-color: #FDFDFC; padding-top: 0px">
+    <form style="position: relative">
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>{{'SEARCH' | translate}}</label>
+                    <input type="text" ng-model="filter.id"
+                        placeholder="{{'SEARCH BY ID / EMAIL / USER NAME' | translate}}">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group select-category">
+                    <!-- <label>{{localisation.order + ' STATUS' | translate}}</label> -->
+                    <label>{{'BOOKING STATUS' | translate}}</label>
+                    <select class="app" ng-model="filter.status" ng-change="changeStatus(filter.status)">
+                        <option value="">{{'ALL' | translate}}</option>
+                        <option value="0">{{0 | status|translate}}</option>
+                        <option value="1">{{1 | status | translate}}</option>
+                        <option value="11">{{11 | status | translate}}</option>
+                        <option ng-if="app_type != 1 || (app_type == 1 && is_pickup != 1)" value="3">{{3 |
+                            status|translate}}
+                        </option>
+                        <option ng-if="app_type != 1 || (app_type == 1 && is_pickup != 0)" value="10">{{10 |
+                            status|translate}}
+                        </option>
+                        <option value="5">{{5 | status|translate}}</option>
+                        <option value="2">{{2 | status| capitalLetters|translate}}</option>
+                        <option value="8">{{8 | status|translate}}</option>
+                    </select>
+                    <span class="inputtag"><img src="/img/v1_images/ic_dropdown.svg"></span>
+                </div>
+            </div>
+
+            <div class="col-md-4" ng-if="is_user_type == 1">
+                <div class="form-group select-category">
+                    <label class="cat-label">{{'SELECT' | translate}} User Type</label>
+                    <select style="border-radius: 8px; border: 1px solid rgba(0, 0, 0, 0.12); height: 40px;"
+                        data-placeholder="Choose Type" class="app" tabindex="4" ng-model="selected_user_type"
+                        ng-options="type.name for type in user_type_prices"
+                        ng-change="onSelectUserType(selected_user_type)">
+                        <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-4" ng-if="profile === 'ADMIN' && is_single_vendor == 0">
+                <div class="form-group select-category">
+                    <label>{{localisation.order | translate}} {{localisation.supplier | translate}}</label>
+                    <select class="app" data-placeholder="Choose Supplier" tabindex="4" ng-model="selected_supplier"
+                        ng-options="supplier.supplier_name for supplier in suppliers"
+                        ng-change="changeSupplier(selected_supplier)">
+                        <option selected disabled value="">{{'SELECT' | translate}}</option>
+                    </select>
+                    <span class="inputtag"><img src="/img/v1_images/ic_dropdown.svg"></span>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <!-- <label>{{localisation.order_date | translate}}</label> -->
+                    <label>{{'BOOKING PLACED ON' | translate}}</label>
+                    <input type="text" id="datepickerOrderReport" placeholder="{{'BOOKING PLACED ON' | translate}}">
+                    <span class="inputtag"><img src="/img/v1_images/calendar.svg"></span>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="btns">
+                    <button type="button" ng-click="downloadCSV()"
+                        style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'DOWNLOAD
+                        CSV' | translate}}</button>
+                    <button type="button" ng-click="resetFilter()"
+                        style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'RESET'
+                        | translate}}</button>
+                    <button type="button" class="bg-success" ng-click="selectFilter()"
+                        style="color: #fff; border: 1px solid var(--primary-color); margin-left: 7px;">{{'FILTER' |
+                        translate}}</button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+    <h3 ng-if="is_single_vendor == 0 && show_report_total_counts == 1"
+        style="text-align: end; margin: inherit; font-weight: bold;">{{'TOTAL ORDERS AMOUNT' | translate}} :
+        {{TotalorderAmount}}</h3>
+</div>
+<div id="accordion" style="margin-top: 20px; margin-bottom: -10px;"
+    ng-if="profile === 'ADMIN' && no_send_notification == 0">
+    <div class="card">
+        <div class="card-header" id="headingOne" style="background-color: #FDFDFC; padding: 5px 10px;">
+            <a class="chev-btn" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                style="padding: 5px 10px" ng-click="notificationOpen()" aria-controls="collapseOne">
+                <i data-toggle="collapse" data-target="#collapseOne" ng-if="!notification_open"
+                    class="fa fa-chevron-down"></i>
+                <i data-toggle="collapse" data-target="#collapseOne" ng-if="notification_open"
+                    class="fa fa-chevron-up"></i>
+            </a>
+            <h5 class="mb-0 notification">
+                {{'SEND NOTIFICATION/EMAIL TO USERS' | translate}}
+            </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                <div class="persinfo" style="margin-bottom: 20px;">
+                    <div class="labelrad">
+                        <label style="margin-left: 0px">
+                            <input type="radio" name="type" value="1" required convert-to-number ng-model="message_type"
+                                ng-change="changeMsgType(message_type)"><span></span>{{'SEND AS NOTIFICATION' |
+                            translate}}
+                        </label>
+                        <label>
+                            <input type="radio" name="type" value="2" required convert-to-number ng-model="message_type"
+                                ng-change="changeMsgType(message_type)"><span></span>{{'SEND AS EMAIL' | translate}}
+                        </label>
+                    </div>
+                </div>
+
+                <textarea ng-if="message_type == 1" class="notification-textarea"
+                    placeholder="{{'Enter Notification Content'|translate}}" rows="4"
+                    ng-model="notification.msg"></textarea>
+
+                <div ng-if="message_type == 2" sty>
+                    <div class="top" style="margin-bottom: 30px">
+                        <div class="row">
+                            <div class="col-md-2" style="padding-top: 8px">
+                                <span>{{'SUBJECT' | translate}} : </span>
+                            </div>
+                            <div class="col-md-10">
+                                <input class="form-control" ng-model="email.subject" style="width: 100%"
+                                    placeholder="{{'SUBJECT' | translate}}">
+                            </div>
+                        </div>
+                    </div>
+                    <summernote config="summernote_config" ng-model="email.body"></summernote>
+                    <!-- <div summernote class="summernote" ng-model="email.email_msg"></div> -->
+                </div>
+
+                <div style="text-align: right; margin-top: 20px;">
+                    <button class="button-primary" style="font-size: 16px" ng-click="sendNotificationOrEmail()">{{'SEND'
+                        | translate}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="accordion" style="margin-top: 20px; margin-bottom: -10px;" ng-if="profile === 'ADMIN'">
+    <div class="card">
+        <div class="card-header" id="headingOne" style="background-color: #FDFDFC; padding: 5px 10px;">
+            <a class="chev-btn" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
+                style="padding: 5px 10px" ng-click="graphical_report = !graphical_report" aria-controls="collapseTwo">
+                <i data-toggle="collapse" data-target="#collapseTwo" ng-if="!graphical_report"
+                    class="fa fa-chevron-down"></i>
+                <i data-toggle="collapse" data-target="#collapseTwo" ng-if="graphical_report"
+                    class="fa fa-chevron-up"></i>
+            </a>
+            <h5 class="mb-0 notification">
+                {{'GRAPHICAL REPORT' | translate}}
+            </h5>
+        </div>
+
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                <div class="dashgra m-top-30">
+                    <div class="row dashboard-box-outter">
+                        <div class="col-md-12">
+                            <canvas class="chart chart-bar" chart-data="totalOrders" chart-labels="labels"
+                                chart-options="options" chart-dataset-override="datasetOverride">
+                            </canvas>
+                            <div class="nodata" ng-if="no_orders">
+                                <p style="font-weight: bold;"> {{'NO DATA FOUND' | translate}} </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="repbtm m-top-40">
+    <!-- <div class="secnav ">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <input type="text" placeholder="Search">
+            </div>
+        </div>
+    </div> -->
+
+    <div class="tableouter m-top-20">
+        <table>
+            <thead>
+                <tr>
+                    <th ng-if="notification_open && orders.length">
+                        <label class="check"><input type="checkbox" ng-click="checkAll()"><span
+                                style="margin-top: 5px"></span></label>
+                    </th>
+                    <th>{{localisation.account_user_id | capitalLetters | translate}}</th>
+                    <th>{{'USER NAME' | translate}}</th>
+                    <th ng-if="profile === 'ADMIN' && is_single_vendor == 0">{{localisation.supplier | translate}}</th>
+                    <th ng-show="profile === 'ADMIN' || no_user_email == 0" class="cursor" ng-click="sortBy(2)">
+                        {{'USER EMAIL' | translate}} <i class="fa fa-sort"></i></th>
+                    <th ng-if="show_order_details_in_order_report == 1">{{'USER PHONE NO.' | translate}}</th>
+                    <th class="cursor" style="width: 130px" ng-click="sortBy(3)">{{'CREATED ON' | translate}} <i
+                            class="fa fa-sort"></i></th>
+                    <th ng-if="show_order_details_in_order_report == 1">{{'DELIVERED ON' | translate}}</th>
+
+                    <th ng-if="show_order_details_in_order_report == 1">{{localisation.agent | translate}} {{'NAME' |
+                        translate}}</th>
+                    <th ng-if="show_order_details_in_order_report == 1">{{localisation.agent | translate}} {{'PHONE NO.'
+                        |translate}}</th>
+
+                    <th>{{localisation.products | translate}}</th>
+                    <th>{{localisation.order_amount | capitalLetters| translate}}</th>
+                    <th ng-if="product_price_report==1">{{'PRODUCT PRICE' | capitalLetters | translate}}</th>
+                    <th ng-if="show_order_details_in_order_report == 1">{{'DELIVERY CHARGES' | translate}}</th>
+                    <th ng-if="show_order_details_in_order_report == 1">{{'PROMO DISCOUNT' | translate}}</th>
+                    <th ng-if="show_order_details_in_order_report == 1">{{'LOYALTY POINT DISCOUNT' | translate}}</th>
+                    <th ng-if="show_order_details_in_order_report == 1">{{'USER ADDRESS' | translate}}</th>
+                    <th ng-if="show_order_details_in_order_report == 1">{{'PAYMENT TYPE' | translate}}</th>
+                    <th ng-if="enable_order_desc_price_breakdown==1">
+                        {{localisation.pay_to_restaurant | translate}}
+                    </th>
+                    <th ng-if="enable_order_desc_price_breakdown==1">
+                        {{localisation.pay_to_compnay | translate}}
+                    </th>
+
+                    <th>{{'STATUS' | translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="order in orders">
+                    <td ng-if="notification_open && orders.length"><label cla ss="check"><input type="checkbox"
+                                ng-checked="selected_orders.includes(order.id)" ng-click="check(order)"><span
+                                style="margin-top: 5px"></span></label>
+                    </td>
+                    <td>{{order.id}}</td>
+                    <td>{{order.firstname}}</td>
+                    <td ng-if="profile === 'ADMIN' && is_single_vendor == 0">{{order.supplier_name}}</td>
+                    <td ng-show="profile === 'ADMIN' || no_user_email == 0">{{order.user_email}}</td>
+                    <td ng-if="show_order_details_in_order_report == 1">{{order.user_mobile_no}}</td>
+                    <td>
+                        <span>
+                            {{order.created_on | date: 'MMM d, y' : 'UTC'}}
+                        </span> <br>
+                        <span>
+                            {{order.created_on | date: 'hh:mm a' : 'UTC'}}
+                        </span>
+                    </td>
+                    <td ng-if="show_order_details_in_order_report == 1">
+                        <span>
+                            {{order.delivered_on | date: 'MMM d, y' : 'UTC'}}
+                        </span> <br>
+                        <span>
+                            {{order.delivered_on | date: 'hh:mm a' : 'UTC'}}
+                        </span>
+                    </td>
+                    <td ng-if="show_order_details_in_order_report == 1">{{order.agent_name}}</td>
+                    <td ng-if="show_order_details_in_order_report == 1">{{order.agent_phone_number}}</td>
+
+                    <td>
+                        <span ng-repeat="product in order.products">{{product.product_name}} x
+                            {{product.quantity}}</span>
+                    </td>
+                    <td>{{currency}} {{order.net_amount | number : addon_decimal_value}}</td>
+                    <td ng-if="product_price_report==1">{{currency}} {{order.total_order_price | number :
+                        addon_decimal_value}}</td>
+                    <td ng-if="show_order_details_in_order_report == 1">{{currency}} {{order.delivery_charges | number :
+                        addon_decimal_value}}</td>
+                    <td ng-if="show_order_details_in_order_report == 1">{{order.promo_discount}}</td>
+                    <td ng-if="show_order_details_in_order_report == 1">{{order.loyality_point_discount}}</td>
+                    <td ng-if="show_order_details_in_order_report == 1">{{order.user_address_line_1}}</td>
+                    <td ng-if="show_order_details_in_order_report == 1">
+                        {{order.payment_type == 0 ? 'CASH' : (order.payment_type == 1 ? 'ONLINE' : '')}}</td>
+                    <td ng-if="enable_order_desc_price_breakdown==1">
+                        {{currency}}{{getPaytoRestaurant(order)}}
+                    </td>
+                    <td ng-if="enable_order_desc_price_breakdown==1">
+                        {{currency}}{{getPaytoCompnay(order)}}
+                    </td>
+
+
+
+                    <td>{{order.status | status : false : order.type : order.category[0].terminology |
+                        capitalLetters|translate}}</td>
+
+                </tr>
+            </tbody>
+        </table>
+        <div class="no-data-found" ng-if="orders.length == 0 && dataLoaded">
+            {{'NO DATA FOUND' | translate}}
+        </div>
+
+        <div ng-if="orders.length > 0 && dataLoaded" class="row pagination">
+            <ul ng-if="pager.pages && pager.pages.length">
+                <li ng-class="{disabled:pager.currentPage === 1}">
+                    <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === 1}">
+                    <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                </li>
+                <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                    <a ng-click="setPage(page)">{{page}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                    <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                    <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .btns {
+        position: absolute;
+        right: 0;
+        top: 138px;
+    }
+
+    .chev-btn {
+        background-color: transparent;
+        float: right;
+        outline: none;
+    }
+
+    .chev-btn:active {
+        outline: none;
+    }
+
+    .notification {
+        color: #4a4a4a;
+        width: 50%;
+        margin-top: 7px;
+        font-weight: 500;
+        margin-left: 10px;
+    }
+
+    .notification-textarea {
+        padding: 10px 15px;
+        width: 100%;
+        border-radius: 4px;
+    }
+</style>

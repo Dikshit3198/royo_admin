@@ -1,0 +1,251 @@
+<div class="wrapper">
+
+    <div class="category">
+
+        <div class="toptabs">
+            <ul class="nav nav-tabs ">
+                <li class="nav-item">
+                    <a ng-if="is_event" style="text-transform: capitalize;" class="nav-link active">
+                        {{localisation.event_product_assignment | translate}}
+                    </a>
+                </li>
+                <li class="nav-item" ng-if="!is_menu_name_added && !menu_name_obj.name">
+                    <div class="submit-plan">
+                        <button type="button" class="bold create" ng-click="openAddMenuName()">{{'Add Menu Name' |
+                            translate}}</button>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="submit-plan">
+                        <button type="button" class="bold create" ng-click="openAddMenuName()">
+                            {{menu_name_obj.name}}
+                        </button>
+                        <button type="button" ng-if="products.length" class="bold create"
+                            ng-click="assignProductsToEvent()">
+                            {{'Assign Selected Items' | translate}}
+                        </button>
+                    </div>
+                </li>
+
+
+            </ul>
+        </div>
+        <div class="container" ng-if="is_menu_name_added">
+            <div class="secnav">
+                <div class="row">
+                    <div class="col-md-4 col-sm-4">
+                        <input style="width: 252px" type="text" placeholder="{{'SEARCH' | translate}}"
+                            ng-keypress="searchProduct($event)" ng-model="search">
+                    </div>
+                    <div class="col-md-8 col-sm-8">
+                        <div class="topfil">
+                            <ul>
+                                <li>
+                                    <button type="button" class="simple" ng-click="refresh()"><img
+                                            src="img/v1_images/ic_rotate.svg">{{'REFRESH' | translate}}</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row select-category" style="margin-top: 20px">
+                    <div class="col-md-3" ng-if="categories.length" style="margin-bottom: 10px;">
+                        <label class="cat-label">{{'SELECT' | translate}}
+                            {{localisation.category | translate}}</label>
+                        <select data-placeholder="Choose {{localisation.category | translate}}" class="app" tabindex="4"
+                            ng-model="selected_cat" ng-options="category.name for category in categories"
+                            ng-change="onSelectCategory(selected_cat, true)">
+                            <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3" style="margin-bottom: 10px;"
+                        ng-repeat="cat in dynamicSubCategories track by $index" ng-init="parentIndex = $index">
+                        <label class="cat-label" ng-if="parentIndex == 0">{{selected_cat.name}}</label>
+                        <label class="cat-label" ng-if="parentIndex > 0">{{selectedCategory[childIndex-1].name}}</label>
+                        <select data-placeholder="Choose Category" tabindex="4" class="app"
+                            ng-model="selectedCategory[childIndex]" ng-init="childIndex = $index"
+                            ng-options="subCat.name for subCat in cat"
+                            ng-change="changeSubCatId(selectedCategory[childIndex], parentIndex + 1, true)">
+                            <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF;">
+                <div class="catbox" ng-if="is_grid">
+
+                    <div class="addcatbr">
+                        <div class="row">
+                            <div class="col-md-3" ng-repeat="product in products">
+                                <div class="product-assign">
+                                    <label style="margin-bottom: 0px">
+                                        <input type="checkbox" ng-checked="product.item_assigned"
+                                            ng-click="checkProductToAssign(product)">
+                                        <span></span>
+                                        <img src="{{product.images[0].image_path}}" style="height: 150px">
+                                    </label>
+                                    <div class="text">
+                                        <strong class="bold ellipsis" style="width: 100%" data-toggle="tooltip"
+                                            title="{{product.name_en}}">{{product.name_en}}</strong>
+                                        <p class="price" style="cursor: default">
+                                            {{product.regular_price ? (product.discount_price ? currency +
+                                            product.discount_price : currency + product.regular_price) : ('PRICE NOT
+                                            ADDED'
+                                            | translate)}}
+                                        </p>
+                                        <p class="cursor price" ng-click="openItemPrice(product)">{{'Price'}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="no-data-found" ng-if="products.length == 0 && dataLoaded">
+                    {{'NO DATA FOUND' | translate}}
+                </div>
+
+                <div class="no-data-found" ng-if="!dataLoaded">
+                    {{'PLEASE SELECT CATEGOY' | translate}}
+                </div>
+
+                <div ng-if="products.length > 0 && dataLoaded" class="row pagination">
+                    <ul ng-if="pager.pages && pager.pages.length">
+                        <li ng-class="{disabled:pager.currentPage === 1}">
+                            <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                        </li>
+                        <li ng-class="{disabled:pager.currentPage === 1}">
+                            <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                        </li>
+                        <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                            <a ng-click="setPage(page)">{{page}}</a>
+                        </li>
+                        <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                            <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                        </li>
+                        <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                            <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="modal" id="addEventMenuRef">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{'ADD EVENT MENU NAME' | translate}}</h3>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <form role="form" id="addEventMenuForm" name="addEventMenuForm"
+                        ng-submit="addEventMenuName(addEventMenuForm)" novalidate>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label>{{'EVENT MENU NAME' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="name" ng-model="menu_name_obj.name"
+                                    placeholder="{{'EVENT MENU NAME' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addEventMenuForm.name.$invalid && addEventMenuForm.$submitted">
+                                    <small ng-show="addEventMenuForm.name.$error.required">Please enter
+                                        event menu name.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="submit-plan">
+                            <button type="submit">{{'SUBMIT' | translate}}</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="editItemPriceRef">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{'ITEM PRICE' | translate}}</h3>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <form role="form" id="editItemPriceForm" name="editItemPriceForm"
+                        ng-submit="editProductPrice(editItemPriceForm)" novalidate>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label>{{'PRICE' | translate}}<span class="star">*</span></label>
+                                <input type="number" name="entered_price" ng-model="entered_price"
+                                    placeholder="{{'ENTER PRICE' | translate}}" required>
+                                <div class="error"
+                                    ng-show="editItemPriceForm.entered_price.$invalid && editItemPriceForm.$submitted">
+                                    <small ng-show="editItemPriceForm.entered_price.$error.required">Please enter
+                                        price.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="submit-plan">
+                            <button type="submit">{{'SUBMIT' | translate}}</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<success-modal message="message"></success-modal>
+<read-more text="read_more_text"></read-more>
+
+<style>
+    .toptabs .nav-tabs .nav-link.active:after {
+        background: none;
+    }
+
+    .product-assign {
+        box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.12);
+        border-radius: 8px;
+        border: 1px solid #dadada;
+        margin: 10px 0px;
+    }
+
+    .price {
+        color: #656565 !important;
+        font-weight: 500;
+        cursor: pointer;
+        text-transform: uppercase;
+        margin-top: 6px;
+    }
+
+    .price:hover {
+        font-weight: 800;
+        text-decoration: underline;
+    }
+</style>

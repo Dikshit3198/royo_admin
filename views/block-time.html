@@ -1,0 +1,258 @@
+<div class="container-fluid back">
+
+</div>
+
+
+<div class="container">
+    <div class="row profile">
+        <div class="col-4">
+
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'Block Times' | translate}}</h1>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)" ng-if="permissions('promotions', 'create') == 1">
+                                <button type="button" class="bold create" data-toggle="modal"
+                                    ng-click="changeView(true)"
+                                    data-target="#addBlockTimeRef">{{'ADD BLOCK TIMES' | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{'NAME' | translate}}</th>
+                                <th>{{'BLOCK TIME' | translate}}</th>
+                                <th>{{'BLOCK END TIME' | translate}}</th>
+                                <th>{{'BLOCK DATE' | translate}}</th>
+                                <th>{{'BLOCK END DATE' | translate}}</th>
+                                <th>{{'COMMISSION' | translate}}</th>
+                                <!-- <th>{{'OFFSET' | translate}}</th> -->
+                                <!-- <th>{{'CREATED ON' | translate}}</th> -->
+                                <th>{{'DESCRIPTION' | translate}}</th>
+                                <th>{{'ACTION' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="blocktime in blockTimeList">
+                                <td>{{blocktime.id}}</td>
+                                <td>{{blocktime.name || 'N/A'}}</td>
+                                <td>{{blocktime.blockTime || 'N/A'}}</td>
+                                <td>{{blocktime.blockEndTime || 'N/A'}}</td>
+                                <td>{{blocktime.blockDate  | date: 'MMM d, y' : 'UTC'}}</td>
+                                <td>{{blocktime.blockEndDate  | date: 'MMM d, y' : 'UTC'}}</td>
+                                <td>{{blocktime.block_time_commission || 'N/A'}}</td>
+                                <!-- <td>{{blocktime.offset || 'N/A'}}</td> -->
+                                <!-- <td>{{blocktime.created_at  | date: 'MMM d, y . hh:mm a' : 'UTC'}}</td> -->
+                                <td>{{blocktime.description || 'N/A'}}</td>
+                                <td>
+                                    <span class="delete" ng-click="deleteBlockTime(blocktime)">
+                                        {{'Delete'}}
+                                    </span>
+                                    <br />
+                                    <span class="delete" ng-click="updateBlockTime(blocktime)">
+                                        {{'Update'}}
+                                    </span>
+                                    <br />
+                                    <span class="delete" ng-click="viewAgents(blocktime)">
+                                        {{'View Agents'}}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="blockTimeList.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+                    <div ng-if="blockTimeList.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="addBlockTimeRef">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{is_updating?'UPDATE':'ADD'}}&nbsp;{{'BLOCK TIME' | translate}}</h3>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <form role="form" id="addBlockTimeForm" name="addBlockTimeForm"
+                        ng-submit="addBlockTime(addBlockTimeForm)" novalidate>
+                        <div class="form-group">
+                            <label>{{'NAME' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="name" ng-model="block_time.name"
+                                placeholder="{{'NAME' | translate}}" required>
+                            <div class="error" ng-show="addBlockTimeForm.name.$invalid && addBlockTimeForm.$submitted">
+                                <small ng-show="addBlockTimeForm.name.$error.required">Please enter
+                                    name.</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>{{'BLOCK TIME' | translate}}<span class="star">*</span></label>
+                            <input type="time" class="time" id="blockTime" name="blockTime"
+                                ng-model="block_time.blockTime" placeholder="HH:mm:ss" required />
+                            <div class="error"
+                                ng-show="addBlockTimeForm.blockTime.$invalid && addBlockTimeForm.$submitted">
+                                <small ng-show="addBlockTimeForm.blockTime.$error.required">Please enter
+                                    blocktime.</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>{{'BLOCK END TIME' | translate}}<span class="star">*</span></label>
+                            <input type="time" class="time" id="blockEndTime" name="blockEndTime"
+                                ng-model="block_time.blockEndTime" placeholder="HH:mm:ss" required />
+                            <div class="error"
+                                ng-show="addBlockTimeForm.blockEndTime.$invalid && addBlockTimeForm.$submitted">
+                                <small ng-show="addBlockTimeForm.blockEndTime.$error.required">Please enter
+                                    block end time.</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>{{'BLOCK DATE' | translate}}<span class="star">*</span></label>
+                            <input style="width: 100%" type="text" id="datepicker_order" ng-model="block_time.blockDate"
+                                placeholder="{{'DATE' | translate}}" readonly>
+                            <span style="position: absolute; right: 30px;" class="inputtag"><img
+                                    src="/img/v1_images/calendar.svg"></span>
+                            <div class="error"
+                                ng-show="addBlockTimeForm.blockDate.$invalid && addBlockTimeForm.$submitted">
+                                <small ng-show="addBlockTimeForm.blockDate.$error.required">Please enter
+                                    blockDate.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{'COMMISSION' | translate}}<span class="star">*</span></label>
+                            <input type="number" limit-to="60" name="block_time_commission"
+                                ng-model="block_time.block_time_commission" placeholder="{{'COMMISSION' | translate}}"
+                                required>
+                            <div class="error"
+                                ng-show="addBlockTimeForm.block_time_commission.$invalid && addBlockTimeForm.$submitted">
+                                <small ng-show="addBlockTimeForm.block_time_commission.$error.required">Please enter
+                                    commission.</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>{{'DESCRIPTION' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="description" ng-model="block_time.description"
+                                placeholder="{{'DESCRIPTION' | translate}}" required>
+                            <div class="error"
+                                ng-show="addBlockTimeForm.description.$invalid && addBlockTimeForm.$submitted">
+                                <small ng-show="addBlockTimeForm.description.$error.required">Please enter
+                                    description.</small>
+                            </div>
+                        </div>
+
+                        <div class="submit-plan">
+                            <button type="submit">{{'SUBMIT' | translate}}</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="modal" id="blocktimeAcceptedAgentRef">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{'BLOCK TIME ACCEPTED AGENTS' | translate}}</h3>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="col-md-12">
+                        <div class="row" ng-if="accepted_blocktime_agents.length">
+                            <div class="col-md-6 card" ng-repeat="blocktimeAgent in accepted_blocktime_agents">
+                                <p>{{blocktimeAgent.agent_id}}</p>
+                                <p>{{blocktimeAgent.name}}</p>
+                                <p>{{blocktimeAgent.email}}</p>
+                            </div>
+                        </div>
+                        <div class="" ng-if="!accepted_blocktime_agents.length">
+                            <p class="text-center">{{'No Data Found' | translate}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+
+
+
+<style>
+    .delete {
+        cursor: pointer;
+    }
+
+    .delete:hover {
+        text-decoration: underline;
+        font-weight: 600;
+    }
+
+    .star {
+        position: relative !important;
+    }
+
+    .card:hover {
+        background-color: rgb(158, 158, 158);
+    }
+</style>

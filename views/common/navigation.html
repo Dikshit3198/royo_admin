@@ -1,0 +1,308 @@
+<div class="side-menu">
+    <nav class="navbar">
+        <!-- Brand -->
+        <a class="navbar-brand"
+            ui-sref="{{['ADMIN', 'SUPPLIER'].includes(profile) ? 'index.dashboard' : 'index.dashboardShipping'}}"
+            ng-style="{'backgroundColor': navBrandColor}">
+            <img ng-if="app_image" id="app_logo" ng-style="{'height' : logo_height}"
+                src="{{compressImage(app_image, '180x120', true)}}" style="object-fit: contain;"
+                ng-class="logo_background_color == 1 ? 'logo-bck' : ''">
+            <div ng-if="!app_image" class="app-image" ng-style="{'backgroundColor': logo_data.background}">
+                <p ng-style="{'color': logo_data.theme_color, 'fontFamily': logo_data.font_family}">{{business_name}}
+                </p>
+            </div>
+        </a>
+        <!-- Toggler/collapsibe Button -->
+        <span class="menu_bar" onclick="openNav()">&#9776;</span>
+        <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar"> <img
+                src="img/v1_images/burger_menu.png"></button> -->
+        <!-- Navbar links -->
+        <div class="navbar-collapse sidenav" id="mySidenav" style="background-color: #ffffff">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <ul class="navbar-nav">
+                <li class="nav-item" ui-sref-active="active" ng-if="['ADMIN', 'SUPPLIER', 'BRANCH'].includes(profile)">
+                    <a class="nav-link" ui-sref="index.dashboard"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_dashboard.svg' : 'img/web-pannel-assets/dashboard.svg'}}">{{'DASHBOARD'
+                        | translate}}</a>
+                </li>
+                <li class="nav-item" ui-sref-active="active" ng-if="['SHIPPING'].includes(profile)">
+                    <a class="nav-link" ui-sref="index.dashboardShipping"><img
+                            src="img/v1_images/ic_dashboard.svg">{{'DASHBOARD' | translate}}</a>
+                </li>
+                <li class="nav-item" ui-sref-active="active"
+                    ng-if="['ADMIN'].includes(profile) && enable_kpi == 1">
+                    <a class="nav-link" ui-sref="production.kpiSetup"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_dashboard.svg' : 'img/web-pannel-assets/dashboard.svg'}}">{{'KPI'
+                        | translate}}</a>
+                </li>
+
+                <li class="nav-item" ui-sref-active="active"
+                    ng-if="['ADMIN', 'SUPPLIER', 'BRANCH'].includes(profile) && (profile === 'SUPPLIER' || no_catalogue == 0) && permissions('catalogue', 'list') == 1">
+                    <a class="nav-link" ui-sref="production.productionSetup"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_orders.svg' : 'img/web-pannel-assets/Catalogue.svg'}}">{{localisation.catalogue
+                        | translate}}</a>
+                </li>
+                <li ng-if="profile === 'ADMIN' && is_single_vendor == 0 && permissions('suppliers', 'list') == 1"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="profile.supplier"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_suppliers.svg' : 'img/web-pannel-assets/Suppliers.svg'}}">{{localisation.suppliers
+                        | translate}}</a>
+                </li>
+                <li ng-if="profile === 'ADMIN' && is_single_vendor == 1 && permissions('suppliers', 'list') == 1"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="profile.supplierSetup.step_one({id: single_vendor_id, tab: 1})"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_suppliers.svg' : 'img/web-pannel-assets/Profile.svg'}}">
+                        {{'MY PROFILE' | translate}}</a>
+                </li>
+                <li ng-if="profile === 'SUPPLIER' && !is_branch_login && permissions('suppliers', 'list') == 1"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="profile.supplierSetup.step_one({id: active_supplier_id, tab: 1})"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_suppliers.svg' : 'img/web-pannel-assets/Profile.svg'}}">
+                        {{'MY PROFILE' | translate}}</a>
+                </li>
+
+                <li ng-if="profile === 'ADMIN' && permissions('suppliers', 'list') == 1 && is_delivery_company == 1"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="profile.deliveryCompany"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_suppliers.svg' : 'img/web-pannel-assets/Suppliers.svg'}}">{{localisation.delivery_company
+                        | translate}}</a>
+                </li>
+
+                <li ng-if="profile === 'SHIPPING' && !is_branch_login && permissions('suppliers', 'list') == 1 && is_delivery_company == 1"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link"
+                        ui-sref="profile.deliveryCompanySetup.step_one({id: delivery_company_id, tab: 1})"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_suppliers.svg' : 'img/web-pannel-assets/Suppliers.svg'}}">{{'MY
+                        PROFILE' | translate}}</a>
+                </li>
+
+                <li class="nav-item" ui-sref-active="active"
+                    ng-if="['ADMIN', 'SUPPLIER'].includes(profile) && permissions('catalogue', 'list') == 1 && enable_extra_product_service == 1 && app_type == 8">
+                    <a class="nav-link" ui-sref="production.extra_products"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_orders.svg' : 'img/web-pannel-assets/Catalogue.svg'}}">{{localisation.extra_products
+                        | translate}}</a>
+                </li>
+
+                <li class="nav-item"
+                    ng-if="hide_agent_module == 0 && (app_type != 2 || (app_type == 2 && ecom_agent_module == 1)) && !is_branch_login && is_pickup != 1 && permissions('agents', 'list') == 1 && is_dine_in == 0 && (profile === 'ADMIN' || (hide_agent_supplier == 0 && profile === 'SUPPLIER') || (is_delivery_company == 1 && profile === 'SHIPPING'))"
+                    ui-sref-active="active"><a ui-sref="profile.agent" class="nav-link"> <img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_agents.svg' : 'img/web-pannel-assets/Agents.svg'}}">{{localisation.agents
+                        | translate}}</a>
+                </li>
+                <li class="nav-item text-capitalize"
+                    ng-if="hide_agent_module == 0 && (app_type != 2 || (app_type == 2 && ecom_agent_module == 1)) && !is_branch_login && is_pickup != 1 && permissions('agents', 'list') == 1 && is_dine_in == 0 && (track_agent_supplier == 1 && profile === 'SUPPLIER')"
+                    ui-sref-active="active"><a ui-sref="profile.trackAgents" class="nav-link"> <img
+                            src="img/v1_images/ic_agents.svg">{{localisation.track_all_agents | translate}}</a>
+                </li>
+
+                <li class="nav-item text-capitalize" ng-if="track_supplier_agent_loc == 1" ui-sref-active="active"><a
+                        ui-sref="index.supplier_agent_location" class="nav-link"> <img
+                            src="img/v1_images/ic_agents.svg">{{'Locations' | translate}}</a>
+                </li>
+
+                <li ng-if="profile === 'ADMIN' && ([2].includes(app_type) || (app_type > 10 && flow_data_values.includes(2))) && permissions('brands', 'list') == 1"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="production.brands"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_brands.svg' : 'img/web-pannel-assets/Brands.svg'}}">{{localisation.brands
+                        | translate}}</a>
+                </li>
+
+                <li class="nav-item" ui-sref-active="active"
+                    ng-if="['ADMIN', 'SUPPLIER', 'BRANCH'].includes(profile) && permissions('orders', 'list') == 1">
+                    <a class="nav-link" ui-sref="orders.ordersManager({status:is_auto_confirmation})"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_order.svg' : 'img/web-pannel-assets/Orders.svg'}}">{{localisation.orders
+                        | translate}}</a>
+                </li>
+
+                <li ng-if="enable_create_event_feature == 1" class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="events.events-list"><img src="img/v1_images/ic_profile.svg">
+                        {{'Events' | translate}}
+                    </a>
+                </li>
+
+                <li class="nav-item" ui-sref-active="active"
+                    ng-if="enable_custom_orders == 1 && ['ADMIN', 'SUPPLIER', 'BRANCH'].includes(profile) && permissions('orders', 'list') == 1">
+                    <a class="nav-link" ui-sref="custom_orders.ordersManager({status:0})"><img
+                            src="img/v1_images/ic_order.svg">Custom {{localisation.orders | translate}}</a>
+                </li>
+
+                <li class="nav-item" ui-sref-active="active"
+                    ng-if="enable_order_calendar_supplier == 1 && ['SUPPLIER', 'BRANCH'].includes(profile) && permissions('orders', 'list') == 1">
+                    <a class="nav-link" ui-sref="profile.supplier-order-calendar({tab:0})"><img
+                            src="img/v1_images/ic_order.svg">{{'Calendar' | translate}}</a>
+                </li>
+
+                <li ng-if="['ADMIN', 'SUPPLIER', 'BRANCH'].includes(profile) && permissions('banners', 'list') == 1 && no_banner_section == 0 && (profile === 'ADMIN' || no_supplier_banner_section == 0)"
+                    class="nav-item" ui-sref-active="active">
+                    <!-- no_supplier_banner_section -->
+                    <a class="nav-link" ui-sref="production.banners"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_banner.svg' : 'img/web-pannel-assets/Banners.svg'}}">{{'BANNERS'
+                        | translate}}</a>
+                </li>
+                <li ng-if="['ADMIN', 'SUPPLIER', 'BRANCH'].includes(profile) && permissions('promotions', 'list') == 1 
+                && (profile === 'ADMIN' || no_supplier_promotion_section == 0) || supplier_promotion_section_show==1"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="promo.listpromo"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_promotions.svg' : 'img/web-pannel-assets/Promotions.svg'}}">{{localisation.promotions
+                        | translate}}</a>
+                </li>
+
+                <!-- <li ng-if="['ADMIN'].includes(profile) && permissions('promotions', 'list') == 1 && enable_voucher_section"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="voucher.listvoucher"><img
+                            src="img/v1_images/ic_promotions.svg">{{localisation.vouchers | translate}}</a>
+                </li> -->
+
+                <li ng-if="profile === 'ADMIN' && permissions('subscription', 'list') == 1 && is_subscription_plan == 1"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="subscription.plans"><img
+                            src="img/v1_images/ic_promotions.svg">{{'SUBSCRIPTION PLANS' | translate}}</a>
+                </li>
+                <li ng-if="['ADMIN', 'SUPPLIER', 'BRANCH'].includes(profile) && (profile === 'ADMIN' || hide_user_info_supplier == 0 || enable_user_subscriptin_supplier == 1) && (is_user_subscription == 1 || (profile == 'SUPPLIER' && enable_user_subscriptin_supplier == 1))"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="subscription.userPlans"><img
+                            src="img/v1_images/ic_promotions.svg">{{localisation.user_subscription | translate}}</a>
+                </li>
+                <li ng-if="profile === 'SUPPLIER' && is_subscription_plan == 1" class="nav-item"
+                    ui-sref-active="active">
+                    <a class="nav-link" ui-sref="subscription.supplierPlans"><img
+                            src="img/v1_images/ic_promotions.svg">{{'SUBSCRIPTIONS' | translate}}</a>
+                </li>
+                <li ng-if="profile === 'ADMIN' && is_loyality_enable  == 1 &&  is_super_admin == 1" class="nav-item"
+                    ui-sref-active="active">
+                    <a class="nav-link" ui-sref="loyalty.plans"><img src="img/v1_images/ic_promotions.svg">
+                        {{'LOYALTY CARDS' | translate}}</a>
+                </li>
+                <li ng-if="['ADMIN', 'SUPPLIER', 'BRANCH'].includes(profile) && is_feedback_form_enabled  == 1"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="feedback.list"><img src="img/v1_images/ic_promotions.svg">{{'FEEDBACK'
+                        | translate}}</a>
+                </li>
+                <li ng-if="['ADMIN', 'SUPPLIER', 'BRANCH'].includes(profile) && gift_card == 1" class="nav-item"
+                    ui-sref-active="active">
+                    <a class="nav-link" ui-sref="giftCard.list"><img src="img/v1_images/ic_promotions.svg">{{'GIFT CARD'
+                        | translate}}</a>
+                </li>
+                <li class="nav-item" ng-if="['ADMIN', 'SUPPLIER', 'BRANCH'].includes(profile)" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="notifications.list"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_promotions.svg' : 'img/web-pannel-assets/Promotions.svg'}}">{{'Notifications'
+                        | translate}}</a>
+                </li>
+                <li ng-if="(profile === 'ADMIN' && permissions('users', 'list') == 1) || (profile == 'SUPPLIER' && hide_user_listing_for_suppliers==0 && (supplier_to_user_chat == 1 || supplier_to_user_video_call == 1 || is_user_type == 1) && hide_user_info_supplier == 0)"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="profile.users"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_profile.svg' : 'img/web-pannel-assets/Users.svg'}}">{{localisation.users
+                        | translate}}</a>
+                </li>
+                <li ng-if="profile === 'ADMIN' && doc_rating_upload == 1">
+                    <a class="nav-link"
+                        ui-sref="index.doc_rating_upload({created_id: user.user_created_id, name: user.firstname, type: 2, message_id: user.message_id, id: user.id})">
+                        <img src="img/v1_images/ic_profile.svg">{{change_name_to_hygiene_rating !== 1 ? 'Supplier Rating' : 'Hygiene Rating' | translate}}
+                    </a>
+                </li>
+                <li ng-if="(admin_to_user_chat == 1 && profile == 'ADMIN') ||
+                (supplier_to_user_chat == 1 && profile == 'SUPPLIER')">
+                    <a class="nav-link"
+                        ui-sref="orders.orderChat({created_id: user.user_created_id, name: user.firstname, type: 2, message_id: user.message_id, id: user.id, receiver_type: 'user'})">
+                        <img src="img/v1_images/ic_profile.svg">{{'Chat' | translate}}
+                    </a>
+                </li>
+
+                <!-- Not working for 'SUPPLIER', 'BRANCH' -->
+                <li ng-if="['ADMIN'].includes(profile) && permissions('sub admins', 'list') == 1 && (profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant !== '1' : true) && (profile === 'ADMIN' || no_supplier_sub_admins == 0)"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="profile.admin"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_profile.svg' : 'img/web-pannel-assets/Users.svg'}}">
+                        {{'SUB ADMINS' | translate}}</a>
+                </li>
+
+                <li ng-if="['ADMIN'].includes(profile) && (is_supplier_rating == 1 || is_product_rating == 1|| (is_agent_rating == 1 && profile === 'ADMIN'))"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link"
+                        ui-sref="{{is_product_rating == 0 ? (is_supplier_rating == 0 ? 'ratings.ratingList.agents' : 'ratings.ratingList.suppliers') : 'ratings.ratingList.products'}}"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_promotions.svg' : 'img/web-pannel-assets/Promotions.svg'}}">{{'RATINGS'
+                        | translate}}</a>
+                </li>
+                <li class="nav-item" ui-sref-active="active"
+                    ng-if="permissions('reports', 'list') == 1 && ['ADMIN', 'SUPPLIER', 'BRANCH'].includes(profile)">
+                    <a ng-if="profile === 'ADMIN'" class="nav-link" ui-sref="reports.reportsTab.user"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_reports_active.svg' : 'img/web-pannel-assets/Reports.svg'}}">{{'REPORTS'
+                        | translate}}</a>
+                    <a ng-if="profile === 'SUPPLIER' && hide_report_info_supplier==0" class="nav-link"
+                        ui-sref="reports.reportsTab.order"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_reports_active.svg' : 'img/web-pannel-assets/Reports.svg'}}">{{'REPORTS'
+                        | translate}}</a>
+                </li>
+                <li class="nav-item"
+                    ng-if="['ADMIN', 'SUPPLIER', 'BRANCH'].includes(profile) && hide_supplier_accounting == 0 && is_single_vendor == 0 && permissions('accounting', 'list') == 1 && (profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant !== '1' : true)"
+                    ui-sref-active="active">
+                    <a class="nav-link" ui-sref="account.accountSettings.supPayable"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_accounts_active.svg' : 'img/web-pannel-assets/Accounting.svg'}}">{{'ACCOUNTING'
+                        | translate}}</a>
+                </li>
+                <li class="nav-item"
+                    ng-if="['ADMIN', 'SUPPLIER', 'BRANCH'].includes(profile) && is_single_vendor == 1 && permissions('accounting', 'list') == 1  && (profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant !== '1' : true)"
+                    ui-sref-active="active">
+                    <a class="nav-link" ui-sref="account.accountSettings.driversStatement"><img
+                            src="img/v1_images/ic_accounts_active.svg">{{'ACCOUNTING' | translate}}</a>
+                </li>
+                <li ng-if="profile === 'ADMIN' && is_survey_monkey_enabled == 1 " class="nav-item"
+                    ui-sref-active="active">
+                    <a class="nav-link" ui-sref="surveyMonkey.survey-monkey"><img
+                            src="img/v1_images/ic_profile.svg">{{'Survey Monkey' | translate}}</a>
+                </li>
+
+
+                <li ng-if="profile === 'ADMIN' && enable_updation_vendor_approval == 1" class="nav-item"
+                    ui-sref-active="active">
+                    <a class="nav-link" ui-sref="vendorApproval.vendorApproval-list"><img
+                            src="img/v1_images/ic_profile.svg">{{'Vendor Approval' | translate}}</a>
+                </li>
+
+
+                <li ng-if="profile === 'ADMIN' && is_social_ecommerce == 1" class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="socialEcommerce.post-report"><img
+                            src="img/v1_images/ic_profile.svg">{{'Social Ecommerce' | translate}}</a>
+                </li>
+                <li ng-if="profile === 'ADMIN' && is_sos_allow == 1" class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="sos.sos-list"><img src="img/v1_images/ic_profile.svg">{{'SOS
+                        Notifications' | translate}}</a>
+                </li>
+
+                <li ng-if="profile === 'ADMIN' && is_wallet_withdraw == 1" class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="wallet.wallet-list"><img src="img/v1_images/ic_profile.svg">{{'Wallet
+                        Withdraw' | translate}}</a>
+                </li>
+
+
+                <li ng-if="profile === 'ADMIN' && permissions('settings', 'list') == 1" class="nav-item"
+                    ui-sref-active="active">
+                    <a class="nav-link" ui-sref="index.settings"><img
+                            ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_settings_active.svg' : 'img/web-pannel-assets/Settings.svg'}}">{{'SETTINGS'
+                        | translate}}</a>
+                </li>
+                <li ng-if="profile === 'ADMIN' && [enable_custom_pages, enable_extra_content_fields].includes('1') && permissions('settings', 'list') == 1"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="index.webContent.pages({type:custom_page_type || 1})"><img
+                            src="img/v1_images/ic_settings_active.svg">{{'CONTENT' | translate}}</a>
+                </li>
+
+                <li ng-if="profile === 'SUPPLIER' && !is_branch_login && permissions('suppliers', 'list') == 1 && enable_contact_us_supplier == 1"
+                    class="nav-item" ui-sref-active="active">
+                    <a class="nav-link" ui-sref="index.contact"><img
+                            src="img/v1_images/ic_settings_active.svg">{{'CONTACT US' | translate}}</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+
+<style>
+    .logo-bck {
+        padding: 5px 20px;
+        width: 200px;
+        height: 120px;
+        border-radius: 8px;
+        background-color: var(--theme-color);
+    }
+</style>

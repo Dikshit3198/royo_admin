@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_notification</title>
+    <desc>Created with Sketch.</desc>
+    <g id="panel" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-11-Copy" transform="translate(4.000000, 2.000000)">
+            <g id="Group-21">
+                <g id="ic_notification">
+                    <g transform="translate(1.000000, 2.000000)">
+                        <path d="M0.5,13.5 L13.5,13.5 L13.5,7 C13.5,3.41521196 10.5870492,0.5 7,0.5 C3.41521196,0.5 0.5,3.41295078 0.5,7 L0.5,13.5 Z" id="Path" stroke="#4A4A4A" fill="#A8A8A8"></path>
+                        <path d="M2.43261719,6.82714844 C2.43261719,4.61800944 4.22797334,2.82714844 6.43261719,2.82714844" id="Rectangle-3-Copy" stroke="#F5F7FB" stroke-linecap="round" stroke-linejoin="round" transform="translate(4.432617, 4.827148) rotate(-3.000000) translate(-4.432617, -4.827148) "></path>
+                        <path d="M5,15 C5,16.157168 5.8954305,17.0952381 7,17.0952381 L7,17.0952381 C8.1045695,17.0952381 9,16.157168 9,15" id="Oval" stroke="#4A4A4A"></path>
+                    </g>
+                    <path d="M0.0319824219,17 L16.0274658,17" id="Line-5" stroke="#4A4A4A" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M8,1.00817871 L8,2.5" id="Line" stroke="#4A4A4A" stroke-linecap="round" stroke-linejoin="round"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

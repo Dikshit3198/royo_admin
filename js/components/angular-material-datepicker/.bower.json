@@ -1,0 +1,33 @@
+{
+  "name": "angular-datepicker-light",
+  "version": "1.1.0",
+  "description": "AngularJS datepicker plugin",
+  "main": "angular-datepicker-light.js",
+  "homepage": "http://www.vickram.me/angular-datepicker-light-plugin/",
+  "authors": [
+    "Vickram Ravichandran (http://vickram.me)"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "angular",
+    "datepicker",
+    "calendar",
+    "directive",
+    "plugin"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "_release": "1.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.1.0",
+    "commit": "40308f6cbb6edc3b6f39aed68eaa24b09a392745"
+  },
+  "_source": "https://github.com/vickramravichandran/angular-datepicker-light.git",
+  "_target": "^1.1.0",
+  "_originalSource": "angular-datepicker-light",
+  "_direct": true
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200px" height="800px" viewBox="0 0 1200 800" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>background</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Login-Copy">
+            <rect fill="#F5F7FB" x="0" y="0" width="1200" height="800"></rect>
+            <g id="Group-31-Copy-2" opacity="0.100000001" transform="translate(-168.000000, 620.000000)">
+                <g id="Group-4" transform="translate(5.228062, 4.614599)">
+                    <g id="Group-3" transform="translate(49.230333, 0.000000)">
+                        <circle id="Combined-Shape" fill="#9B8B5F" cx="127.998865" cy="127.998865" r="127.998865"></circle>
+                        <ellipse id="Oval" stroke="#F5F7FB" stroke-width="14.2220961" cx="127.998865" cy="127.998865" rx="56.8883843" ry="135.109913"></ellipse>
+                        <ellipse id="Oval-Copy" stroke="#F5F7FB" stroke-width="14.2220961" transform="translate(127.998865, 127.998865) rotate(-270.000000) translate(-127.998865, -127.998865) " cx="127.998865" cy="127.998865" rx="56.8883843" ry="135.109913"></ellipse>
+                    </g>
+                    <g id="ic_cart" transform="translate(0.000000, 137.844931)" stroke="#9B8B5F" stroke-linecap="round" stroke-linejoin="round" stroke-width="9.84606652">
+                        <g id="Group" transform="translate(3.117921, 6.153792)">
+                            <g id="Group-2" transform="translate(0.000000, 6.593348)">
+                                <polyline id="Rectangle-2" points="64.0741027 38.0216408 174.60358 38.0216408 154.291702 105.49357 46.2039079 105.49357 26.8780468 10.570687 0 0"></polyline>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+            <g id="Group-31-Copy-2" opacity="0.100000001" transform="translate(1019.000000, -124.000000)">
+                <g id="Group-4" transform="translate(5.228062, 4.614599)">
+                    <g id="Group-3" transform="translate(49.230333, 0.000000)">
+                        <circle id="Combined-Shape" fill="#9B8B5F" cx="127.998865" cy="127.998865" r="127.998865"></circle>
+                        <ellipse id="Oval" stroke="#F5F7FB" stroke-width="14.2220961" cx="127.998865" cy="127.998865" rx="56.8883843" ry="135.109913"></ellipse>
+                        <ellipse id="Oval-Copy" stroke="#F5F7FB" stroke-width="14.2220961" transform="translate(127.998865, 127.998865) rotate(-270.000000) translate(-127.998865, -127.998865) " cx="127.998865" cy="127.998865" rx="56.8883843" ry="135.109913"></ellipse>
+                    </g>
+                    <path d="M49.2303326,176.229206 L183.013665,176.229206 C188.451497,176.229206 192.859731,180.63744 192.859731,186.075273 C192.859731,187.03726 192.718752,187.994055 192.441287,188.91516 L163.336172,285.535929 L60.7710956,225.536461 L49.2303326,176.229206 Z" id="Path-7" fill="#F5F7FB"></path>
+                    <g id="ic_cart" transform="translate(0.000000, 137.844931)">
+                        <g id="Group" transform="translate(3.117921, 6.153792)">
+                            <g id="Group-2" transform="translate(0.000000, 6.593348)">
+                                <ellipse id="Oval-Copy" fill="#9B8B5F" cx="138.904208" cy="147.690998" rx="21.3140424" ry="21.098714"></ellipse>
+                                <ellipse id="Oval-Copy-2" fill="#9B8B5F" cx="64.0741027" cy="147.690998" rx="21.3140424" ry="21.098714"></ellipse>
+                                <polyline id="Rectangle-2" stroke="#9B8B5F" stroke-width="9.84606652" stroke-linecap="round" stroke-linejoin="round" points="64.0741027 38.0216408 174.60358 38.0216408 154.291702 105.49357 46.2039079 105.49357 26.8780468 10.570687 0 0"></polyline>
+                            </g>
+                        </g>
+                        <path d="M65.4900442,96.816449 L113.137218,96.816449" id="Line" stroke="#9B8B5F" stroke-width="9.84606652" stroke-linecap="round" stroke-linejoin="round" fill-rule="nonzero"></path>
+                        <path d="M65.4900442,77.124316 L88.0888822,77.124316" id="Line-Copy" stroke="#9B8B5F" stroke-width="9.84606652" stroke-linecap="round" stroke-linejoin="round" fill-rule="nonzero"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

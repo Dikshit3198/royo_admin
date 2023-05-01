@@ -1,0 +1,317 @@
+<!--=======================================contact page===================-->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-6 mx-auto text-center mt-4">
+        <div class="section-title">
+          <!-- <p>get in touch</p> -->
+          <h4>{{'CONTACT US' | translate}}</h4>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col-md-5">
+        <div class="single-contact">
+          <i class="fa fa-map-marker"></i>
+          <h5>{{'Address' | translate}}</h5>
+          <p>{{client_info.country || ''}}</p>
+        </div>
+        <div class="single-contact">
+          <i class="fa fa-phone"></i>
+          <h5>{{'Phone' | translate}}</h5>
+          <p><a >+{{client_info.country_code}} {{client_info.phone}}</a></p>
+        </div>
+        <div class="single-contact">
+          <i class="fa fa-envelope"></i>
+          <h5>{{'Email' | translate}}</h5>
+          <p><a >{{client_info.email || ''}}</a></p>
+        </div>
+      </div>
+      <div class="col-md-7">
+        <form class="contact-form" role="form" id="addContactUsForm" name="addContactUsForm"
+          ng-submit="contactUs(addContactUsForm)" novalidate>
+          <div class="row">
+            <!-- <div class="col-xl-6">
+                              <input type="text" placeholder="name">
+                           </div> -->
+            <div class="col-xl-6">
+              <div class="form-group">
+                <input type="email" placeholder="{{'Email' | translate}}" ng-model="supplier.email" name="email" required>
+                <div class="error" ng-show="addContactUsForm.email.$invalid && addContactUsForm.$submitted">
+                  <small ng-show="addContactUsForm.email.$error.required">{{'please enter email' | translate}}</small>
+                  <small ng-show="addContactUsForm.email.$error.email">
+                    {{'please enter a valid email' | translate}} </small>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <div class="form-group">
+                <input type="text" placeholder="{{'Subject' | translate}}" name="subject" ng-model="supplier.subject" required>
+                <div class="error" ng-show="addContactUsForm.subject.$invalid && addContactUsForm.$submitted">
+                  <small ng-show="addContactUsForm.subject.$error.required">{{'please enter a subject' | translate}}</small>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="col-xl-6">
+                              <input type="text" placeholder="telephone">
+                           </div> -->
+            <div class="col-xl-12 mt-4">
+              <div class="form-group">
+                <textarea placeholder="{{'Message' | translate}}" cols="30" rows="3" name="message"
+                  ng-model="supplier.message" required></textarea>
+                <div class="error" ng-show="addContactUsForm.message.$invalid && addContactUsForm.$submitted">
+                  <small ng-show="addContactUsForm.message.$error.required">
+                    {{'please enter a message' | translate}}</small>
+                </div>
+                <div>
+                </div>
+                <input type="submit" value="{{'Send Message' | translate}}">
+              </div>
+
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<success-modal message="message"></success-modal>
+<style>
+  html {
+    line-height: 1;
+    overflow-y: scroll;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    height: 100%;
+  }
+
+  a:hover,
+  a:focus {
+    color: #061822;
+  }
+
+  a {
+    text-decoration: none !important;
+  }
+
+  button:focus {
+    outline: 0 none !important;
+  }
+
+  ul {
+    padding: 0;
+  }
+
+  ul li {
+    list-style: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #061822;
+  }
+
+  h1 {
+    font-size: 30px;
+  }
+
+  h2 {
+    font-size: 28px;
+  }
+
+  h3 {
+    font-size: 26px;
+  }
+
+  h4 {
+    font-size: 24px;
+  }
+
+  h5 {
+    font-size: 22px;
+  }
+
+  h6 {
+    font-size: 20px;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  /*------------------------costom css-------------------*/
+  .pb-100 {
+    padding-bottom: 100px;
+  }
+
+  .pt-100 {
+    padding-top: 100px;
+  }
+
+  .mb-100 {
+    margin-bottom: 100px;
+  }
+
+  a {
+    text-decoration: none;
+    color: #333;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  .section-title {
+    position: relative;
+  }
+
+  .section-title p {
+    font-size: 16px;
+    margin-bottom: 5px;
+    font-weight: 400;
+  }
+
+  .section-title h4 {
+    font-size: 40px;
+    font-weight: 600;
+    text-transform: capitalize;
+    position: relative;
+    padding-bottom: 20px;
+    display: inline-block;
+  }
+
+  .section-title h4::before {
+    position: absolute;
+    content: "";
+    width: 80px;
+    height: 2px;
+    background-color: #d8d8d8;
+    bottom: 0;
+    left: 50%;
+    margin-left: -40px;
+  }
+
+  .section-title h4::after {
+    position: absolute;
+    content: "";
+    width: 50px;
+    height: 2px;
+    background-color: #2ca6b1;
+    left: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -25px;
+  }
+
+  .contact {
+    background-image: url('./img/bg-img.png');
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    padding: 60px 0;
+    height: 100vh;
+  }
+
+  .section-title {
+    margin-bottom: 50px;
+  }
+
+  .contact-form input,
+  textarea {
+    width: 100%;
+    border: 1px solid #fff;
+    padding: 10px 10px;
+    text-transform: capitalize;
+    margin-top: 20px;
+    background-color: #ffffff;
+    color: #222;
+    border-radius: 5px;
+  }
+
+  .contact-form input,
+  textarea:focus {
+    outline: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .single-contact {
+    text-align: left;
+    position: relative;
+    padding-left: 70px;
+    margin-bottom: 50px;
+    margin-top: 10px;
+  }
+
+  .single-contact i.fa {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    background-color: #2ca6b1;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 3px;
+  }
+
+  .single-contact h5 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .single-contact p {
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  .contact-form input[type="submit"] {
+    background-color: #2ca6b1;
+    border: 0px;
+    cursor: pointer;
+    font-size: 18px;
+    -webkit-transition: .4s;
+    transition: .4s;
+    color: #fff !important;
+  }
+
+  .contact-form input[type="submit"]:hover {
+    background-color: #2ca6b1
+  }
+
+  .contact-form input:focus,
+  textarea:focus {
+    border-color: #2ca6b1
+  }
+
+  .single-contact p a {
+    color: #fff;
+  }
+
+  /*---------------------------media css-----------------------------------------------*/
+  @media (max-width:992px) {
+    .contact {
+      height: 100%;
+    }
+
+    .row.mt-5 {
+      margin-top: 0rem !important;
+    }
+  }
+</style>

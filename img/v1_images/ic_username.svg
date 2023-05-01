@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_username</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="10" cy="10" r="10"></circle>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Oval-+-Rectangle-5-Mask-Copy" transform="translate(2.000000, 2.000000)">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <circle stroke="#9D8A5F" cx="10" cy="10" r="9.5"></circle>
+            <g id="Group" mask="url(#mask-2)" stroke="#9D8A5F">
+                <g transform="translate(2.500000, 5.833333)">
+                    <circle id="Oval" cx="7.5" cy="4.16666667" r="4.16666667"></circle>
+                    <path d="M0,16.6666667 L0,15 C-3.70074342e-16,11.3181017 2.98476833,8.33333333 6.66666667,8.33333333 L6.66666667,8.33333333 L8.33333333,8.33333333 C12.0152317,8.33333333 15,11.3181017 15,15 L15,16.6666667" id="Rectangle-5" stroke-linecap="round" stroke-linejoin="round"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

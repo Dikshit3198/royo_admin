@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_orders</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Multiple-Vendor" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ic_catalogue_active">
+            <g id="Group-23-Copy-2" transform="translate(3.000000, 4.000000)">
+                <g id="Group-23-Copy">
+                    <rect id="Rectangle" fill="#7CF4FF" x="10.8" y="4.44444444" width="5.4" height="11.5555556" rx="1.8"></rect>
+                    <path d="M2.25,4.89444444 L2.25,14.2 C2.25,14.9455844 2.85441559,15.55 3.6,15.55 L14.4,15.55 C15.1455844,15.55 15.75,14.9455844 15.75,14.2 L15.75,4.89444444 L2.25,4.89444444 Z" id="Rectangle-Copy-12" stroke="#2CA6B1" stroke-width="0.9"></path>
+                    <rect id="Rectangle-Copy-25" fill="#7CF4FF" x="7.2" y="0" width="10.8" height="5.33333333" rx="1.8"></rect>
+                    <rect id="Rectangle-Copy-26" stroke="#2CA6B1" stroke-width="0.9" x="0.45" y="0.45" width="17.1" height="4.43333333" rx="1.8"></rect>
+                    <path d="M4.05,10.2222222 L6.75,10.2222222" id="Line-3" stroke="#2CA6B1" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M4.05,12.8888889 L9.45,12.8888889" id="Line-3-Copy" stroke="#2CA6B1" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

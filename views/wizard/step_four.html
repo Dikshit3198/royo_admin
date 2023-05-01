@@ -1,0 +1,28 @@
+<div class="suprev">
+
+    <div class="rev m-top-30" ng-repeat="review in reviews">
+        <!-- <div class="dropdown">
+            <button type="button" class=" dropdown-toggle" data-toggle="dropdown"
+                style="background-color: transparent; padding: 0; border: none;">
+                <img src="img/v1_images/ic_mored.svg">
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Link 1</a>
+                <a class="dropdown-item" href="#">Link 2</a>
+                <a class="dropdown-item" href="#">Link 3</a>
+            </div>
+        </div> -->
+        
+        <figure> <img src="{{compressImage(review.user_image, '100x100')}}"> </figure>
+        <div class="text">
+            <h5 class="bold">{{review.firstname}} {{review.lastname}}</h5>
+            <h6>{{review.rated_on | date}}</h6>
+            <span><i style="color: #FF9529" class="fa fa-star"></i> {{review.rating}}</span>
+        </div>
+        <p>{{review.comment}}</p>
+    </div>
+    <div class="no-data-found" ng-if="reviews.length == 0 && dataLoaded">
+            {{'NO REVIEWS FOUND' | translate}}
+    </div>
+
+</div>

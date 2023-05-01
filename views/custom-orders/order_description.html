@@ -1,0 +1,1580 @@
+<div class="wrapper">
+
+    <a class="backbtn" ui-sref="custom_orders.ordersManager({status: tabStatus})"><img
+            src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+
+    <div class="orddet">
+        <div class="top">
+            <h1 class="bold" style="text-transform: capitalize;">{{localisation.order_detail | translate}} :
+                #{{order_desc.id}}
+                <!-- <a href=""><img src="img/v1_images/ic_dropdown_fill.svg"></a> -->
+            </h1>
+
+            <div class="current-status"
+                ng-if="profile == 'ADMIN' || profile == 'SUPPLIER' || (profile == 'BRANCH' && is_head_branch == 1)">
+                <button class="bg-success" data-toggle="modal" style="margin-top: -2px; float: right;"
+                    ng-if="hide_agent_module == 0 && ((is_own_delivery && !order_desc.is_own_delivery) || !is_own_delivery) && (order_desc.self_pickup != 1 && order_desc.self_pickup!=3 && order_desc.is_dine_in!=1) && (app_type == 1 || (app_type == 2 && ecom_agent_module == 1) || (app_type == 8 && hideAgentList == 1) || app_type > 10) && disable_agent_manual_assignment == 0 && 
+                    (profile == 'ADMIN' || (profile == 'SUPPLIER' && disable_agent_manual_assignment_supplier == 0 && hide_agent_supplier == 0)) && [1,11,10,3].includes(order_desc.status) && permissions('orders', 'update') == 1"
+                    data-target="#assign_agent_to_order" ng-click="openDriverAssign(order)">{{(order_desc.agent.length
+                    || order_desc.is_agent_assign) ?
+                    ('REASSIGN' | translate) : ('ASSIGN' | translate)}}
+                    {{localisation.agent | translate}}</button>
+
+                <span ng-if="schedule_delivery == 1 && [1,3,11,10,4].includes(order_desc.status)"
+                    style="margin-top: -2px; float: right;">
+                    <button type="button" class="bg-success" ng-click="scheduleDelivery()">Schedule Delivery
+                        Time</button>
+                </span>
+
+                <span ng-if="[5,8,2,6].includes(order_desc.status)">
+                    {{'CURRENT STATUS' | translate}}:
+                    <p ng-if="[5,5].includes(order_desc.status)">
+                        {{5 | status : false : order_desc.type : order_desc.terminology | translate}}
+                    </p>
+                    <p ng-if="order_desc.status == 2">{{2 | status : false : order_desc.type : order_desc.terminologys |
+                        translate}}
+                    </p>
+                    <p ng-if="order_desc.status == 8">{{8 | status : false : order_desc.type : order_desc.terminology |
+                        translate}}
+                    </p>
+                    <p ng-if="order_desc.status == 6">{{6 | status : false : order_desc.type : order_desc.terminology |
+                        translate}}
+                    </p>
+                </span>
+
+                <span ng-if="order_desc.status == 2">
+                    <br>
+                    <a style="cursor: pointer; color: var(--primary-color);" data-toggle="modal"
+                        data-target="#rejection_reason">Rejection Reason</a>
+                </span>
+
+                <span
+                    ng-if="order_desc.status == 0 && permissions('orders', 'update') == 1 && !['zelle','cashapp'].includes(order_desc.payment_source) && (profile == 'ADMIN' ||  disable_supplier_order_accept == 0) && (disable_admin_order_status == 0 || profile == 'SUPPLIER')">
+                    <button type="button" class="bg-secondary" ng-click="ConfirmUpdate(2, order_desc)">{{'REJECT' |
+                        translate}}</button>
+                    <button type="button" class="bg-success" ng-click="ConfirmUpdate(1, order_desc)">{{(app_type == 2 ?
+                        'APPROVE' : 'CONFIRM') | translate}}</button>
+                </span>
+
+                <span
+                    ng-if="order_desc.status == 0 && permissions('orders', 'update') == 1 && ['zelle','cashapp'].includes(order_desc.payment_source) && profile == 'ADMIN'">
+                    <button type="button" class="bg-success" ng-click="viewPaymentreceipt(order_desc)">View
+                        Receipt</button>
+                </span>
+
+
+                <span ng-if="[1,11,10,3,4].includes(order_desc.status) && permissions('orders', 'update') == 1 
+                && table_book_mac_theme && !!order_desc.is_dine_in" style="margin-top: -2px; float: right;">
+                    <button type="button" class="bg-success" ng-click="tableSelection(order_desc)">Update Table</button>
+                </span>
+
+                <span
+                    ng-if="[1,11,10,3,4].includes(order_desc.status) && permissions('orders', 'update') == 1 && (disable_admin_order_status == 0 || profile == 'SUPPLIER')">
+                    <select style="width: 160px; height: 38px; padding: 0px 5px;"
+                        ng-change="updateOrderStatus(order_desc.status, order_desc.id, order_desc.self_pickup)"
+                        ng-model="order_desc.status" convert-to-number>
+                        <option value="1" ng-selected="order_desc.status == 1"
+                            ng-disabled="[10,3,5,11].includes(order_desc.status)">
+                            {{1 | status : false : order_desc.type : order_desc.terminology : order_desc.is_dine_in |
+                            translate}}
+                        </option>
+
+                        <option value="11" ng-selected="order_desc.status == 11"
+                            ng-if="!(order_desc.type == 8 && order_desc.self_pickup == 1) && !(table_book_mac_theme && order_desc.is_dine_in == 1)"
+                            ng-disabled="[10,3,5].includes(order_desc.status) && !(order.self_pickup == 1 && [3,4].includes(order.status))">
+                            {{11 | status : false : order_desc.type : order_desc.terminology : order_desc.is_dine_in |
+                            translate}}
+                        </option>
+
+                        <option value="10" ng-selected="order_desc.status == 10"
+                            ng-if="!(enable_product_appointment && order_desc.type == 8 && order_desc.self_pickup == 1) && !(table_book_mac_theme && order_desc.is_dine_in == 1)"
+                            ng-disabled="[3,5].includes(order_desc.status) && !(order.self_pickup == 1 && [3,4].includes(order.status))">
+                            {{10 | status : false : order_desc.type : order_desc.terminology : order_desc.is_dine_in |
+                            translate}}
+                        </option>
+
+                        <option
+                            ng-if="order_desc.self_pickup == 0 && (profile == 'ADMIN' || hide_ontheway_delivered_supplier == 0)"
+                            value="3" ng-selected="order_desc.status == 3"
+                            ng-disabled="order_desc.status == 5 || (profile == 'SUPPLIER' && disable_supplier_delivery_status == 1) || (profile == 'ADMIN' && disable_ontheway_delivered_admin == 1)">
+                            {{3 | status : false : order_desc.type : order_desc.terminology : order_desc.is_dine_in |
+                            translate}}
+                        </option>
+
+                        <option ng-if="order_desc.self_pickup == 1" style="color: var(--gray);  pointer-events: none;"
+                            ng-if="order_desc.self_pickup == 1" value="3" ng-selected="order_desc.status == 3">
+                            {{('USER ' + (3 | status : false : order_desc.type : order_desc.category[0].terminology :
+                            order_desc.is_dine_in)) | translate}}
+                        </option>
+
+                        <option style="color: var(--gray); pointer-events: none;" ng-click="void"
+                            ng-if="order_desc.self_pickup == 1 && !(enable_product_appointment && order_desc.type == 8 && order_desc.self_pickup == 1)"
+                            value="4" ng-selected="order_desc.status == 4">
+                            {{('USER ' + (4 | status : false : order_desc.type : order_desc.category[0].terminology :
+                            order_desc.is_dine_in)) | translate}}
+                        </option>
+
+                        <option
+                            ng-if="profile == 'ADMIN' || (disable_supplier_delivery_status == 0 && hide_ontheway_delivered_supplier == 0)"
+                            value="5"
+                            ng-style="order_desc.is_dine_in && dine_in_deliver_disable ? {'color': 'var(--gray)', 'pointer-events': 'none'} : ''"
+                            ng-disabled="(order_desc.is_dine_in && dine_in_deliver_disable) || (profile == 'ADMIN' && disable_ontheway_delivered_admin == 1)"
+                            ng-selected="order_desc.status == 5">
+                            {{5 | status : false : order_desc.type : order_desc.terminology : order_desc.is_dine_in |
+                            translate}}
+                        </option>
+                    </select>
+                </span>
+
+                <span ng-if="disable_admin_order_status == 1 && profile == 'ADMIN'">
+                    <p>
+                        {{order_desc.status | status : false : order_desc.type : order_desc.terminology :
+                        order_desc.is_dine_in | translate}}
+                    </p>
+                </span>
+
+                <span ng-if="showRefundBtn" style="margin-top: -2px; float: right;">
+                    <button class="bg-success" type="button" ng-click="refundMumybenePayment()">{{'Refund' |
+                        translate}}</button>
+                </span>
+
+                <span ng-if="is_invoice_print_enable==1" style="margin-top: -2px; float: right;">
+                    <button class="bg-success" ng-click="printOrderDetails('printDet1')">{{'Print' |
+                        translate}}</button>
+                </span>
+
+
+            </div>
+
+        </div>
+
+        <div class="row  m-top-20" id="printDet">
+            <div class="col-md-8">
+                <div class="box">
+                    <div class="right" style="width: 100%" ng-if="data_loaded">
+                        <ul>
+                            <li class="mb-4"><label style="text-transform: capitalize;">
+                                    {{localisation.order_date | translate}}</label>{{order_desc.created_at | date:
+                                'medium' : 'UTC'}}
+                            </li>
+                            <li ng-if="[5,6].includes(order_desc.status)"><label
+                                    style="text-transform: capitalize;">{{localisation.delivery_date |
+                                    translate}}</label>{{order_desc.user_delivery_date_time | date: 'medium' : 'UTC'}}
+                            </li>
+                            <li ng-class="!!order_desc.is_schedule ? 'm-top-20' : ''">
+                                <label>{{'PAYMENT STATUS' | translate}}</label>
+                                <span>{{order_desc.payment_status==1?'Paid':'Un Paid'}}</span>
+                            </li>
+                            <li ng-if="order_desc.paymentStatus">
+                                <label>{{localisation.payment | translate}} Status(Id)</label>
+                                <span>{{order_desc.paymentStatus}} ({{order_desc.paymentId}})</span>
+                            </li>
+
+                        </ul>
+                        <ul class="m-top-20">
+                            <li ng-if="profile === 'ADMIN' && is_single_vendor == 0" class="mb-4">
+                                <label>{{'Pickup Name' | translate}}
+                                    <!-- {{'NAME' | translate}} -->
+                                </label>{{order_desc.user_pickup_name}}<br>
+                            </li>
+                            <li ng-if="profile === 'ADMIN' && is_single_vendor == 0" class="ellipsis"
+                                ng-if="branch_flow == 0" style="width: 56%;">
+                                <label>{{'Pickup Address' | translate}}</label>
+                                <span data-toggle="tooltip" title="{{order_desc.user_pickup_address}}">
+                                    {{order_desc.user_pickup_address}}
+                                </span>
+                            </li>
+                            <li>
+                                <label>{{'DELIVERY MODE' | translate}}</label>
+                                <span>{{'Delivery' | translate}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div ng-if="data_loaded" style="position: relative; margin-top: 40px;">
+                    <div class="row mb-4">
+                        <!-- class product-update-btns -->
+                        <div class="col-md-2 mr-2"
+                            ng-if="dhlService == 1 && [0,1].includes(order_desc.status) && order_desc.dhlData && !order_desc.dhlData.length"
+                            ng-style="order_request == 1 && order_desc.is_edit == 0 && order_desc.status == 0 ? '' : ''">
+                            <button ng-if="!is_dhl_assignment" type="button" class="button-primary"
+                                ng-click="dhlAssignment()">Assign to DHL</button>
+                            <button ng-if="is_dhl_assignment" type="button" class="button-primary"
+                                ng-click="submitDHL()">Submit to DHL</button>
+                        </div>
+                        <div class="col-md-2 mr-2"
+                            ng-if="is_ship_rocket_enable == 1 && [0,1].includes(order_desc.status) && !order_desc.is_shiprocket_assigned"
+                            ng-style="order_request == 1 && order_desc.is_edit == 0 && order_desc.status == 0 ? '' : ''">
+                            <button ng-if="!order_desc.is_shiprocket_assigned && [0,1].includes(order_desc.status)"
+                                type="button" class="button-primary" ng-click="openShipRocket()">Ship
+                                Rocket</button>
+                            <button ng-if="order_desc.is_shiprocket_assigned" style="width: 100%;" type="button"
+                                class="button-primary" ng-click="trackShipRocket()">Track Ship Rocket</button>
+                        </div>
+
+                        <div class="col-md-6 mr-2" ng-if="order_request == 1 && order_desc.status == 0">
+                            <div class="row">
+                                <div ng-if="order_desc.is_edit == 0" class="mr-1">
+                                    <button ng-if="edit_product == 0" class="button-primary" type="button"
+                                        ng-click="editProducts()">Edit</button>
+                                    <button ng-if="edit_product == 1" class="button-primary" type="button"
+                                        ng-click="updateProducts()">Update</button>
+                                </div>
+                                <div ng-if="is_update_price_enable == 1 && order_desc.admin_updated_charge<=0">
+                                    <button ng-click="EditOrderPrice(order_desc)" type="button" class="button-primary"
+                                        style="width: auto; padding: 4px 20px; font-size: 16px;">
+                                        {{'Update Price' | translate}}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <h2 style="color: #4a4a4a; font-weight: 500;">{{localisation.products | translate}}</h2>
+                    <div class="box" ng-repeat="product in products">
+                        <div class="left" style="padding: 12px; width: 160px">
+                            <div class="leftimg">
+                                <img style="height: 100px" src="{{compressImage(product.image, '180x140')}}">
+                                <!-- <h6 class="ellipsis" data-toggle="tooltip" title="{{product.product}} x {{product.quantity}}">
+                                {{product.product}} x {{product.quantity}}</h6>
+                            <span class="bold">AED {{product.Product_cost}}</span> -->
+                            </div>
+                        </div>
+                        <div class="right" style="padding: 12px; width: 85%">
+                            <ul>
+
+                            </ul>
+
+                            <ul ng-if="product.addons.length" style="margin-bottom: 10px;">
+                                <li style="width: 100%" ng-repeat="addon in product.addons track by $index">
+                                    <small><b style="text-transform: uppercase;">{{addon.addon_name}} :</b>
+                                        {{addon.addon_types}}</small>
+                                </li>
+                            </ul>
+
+                            <ul>
+                                <li style="width: 100%">
+                                    {{currency}}{{(product.estimated_cost).toFixed(price_decimal_length)}}
+                                </li>
+                            </ul>
+                            <ul>
+                                <li style="width: 100%">Instructions: <b>{{product.instructions_delivery}}</b></li>
+                            </ul>
+                            <ul ng-if="product.duration && is_product_weight == 1">
+                                <li style="width: 100%">Weight: {{product.duration}}grams</li>
+                            </ul>
+                            <ul>
+                                <li style="width: 100%"
+                                    ng-if="branch_flow == 1 && product.branch && is_multiple_supplier == 1"><label
+                                        style="display: inline-block;">Branch: </label>
+                                    {{product.branch}}
+                                    <!-- &nbsp;-&nbsp;{{product.branchAddress}} -->
+                                </li>
+                            </ul>
+                            <ul class="variants" ng-if="product.variants.length && app_type == 2">
+                                <li ng-repeat="variant in product.variants">{{variant.variant_name}} :
+                                    <span ng-if="variant.variant_type == 0">{{variant.variant_value}}</span>
+                                    <span ng-if="variant.variant_type == 1" class="v-color"
+                                        ng-style="{'backgroundColor': variant.variant_value}"> </span>
+                                </li>
+                            </ul>
+                            <ul ng-if="order_desc.return_data.length">
+                                <li ng-repeat="rtn in order_desc.return_data">
+                                    <small>{{'Action' |translate}}:&nbsp;{{'Returned' | translate}}</small>
+                                    <small>{{'Reason' | translate}}:&nbsp;{{rtn.reasons || 'N/A'}}</small>
+                                </li>
+                            </ul>
+
+                            <div class="row persinfo"
+                                ng-if="enable_product_special_instruction && product.special_instructions">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>
+                                            <small>{{'Special Instructions'
+                                                |translate}}:&nbsp;<b>{{product.special_instructions}}</b></small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" ng-if="edit_product" style="margin-top: 10px;">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend cursor" ng-click="decreaseQuantity(product)">
+                                            <span class="input-group-text"><i class="fa fa-minus"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" value="{{product.quantity}}"
+                                            placeholder="Qty" readonly>
+                                        <div class="input-group-append cursor" ng-click="increaseQuantity(product)">
+                                            <span class="input-group-text"><i class="fa fa-plus"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="remove-product" ng-if="products.length > 1">
+                                        <button type="button" ng-click="removeProduct($index)">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row persinfo" ng-if="dhlService == 1 && is_dhl_assignment">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Weight</label>
+                                        <input type="number" name="weight" integers ng-model="product.weight"
+                                            placeholder="Weight">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Width</label>
+                                        <input type="number" name="width" integers ng-model="product.width"
+                                            placeholder="Width">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Height</label>
+                                        <input type="number" name="height" integers ng-model="product.height"
+                                            placeholder="Height">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Depth</label>
+                                        <input type="number" name="depth" integers ng-model="product.depth"
+                                            placeholder="Depth">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="bx-top">
+                    <img src="{{order_desc.user_image ? compressImage(order_desc.user_image, '80x80') : 'img/default_user.png'}}"
+                        onError="src = './img/default_user.png';">
+                    <label>{{'DELIVERY USER NAME' | translate}}</label>
+                    <p>{{order_desc.user_delivery_name}}</p>
+
+                    <label ng-if="profile == 'ADMIN'">{{'DELIVERY CONTACT NUMBER' |
+                        translate}}</label>
+                    <p ng-if="profile == 'ADMIN'">
+                        {{order_desc.user_delivery_phone}}</p>
+
+                    <label>{{'DELIVERY ADDRESS' | translate}}</label>
+                    <p>
+                        {{order_desc.user_delivery_address}}
+                    </p>
+                </div>
+
+
+
+                <div class="img_box m-top-30 m-bottom-30" style="margin-bottom: 70px;">
+                    <label>{{'Uploaded Images' | translate}}</label>
+                    <div class="col-md-12" ng-repeat="imgs in order_desc.upload_picture track by $index">
+                        <img src="{{imgs.upload_picture}}">
+                    </div>
+                </div>
+
+
+
+                <div class="bx-top m-top-30 m-bottom-30" style="margin-bottom: 70px;">
+                    <ul>
+                        <li>{{'ORDER PRICE' | translate}}
+                            <strong class="bold">
+                                {{currency}}{{ (order_desc.estimated_cost).toFixed(price_decimal_length) }}</strong>
+                        </li>
+
+                        <li>{{'TOTAL PRICE' | translate}}
+                            <strong class="bold">
+                                {{currency}}{{ (order_desc.estimated_cost).toFixed(price_decimal_length) }}</strong>
+                        </li>
+                    </ul>
+
+                </div>
+
+                <div class="bx-top m-top-30"
+                    ng-if="order_desc.refund_amount && order_desc.status == 8 && order_desc.payment_type != 0">
+                    <p class="refund">Refund Amount<strong>{{currency}} {{order_desc.refund_amount}}</strong></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="prep_time">
+    <div class="modal-dialog" style="max-width: 500px;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>{{localisation.order | translate}} confirmation</h3>
+                </div>
+
+                <div class="modbody list-products" style="border: none;">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group timeslot" style="padding: 0px; border: none;">
+                                <label>{{localisation.preparation_time | translate}}</label>
+                                <div class="input" clock-picker data-autoclose="true">
+                                    <input autocomplete="off" type="text" ng-model="prep_time" id="preptime" readonly>
+                                    <span class="inputtag"><img src="img/v1_images/timeg.png"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7 modfooter" style="background-color: #ffffff;">
+                            <button type="submit" class="bg-success bold" style="width: 250px; margin-top: 10px;"
+                                ng-click="orderConfirmation(1, selected_order, 1)">{{'ADD' | translate}}
+                                {{localisation.preparation_time | translate}}</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button type="submit" class="bg-success bold" style="width: 250px;"
+                        ng-click="orderConfirmation(1, selected_order, 0)">Continue With Default</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="zelle_confirmation">
+    <div class="modal-dialog" style="max-width: 550px;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>{{localisation.order}} Confirmation</h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="receipt">
+                        <img src="{{compressImage(zelle_order.zelle_receipt_url, '300x200', true)}}">
+                    </div>
+                </div>
+
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button type="button" class="bg-secondary" data-dismiss="modal"
+                        ng-click="ConfirmUpdate(2, zelle_order)">{{'REJECT' | translate}}</button>
+                    <button type="button" class="bg-success" data-dismiss="modal"
+                        ng-click="ConfirmUpdate(1, zelle_order)">{{(app_type == 2 ? 'APPROVE' : 'CONFIRM') |
+                        translate}}</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="order_prescription">
+    <div class="modal-dialog" style="max-width: 550px;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>{{localisation.prescription_value | translate}}</h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="receipt">
+                        <img src="{{compressImage(prescription_image, '300x200', true)}}">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="add_products">
+    <div class="modal-dialog" style="max-width: 72%; width: 80%;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>Choose {{localisation.products | translate}} to add</h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <div class="wrapper" style="margin-bottom: 30px;">
+
+                        <div class="category">
+
+                            <div class="secnav">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <div class="row select-category" style="margin-top: -30px">
+                                            <div class="col-md-3" ng-if="categories.length"
+                                                style="margin-bottom: 10px;">
+                                                <label class="cat-label">{{'SELECT' | translate}}
+                                                    {{localisation.category | translate}}</label>
+                                                <select data-placeholder="Choose {{localisation.category | translate}}"
+                                                    class="app" tabindex="4" ng-model="selected_cat"
+                                                    ng-options="category.name for category in categories"
+                                                    ng-change="onSelectCategory(selected_cat, true)">
+                                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-3" style="margin-bottom: 10px;"
+                                                ng-repeat="cat in dynamicSubCategories track by $index"
+                                                ng-init="parentIndex = $index">
+                                                <label class="cat-label"
+                                                    ng-if="parentIndex == 0">{{selected_cat.name}}</label>
+                                                <label class="cat-label"
+                                                    ng-if="parentIndex > 0">{{selectedCategory[childIndex-1].name}}</label>
+                                                <select data-placeholder="Choose Category" tabindex="4" class="app"
+                                                    ng-model="selectedCategory[childIndex]"
+                                                    ng-init="childIndex = $index"
+                                                    ng-options="subCat.name for subCat in cat"
+                                                    ng-change="changeSubCatId(selectedCategory[childIndex], parentIndex + 1, true)">
+                                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <input style="width: 100%" type="text" placeholder="{{'SEARCH' | translate}}"
+                                            ng-keypress="searchProduct($event)" ng-model="search">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF;">
+                                <div class="catbox">
+                                    <div class="addcatbr">
+                                        <div class="row">
+                                            <div class="col-md-2" ng-repeat="product in product_list">
+                                                <div class="product-assign">
+                                                    <label style="margin-bottom: 0px">
+                                                        <input ng-if="product.price && product.left_quantity"
+                                                            type="checkbox" ng-click="selectProduct(product)">
+                                                        <span ng-if="product.price && product.left_quantity"></span>
+                                                        <img ng-style="product.price ? {'cursor': 'pointer'} : {'cursor': 'default'}"
+                                                            src="{{compressImage(product.images[0].image_path, '290x180')}}"
+                                                            style="height: 110px;">
+                                                        <div class="out-stock" ng-if="!product.left_quantity">Out Of
+                                                            Stock</div>
+                                                    </label>
+                                                    <div class="text">
+                                                        <strong class="bold ellipsis"
+                                                            style="width: 100%; font-size: 14px;" data-toggle="tooltip"
+                                                            title="{{product.name_en}}">{{product.name_en}}</strong>
+                                                        <p class="price" style="cursor: default; font-size: 14px">
+                                                            {{product.price ? (currency +
+                                                            (product.price).toFixed(price_decimal_length)) : 'Price Not
+                                                            Added'}}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="no-data-found" ng-if="product_list.length == 0 && dataLoaded">
+                                    {{'NO DATA FOUND' | translate}}
+                                </div>
+
+                                <div class="no-data-found" ng-if="!dataLoaded">
+                                    {{'PLEASE SELECT CATEGORY' | translate}}
+                                </div>
+
+                                <div ng-if="product_list.length > 0 && dataLoaded" class="row pagination">
+                                    <ul ng-if="pager.pages && pager.pages.length">
+                                        <li ng-class="{disabled:pager.currentPage === 1}">
+                                            <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                                        </li>
+                                        <li ng-class="{disabled:pager.currentPage === 1}">
+                                            <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                                        </li>
+                                        <li ng-repeat="page in pager.pages"
+                                            ng-class="{active:pager.currentPage === page}">
+                                            <a ng-click="setPage(page)">{{page}}</a>
+                                        </li>
+                                        <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                            <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                                        </li>
+                                        <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                            <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button type="button" class="bg-success" data-dismiss="modal"
+                        style="width: auto; padding: 2px 20px;" ng-click="addProducts()">Add selected
+                        {{localisation.product | translate}}</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="schedule_delivery_time">
+    <div class="modal-dialog" style="max-width: 320px;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>Schedule Delivery Time</h3>
+                </div>
+
+                <div class="modbody list-products" style="border: none;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="text" name="date" readonly id="schedule_data"
+                                    ng-model="schedule_delivery_time.date" placeholder="Date">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-group timeslot" style="padding: 0px; border: none;">
+                                <label>Time</label>
+                                <div class="input" clock-picker data-autoclose="true">
+                                    <input autocomplete="off" placeholder="Time" type="text"
+                                        ng-model="schedule_delivery_time.time" id="schedule_time" readonly>
+                                    <span class="inputtag"><img src="img/v1_images/timeg.png"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button type="submit" class="bg-success bold" style="width: 250px;"
+                        ng-click="setDeliveryTime()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="assign_agent_to_order">
+    <div class="modal-dialog" style="max-width: 360px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead" style="padding: 20px 30px">
+                    <h2 class="bold" style="display: inline-block;">{{'CHOOSE' | translate}}
+                        {{localisation.agent | translate}}</h2>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="padding: 20px 30px">
+                    <div ng-if="is_vehicle_category_enable=='1'" class="select-category mb-3">
+                        <select class="app" ng-model="selected_agent_vehicle_cat"
+                            ng-change="onSelectAgentVehicle(selected_agent_vehicle_cat)">
+                            <option value="">{{'SELECT VEHICLE' | translate}}</option>
+                            <option ng-repeat="vehicle in vehicleCatList" value="{{vehicle.id}}">{{vehicle.name}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div isteven-multi-select input-model="agents" output-model="selected_agent" max-height="250px"
+                        button-label="name total_active_orders" item-label="name total_active_orders"
+                        tick-property="ticked" selection-mode="single">
+                    </div>
+                </div>
+
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button type="submit" class="bg-success bold" ng-click="assignAgent()"
+                        ng-class="selected_agent == '' ? 'disabled' : ''" ng-disabled="selected_agent == ''">{{'ASSIGN'
+                        | translate}}</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="dhl_shipment">
+    <div class="modal-dialog" style="max-width: 420px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead" style="padding: 20px 30px">
+                    <h2 class="bold" style="display: inline-block;">DHL Shipment</h2>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="padding: 20px 30px">
+                    <ul>
+                        <li>AWB No. : {{dhlData.AWBNumber}}</li>
+                        <li>Consignee Name : {{dhlData.ShipmentInfo.ConsigneeName}}</li>
+                        <li>Consignee Address : {{dhlData.ShipmentInfo.Consignee.City}},
+                            {{dhlData.ShipmentInfo.Consignee.CountryCode}},
+                            {{dhlData.ShipmentInfo.Consignee.PostalCode}}</li>
+                        <li>Pieces : {{dhlData.ShipmentInfo.Pieces}}</li>
+                        <li>Weight : {{dhlData.ShipmentInfo.Weight}}{{dhlData.ShipmentInfo.WeightUnit}}</li>
+                        <li>Shipment Date : {{dhlData.ShipmentInfo.ShipmentDate | date: 'medium'}}</li>
+                        <li>Shipment Description : {{dhlData.ShipmentInfo.ShipmentDesc}}</li>
+                        <li>Status : {{dhlData.ShipmentInfo.ShipmentEvent.ServiceEvent.Description}}
+                            ({{dhlData.ShipmentInfo.ShipmentEvent.ServiceEvent.EventCode}})</li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="order_rejection">
+    <div class="modal-dialog" style="max-width: 550px;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>{{localisation.order | translate}} Rejection Reason</h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <textarea style="width: 100%;" class="form-control" placeholder="Reason" rows="4"
+                        ng-model="rejection_reason"></textarea>
+                </div>
+
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button type="button" class="bg-success" data-dismiss="modal"
+                        ng-click="orderConfirmation(2, selected_order, 0)">Submit</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="edit_order_price">
+    <div class="modal-dialog" style="max-width: 320px;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>Edit Price</h3>
+                </div>
+                <div class="modbody list-products" style="border: none;">
+                    <div class="row">
+                        <form role="form" id="edit_order_priceForm" name="edit_order_priceForm"
+                            ng-submit="onEditNewPrice(edit_order_priceForm)" autocomplete="off" novalidate>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Price</label>
+                                    <input type="number" name="admin_updated_charge" id="admin_updated_charge"
+                                        ng-model="edit_order_price.admin_updated_charge" placeholder="Order Price"
+                                        required>
+                                    <div class="error"
+                                        ng-show="edit_order_priceForm.admin_updated_charge.$invalid && edit_order_priceForm.$submitted">
+                                        <small
+                                            ng-show="edit_order_priceForm.admin_updated_charge.$error.required">{{'PLEASE
+                                            ENTER THE PRICE' | translate}}</small>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-if="disable_tax == 0">
+                                    <label>{{localisation.tax | translate}}</label>
+                                    <input type="number" name="edit_order_tax" id="edit_order_tax"
+                                        ng-model="edit_order_price.handlingAdmin" placeholder="Tax">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label>{{'Updated Receipt' | translate}}</label>
+                                <input filestyle="" type="file" accept="image/*" name="image1" ng-model="logo"
+                                    class="cursor" style="width: 242px;"
+                                    onchange="angular.element(this).scope().file_to_upload_for_edit_order_receipt(this.files)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                                <span ng-if="edit_order_price.admin_price_update_receipt">
+                                    <img style="width: 100%; height: 100%; object-fit: contain;" id="croppr"
+                                        src="{{edit_order_price.admin_price_update_receipt}}">
+                                </span>
+                                <span ng-if="!edit_order_price.admin_price_update_receipt">
+                                    <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                                </span>
+                                <div class="error"
+                                    ng-show="!edit_order_price.admin_price_update_receipt && edit_order_priceForm.$submitted">
+                                    <small ng-show="!edit_order_price.admin_price_update_receipt">{{'PLEASE UPLOAD
+                                        RECEIPT' | translate}}</small>
+                                </div>
+                            </div>
+                            <div class="modfooter text-center" style="padding: 15px 15px">
+                                <button type="submit" class="bg-success bold" style="width: 250px;">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="ship_rocket_modal">
+    <div class="modal-dialog" style="max-width: 320px;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>Ship Rocket</h3>
+                </div>
+                <div class="modbody list-products" style="border: none;">
+                    <div class="row">
+                        <form role="form" id="ship_rocket_form" name="ship_rocket_form"
+                            ng-submit="submitShipRocket(ship_rocket_form)" autocomplete="off" novalidate>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Delivery Charge</label>
+                                    <input type="number" name="deliveryCharge" id="deliveryCharge"
+                                        ng-model="ship_rocket_obj.deliveryCharge" placeholder="Delivery Charge"
+                                        required>
+                                    <div class="error"
+                                        ng-show="ship_rocket_form.deliveryCharge.$invalid && ship_rocket_form.$submitted">
+                                        <small ng-show="ship_rocket_form.deliveryCharge.$error.required">{{'PLEASE ENTER
+                                            THE DELIVERY CHARGE' | translate}}</small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Weight</label>
+                                    <input type="number" name="weight" id="weight" ng-model="ship_rocket_obj.weight"
+                                        placeholder="Weight" required>
+                                    <div class="error"
+                                        ng-show="ship_rocket_form.weight.$invalid && ship_rocket_form.$submitted">
+                                        <small ng-show="ship_rocket_form.weight.$error.required">{{'PLEASE ENTER THE
+                                            WEIGHT' | translate}}</small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Length</label>
+                                    <input type="number" name="length" id="length" ng-model="ship_rocket_obj.length"
+                                        placeholder="Length" required>
+                                    <div class="error"
+                                        ng-show="ship_rocket_form.length.$invalid && ship_rocket_form.$submitted">
+                                        <small ng-show="ship_rocket_form.length.$error.required">{{'PLEASE ENTER THE
+                                            LENGTH' | translate}}</small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Height</label>
+                                    <input type="number" name="height" id="height" ng-model="ship_rocket_obj.height"
+                                        placeholder="Height" required>
+                                    <div class="error"
+                                        ng-show="ship_rocket_form.height.$invalid && ship_rocket_form.$submitted">
+                                        <small ng-show="ship_rocket_form.height.$error.required">{{'PLEASE ENTER THE
+                                            HEIGHT' | translate}}</small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Breadth</label>
+                                    <input type="number" name="breadth" id="breadth" ng-model="ship_rocket_obj.breadth"
+                                        placeholder="Breadth" required>
+                                    <div class="error"
+                                        ng-show="ship_rocket_form.breadth.$invalid && ship_rocket_form.$submitted">
+                                        <small ng-show="ship_rocket_form.breadth.$error.required">{{'PLEASE ENTER THE
+                                            BREADTH' | translate}}</small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Customer Pin Code</label>
+                                    <input type="text" name="customer_pincode" id="customer_pincode"
+                                        ng-model="ship_rocket_obj.customer_pincode" placeholder="Pin Code" required>
+                                    <div class="error"
+                                        ng-show="ship_rocket_form.customer_pincode.$invalid && ship_rocket_form.$submitted">
+                                        <small ng-show="ship_rocket_form.customer_pincode.$error.required">{{'PLEASE
+                                            ENTER THE CUSTOMER PIN CODE' | translate}}</small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Customer State</label>
+                                    <input type="text" name="customer_state" id="customer_state"
+                                        ng-model="ship_rocket_obj.customer_state" placeholder="Customer State" required>
+                                    <div class="error"
+                                        ng-show="ship_rocket_form.customer_state.$invalid && ship_rocket_form.$submitted">
+                                        <small ng-show="ship_rocket_form.customer_state.$error.required">{{'PLEASE ENTER
+                                            THE CUSTOMER STATE' | translate}}</small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Supplier Pin Code</label>
+                                    <input type="text" name="supplier_pincode" id="supplier_pincode"
+                                        ng-model="ship_rocket_obj.supplier_pincode" placeholder="Supplier Pin Code"
+                                        required>
+                                    <div class="error"
+                                        ng-show="ship_rocket_form.supplier_pincode.$invalid && ship_rocket_form.$submitted">
+                                        <small ng-show="ship_rocket_form.supplier_pincode.$error.required">{{'PLEASE
+                                            ENTER THE SUPPLIER PIN CODE' | translate}}</small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Supplier State</label>
+                                    <input type="text" name="supplier_state" id="supplier_state"
+                                        ng-model="ship_rocket_obj.supplier_state" placeholder="Supplier State" required>
+                                    <div class="error"
+                                        ng-show="ship_rocket_form.supplier_state.$invalid && ship_rocket_form.$submitted">
+                                        <small ng-show="ship_rocket_form.supplier_state.$error.required">{{'PLEASE ENTER
+                                            THE SUPPLIER STATE' | translate}}</small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Supplier City</label>
+                                    <input type="text" name="supplier_city" id="supplier_city"
+                                        ng-model="ship_rocket_obj.supplier_city" placeholder="Supplier City" required>
+                                    <div class="error"
+                                        ng-show="ship_rocket_form.supplier_city.$invalid && ship_rocket_form.$submitted">
+                                        <small ng-show="ship_rocket_form.supplier_city.$error.required">{{'PLEASE ENTER
+                                            THE SUPPLIER CITY' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modfooter text-center" style="padding: 15px 15px">
+                                <button type="submit" class="bg-success bold" style="width: 250px;">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="container" style="display: none;" id="printDet1">
+    <div class="row">
+        <div class="col">
+            <div class="email_order_detail col-md-12">
+                <table class="table order_details" style="background-color: rgb(255 255 255);">
+                    <tbody>
+                        <tr>
+                            <td rowspan="2" style="width:10%;padding-top: 20px;"><img style="width: 50px;;"
+                                    src="https://d1cihd31wcy9pr.cloudfront.net/royoapps-assets.s3-us-west-2.amazonaws.com/1595661899204_1595591526060_ic_food_panel.png"
+                                    alt="" /></td>
+                            <td style="width: 90%;">
+                                <table class="table" style="margin: 0;">
+                                    <!-- <tbody>
+                                        <tr>
+                                            <td style="text-align: right;width: 30%;"><a href="#"
+                                                    style="border-right:0px solid rgb(204,204,204);margin-right:0px;padding-right:0px;text-decoration:none;color:rgb(47, 49, 58);font:12px/16px Arial,sans-serif">Your
+                                                    <span>Order</span></a></td>
+                                            <td style="text-align: right;width: 7%;"><span class="mr-2">|</span><a
+                                                    href="#"
+                                                    style="border-right:0px solid rgb(204,204,204);margin-right:0px;padding-right:0px;text-decoration:none;color:rgb(47, 49, 58);font:12px/16px Arial,sans-serif">Your
+                                                    Account</a><span class="ml-2">|</span></td>
+                                            <td style="text-align: right;width: 1%;"><a href="#"
+                                                    style="border-right:0px solid rgb(204,204,204);margin-right:0px;padding-right:0px;text-decoration:none;color:rgb(47, 49, 58);font:12px/16px Arial,sans-serif">RoyoFoods.com</a>
+                                            </td>
+                                        </tr>
+                                    </tbody> -->
+                                </table>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td colspan="9" style="text-align: right;border-top:1px solid #dee2e6;padding-top:10px;">
+                                <h2
+                                    style="font-size:18px;line-height:10px;margin:0;padding:0;font-weight:normal;color:rgb(0,0,0)!important">
+                                    Order Confirmation</h2>
+                                <p
+                                    style="margin-top: 1em;text-align: right;display:inline-block;text-decoration:none;color:rgb(47, 49, 58);font:12px/6px Arial,sans-serif">
+                                    # {{order_desc.id}} </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="10"
+                                style="padding: 10px 15px 0;border-top: 2px solid #000;background: rgb(242 242 242);">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <h3
+                                                    style="font-size:18px;color:rgb(204,102,0);margin:15px 0 0 0;font-weight:normal">
+                                                    Hello {{order_desc.user_name || order_desc.User_Name}}, </h3>
+                                                <p style="margin:5px 0 0 0;font:12px/16px Arial,sans-serif">Thank you
+                                                    for your order. We’ll send a confirmation when your order ships.
+                                                    Your estimated delivery date is indicated below. If you would like
+                                                    to view the status of your order or make any changes to it, please
+                                                    visit Your Orders on royofoods.com </p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="10"
+                                style="padding: 10px 15px 0;border-top: 2px solid #000;background: rgb(242 242 242);">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <p style="margin:2px 0 9px 0;font:12px/16px Arial,sans-serif"> <span
+                                                        style="color:rgb(102,102,102)">Arriving:</span> <br> <b
+                                                        style="color:#009900">
+                                                        {{order_desc.schedule_date | date: 'medium' : 'UTC'}} </b> </p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="10"
+                                style="border-bottom:1px solid rgb(204,204,204);vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif">
+                                <h3 style="font-size:18px;color:rgb(204,102,0);margin:15px 0 0 0;font-weight:normal">
+                                    Order summary</h3>
+                            </td>
+                            <div></div>
+                        </tr>
+                        <tr>
+                            <td colspan="10"
+                                style="border-bottom:1px solid rgb(204,204,204);vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif">
+                                <h3 style="font-size:18px;color:rgb(204,102,0);margin:15px 0 0 0;font-weight:normal">
+                                    {{order_desc.branch_name}}</h3>
+                            </td>
+                            <div></div>
+                        </tr>
+                        <tr>
+                            <td colspan="10"
+                                style="border-bottom:1px solid rgb(204,204,204);vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif">
+                                <p ng-repeat="product in products">
+                                    {{product.name}} &nbsp;x&nbsp; {{product.quantity}}
+                                </p>
+                            </td>
+                            <div></div>
+                        </tr>
+                        <tr>
+                            <td colspan="10"
+                                style="border-bottom:1px solid rgb(204,204,204);vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif">
+                                <p>
+                                    {{'Spcl Instructions'}}:&nbsp; {{order_desc.special_instructions}}
+                                </p>
+                            </td>
+                            <div></div>
+                        </tr>
+                        <tr>
+                            <td colspan="10"
+                                style="vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif">
+                                <table id="m_3297203215955804520orderDetails"
+                                    style="width:100%;border-collapse:collapse">
+                                    <tbody>
+                                        <tr>
+                                            <td
+                                                style="vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif">
+                                                Order #<a href="#" class=""
+                                                    style="display:inline-block;text-decoration:none;color:rgb(47, 49, 58);font:12px/16px Arial,sans-serif"
+                                                    target="_blank">{{order_desc.id}}</a> <br> <span
+                                                    style="font-size:12px;color:rgb(102,102,102)">Placed on
+                                                    {{order_desc.created_on | date: 'medium' : 'UTC'}}</span> </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                style="vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif">
+                                                <a href="#" class=""
+                                                    style="display:inline-block;text-decoration:none;color:rgb(47, 49, 58);font:12px/16px Arial,sans-serif"
+                                                    target="_blank">{{order_desc.user_name || order_desc.User_Name}}</a>
+                                                <br> <span style="font-size:12px;color:rgb(102,102,102)">
+                                                    {{order_desc.user_phone_number || order_desc.mobile_no}}
+                                                </span>
+                                                <br> <span style="font-size:12px;color:rgb(102,102,102)">
+                                                    {{order_desc.address_line_1}} <br>
+                                                    {{order_desc.customer_address}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="10"
+                                style="padding-left:2px;vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif">
+                                <table style="width:100%;border-collapse:collapse">
+                                    <tbody>
+
+                                        <tr>
+                                            <td style="width: 50%;">
+                                                <li ng-class="!!order_desc.is_schedule ? 'm-top-20' : ''">
+                                                    <label>{{'PAYMENT MODE' | translate}}</label>
+                                                </li>
+                                            </td>
+                                            <td>
+                                                <span ng-if="order_desc.payment_type == 1">Online
+                                                    ({{order_desc.payment_source}})</span>
+                                                <span ng-if="order_desc.payment_type == 0">{{localisation.cash |
+                                                    translate}}</span>
+                                                <span ng-if="order_desc.payment_type == 2">Free</span>
+                                                <span ng-if="order_desc.payment_type == 3">Pending</span>
+                                                <span ng-if="order_desc.payment_type == 4">Wallet</span>
+                                            </td>
+                                        </tr>
+
+                                        <tr ng-if="order_desc.have_coin_change">
+                                            <td style="width: 50%;">
+                                                Change in Request: </td>
+                                            <td>
+                                                <strong class="bold">
+                                                    {{ order_desc.have_coin_change?'Yes':'No' }}</strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 50%;">
+                                                Order Price: </td>
+                                            <td>
+                                                <span>
+                                                    {{currency}}{{(order_desc.total_order_price).toFixed(2)}}
+                                                </span>
+                                                <small ng-if="(app_type == 8 || app_type > 10) && order_desc.addOn"
+                                                    class="addon-charges">(Addon Charges:
+                                                    {{currency}}{{(order_desc.addOn).toFixed(2)}})</small>
+                                            </td>
+                                        </tr>
+                                        <tr ng-if="order_desc.user_service_charge">
+                                            <td style="width: 50%;">
+                                                {{localisation.supplier | translate}} Service: </td>
+                                            <td>
+                                                <strong class="bold">
+                                                    {{currency}}{{(order_desc.user_service_charge).toFixed(2)}}
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr ng-if="order_desc.promoCode">
+                                            <td style="width: 50%;">{{'DISCOUNT AMOUNT' | translate}}</td>
+                                            <td>
+                                                <strong class="bold">
+                                                    <small>{{'PROMO' | translate}} :
+                                                        {{order_desc.promoCode | uppercase}}</small>
+                                                    <span style="margin-top: -20px;">-
+                                                        {{currency}}{{(order_desc.discountAmount).toFixed(2)}}</span>
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr ng-if="order_desc.wallet_discount_amount">
+                                            <td style="width: 50%;">
+                                                {{'WALLET DISCOUNT AMOUNT' | translate}}</td>
+                                            <td>
+                                                <strong class="bold">
+                                                    <span>-
+                                                        {{currency}}{{(order_desc.wallet_discount_amount).toFixed(2)}}</span>
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr
+                                            ng-if="order_desc.self_pickup == 0 && order_desc.type != 8 && app_type != 8">
+                                            <td style="width: 50%;">
+                                                {{'DELIVERY CHARGES' | translate}}</td>
+                                            <td>
+                                                <strong class="bold">
+                                                    <span>
+                                                        {{currency}}{{(order_desc.delivery_charges).toFixed(2)}}
+                                                    </span>
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr ng-if="disable_tax == 0">
+                                            <td style="width: 50%;">
+                                                {{localisation.tax | translate}}</td>
+                                            <td>
+                                                <strong class="bold">
+                                                    <span>
+                                                        {{currency}}{{(order_desc.handling_admin).toFixed(2)}}
+                                                    </span>
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr ng-if="order_desc.referral_amount">
+                                            <td style="width: 50%;">
+                                                {{'Referral Discount' | translate}}</td>
+                                            <td>
+                                                <strong class="bold">
+                                                    <span>-
+                                                        {{currency}}{{ (order_desc.referral_amount).toFixed(2) }}</span>
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr ng-if="order_desc.loyality_point_discount">
+                                            <td style="width: 50%;">
+                                                {{'Loyalty Discount' | translate}}</td>
+                                            <td>
+                                                <strong class="bold">
+                                                    <span>-
+                                                        {{currency}}{{ (order_desc.loyality_point_discount).toFixed(2)
+                                                        }}</span>
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr ng-if="app_type == 1 && order_desc.tip_agent">
+                                            <td style="width: 50%;">
+                                                {{localisation.agent | translate}}
+                                                Tip</td>
+                                            <td>
+                                                <strong class="bold">
+                                                    <span>{{currency}}
+                                                        {{(order_desc.tip_agent).toFixed(2)}}</span>
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr ng-if="order_desc.slot_price">
+                                            <td style="width: 50%;">
+                                                Slot Price</td>
+                                            <td>
+                                                <strong class="bold">
+                                                    <span>{{currency}}
+                                                        {{(order_desc.slot_price).toFixed(2)}}</span>
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr ng-if="order_desc.admin_updated_charge">
+                                            <td style="width: 50%;">
+                                                Updated Price</td>
+                                            <td>
+                                                <strong class="bold">
+                                                    <span>
+                                                        {{order_desc.is_subtotal_add==0?'-':'+'}}
+                                                        {{currency}}{{(order_desc.admin_updated_charge).toFixed(2)}}
+                                                    </span>
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 50%;">
+                                                {{'TOTAL PRICE' | translate}}</td>
+                                            <td>
+                                                <strong class="bold">
+                                                    <small
+                                                        ng-if="is_currency_exchange_rate == 1 && order_desc.currency_exchange_rate">
+                                                        ( XR:
+                                                        {{currency}} 1 = {{order_desc.local_currency}}
+                                                        {{order_desc.currency_exchange_rate}} ) </small>
+                                                    <strong class="bold">
+                                                        {{currency}}{{ (order_desc.order_cost).toFixed(2) }}</strong>
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr ng-if="order_desc.remaining_amount">
+                                            <td style="width: 50%;">
+                                                {{'Remaining Amount' | translate}}</td>
+                                            <td>
+                                                <strong class="bold">
+                                                    {{currency}}{{ (order_desc.remaining_amount).toFixed(2) }}
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr ng-if="order_desc.refund_amount && order_desc.payment_type != 0">
+                                            <td style=" width: 50%;">
+                                                {{'Refund Amount' | translate}}
+                                            </td>
+                                            <td>
+                                                <strong class="bold">
+                                                    {{currency}}{{ (order_desc.refund_amount).toFixed(2) }}
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr
+                                            ng-if="order_desc.refund_amount && order_desc.status == 8  && order_desc.payment_type != 0">
+                                            <td style="width: 50%;">
+                                                {{'Refund Amount' | translate}}</td>
+                                            <td>
+                                                <strong class="bold">
+                                                    {{currency}}{{order_desc.refund_amount}}
+                                                </strong>
+                                            </td>
+                                        </tr>
+
+
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="10"
+                                style="vertical-align:top;font-size:12px;line-height:16px;font-family:Arial,sans-serif">
+                                <p style="margin:4px 0 0 0;font:12px/16px Arial,sans-serif">
+                                    Thanks and Regards
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="10"
+                                style="vertical-align:top;text-align:right;font-size:12px;line-height:16px;font-family:Arial,sans-serif">
+                                <p
+                                    style="padding:0 0 20px 0;border-bottom:1px solid rgb(234,234,234);margin:10px 0 0 0;font:12px/16px Arial,sans-serif">
+                                    We hope to see you again soon.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="rejection_reason">
+    <div class="modal-dialog" style="max-width: 550px;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>{{localisation.order | translate}} Rejection Reason</h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <p class="word_break">{{order_desc.approve_rejection_reason}}</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="updateTable">
+    <div class="modal-dialog" style="max-width: 320px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead" style="padding: 20px 30px">
+                    <h2 class="bold" style="display: inline-block;">{{'CHOOSE' | translate}} Table</h2>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="padding: 20px 30px">
+                    <div class="select-category">
+                        <select class="app" ng-model="selected_table" ng-change="selectTable(selected_table)">
+                            <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                            <option ng-repeat="table in tables" value="{{table.id}}">{{table.table_name}} :
+                                {{table.table_number}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button type="submit" class="bg-success bold" ng-click="updateTable()"
+                        ng-class="selected_table == '' ? 'disabled' : ''" ng-disabled="selected_table == ''">{{'UPDATE'
+                        | translate}}</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<success-modal message="msg_description"></success-modal>
+
+<style>
+    .refund {
+        font-size: 16px !important;
+    }
+
+    .refund strong {
+        float: right;
+    }
+
+    .questions {
+        margin: 8px 0px;
+    }
+
+    .questions h5 {
+        text-transform: capitalize;
+        color: #000000cf;
+        font-weight: 500;
+    }
+
+    .questions h5 span {
+        color: #2097a2;
+        font-weight: 600;
+        margin-right: 8px;
+    }
+
+    .questions p {
+        font-weight: 500;
+        color: #000000ad;
+        margin-left: 22px;
+        margin-top: 5px;
+    }
+
+    .questions ul {
+        margin-left: 36px;
+        margin-top: 5px;
+    }
+
+    .questions li {
+        font-weight: 500;
+        color: #000000ad;
+        list-style: disc;
+    }
+
+    .questions li span,
+    .questions p span {
+        float: right;
+        font-weight: 500;
+    }
+
+    .addon-charges {
+        color: #000000c7;
+        font-weight: 500;
+    }
+
+    .variants {
+        margin-top: 10px;
+    }
+
+    .variants li {
+        display: block !important;
+        padding: 3px 0px;
+    }
+
+    .variants li span {
+        font-weight: 500;
+        margin-left: 5px;
+        font-size: 14px;
+    }
+
+    .variants li .v-color {
+        height: 17px;
+        width: 22px;
+        border: 1px solid #0000006b;
+        padding: 3px;
+        display: inline-block;
+        vertical-align: middle;
+        border-radius: 2px;
+        margin-left: 5px;
+    }
+
+    .receipt {
+        text-align: center;
+    }
+
+    .receipt img {
+        width: 100%;
+        height: 480px;
+        object-fit: contain;
+    }
+
+    .prescription {
+        padding: 15px;
+    }
+
+    .prescription li img {
+        height: 70px;
+        width: 70px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .prescription ul {
+        display: inline-flex;
+    }
+
+    .prescription li {
+        margin-right: 15px;
+    }
+
+    .instructions {
+        padding: 15px;
+    }
+
+    .product-update-btns {
+        position: absolute;
+        right: 0px;
+        top: -15px;
+    }
+
+    .remove-product {
+        text-align: right;
+    }
+
+    .remove-product button {
+        color: #ffffff;
+        border-radius: 4px;
+        background-color: rgb(226, 47, 47);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+        border: none;
+        font-size: 14px;
+        padding: 6px 20px;
+    }
+
+    .input-group {
+        width: 35%;
+    }
+
+    .input-group input {
+        text-align: center;
+        padding: 3px;
+    }
+
+    .input-group .input-group-text {
+        font-size: 12px;
+    }
+
+    .multiSelect>button {
+        width: 100% !important;
+    }
+
+    .orddet .bx-top .signature {
+        width: 100%;
+        height: 250px;
+        float: none;
+    }
+
+    .out-stock {
+        font-size: 14px;
+        color: white;
+        background-color: #00000073;
+        position: absolute;
+        top: 40px;
+        padding: 10px 5px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .img_box {
+        margin-bottom: 70px;
+        border: 1px solid #00000024;
+        padding: 9px;
+        border-radius: 8px;
+
+    }
+
+    .img_box img {
+        height: 137px;
+        width: 100%;
+        border: 1px solid #c8deff;
+        border-radius: 20px;
+        box-shadow: 0 2px 4px 0 rgb(0 0 0 / 12%);
+    }
+</style>

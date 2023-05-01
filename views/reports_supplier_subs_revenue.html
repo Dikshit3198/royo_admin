@@ -1,0 +1,174 @@
+<div class="reporttop m-top-30"
+    style="border: 1px solid rgba(18,17,17,0.1); border-radius: 4px; background-color: #FDFDFC;">
+    <form>
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group" style="margin-top: 0px">
+                    <label>{{'SEARCH' | translate}}</label>
+                    <input type="text" ng-model="filter.search" placeholder="{{'SEARCH' | translate}}"
+                        ng-keypress="search($event)">
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group" style="margin-top: 0px">
+                    <label>{{'Select Month' | translate}}</label>
+                    <select class="app" ng-model="filter.month_filter" placeholder="{{'Select Month' | translate}}"
+                        name="month" convert-to-number required>
+                        <option selected disabled value="">{{'SELECT' | translate}}</option>
+                        <option value="1">{{'January' | translate}}</option>
+                        <option value="2">{{'February' | translate}}</option>
+                        <option value="3">{{'March' | translate}}</option>
+                        <option value="4">{{'April' | translate}}</option>
+                        <option value="5">{{'May' | translate}}</option>
+                        <option value="6">{{'June' | translate}}</option>
+                        <option value="7">{{'July' | translate}}</option>
+                        <option value="8">{{'August' | translate}}</option>
+                        <option value="9">{{'September' | translate}}</option>
+                        <option value="10">{{'October' | translate}}</option>
+                        <option value="11">{{'November' | translate}}</option>
+                        <option value="12">{{'December' | translate}}</option>
+                    </select class="app">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="btns" style="margin-top: 20px;">
+                    <button type="button" ng-click="downloadCSV()"
+                        style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'DOWNLOAD CSV' | translate}}</button>
+                    <button type="button" ng-click="resetFilter()"
+                        style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'RESET' | translate}}</button>
+                    <button type="button" class="bg-success" ng-click="filterData()"
+                        style="color: #fff; border: 1px solid var(--primary-color); margin-left: 7px;">{{'FILTER' | translate}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<div class="dashgra m-top-30">
+    <div class="row dashboard-box-outter">
+        <div class="col-md-6 col-sm-6">
+            <div class="box">
+                <div class="top">
+                    <h3 class="bold">{{'REVENUE' | translate}}</h3>
+                    <div class="detail">
+                    </div>
+                </div>
+                <div class="btm">
+                    <canvas class="chart chart-bar" chart-data="totalRevenue" chart-labels="labels"
+                        chart-options="options" chart-dataset-override="datasetOverride">
+                    </canvas>
+                    <div class="nodata" ng-if="no_revenue">
+                        <p style="font-weight: bold;"> {{'NO DATA FOUND' | translate}} </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="repbtm m-top-40">
+
+    <div class="tableouter m-top-20">
+        <table>
+            <thead>
+                <tr>
+                    <th>{{'ID' | translate}}</th>
+                    <th>{{'IMAGE'| translate}}</th>
+                    <th>{{'TITLE' | translate}}</th>
+                    <th>{{'DESCRIPTION' | translate}}</th>
+                    <th>{{'IS BLOCKED' | translate}}</th>
+                    <th>{{'USERS'|translate}}</th>
+                    <th>{{'ACTIVE USERS'|translate}}</th>
+                    <th>{{'TIMES PURCHAGED'|translate}}</th>
+                    <th>{{'PRICE'|translate}}</th>
+                    <th>{{'TOTAL REVENUE'|translate}}</th>
+                    <th>{{'CREATED ON' | translate}}</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="rep in subscriptions">
+                    <td>{{rep.id}}</td>
+                    <td>
+                        <img src="{{rep.image}}">
+                    </td>
+                    <td>{{rep.name}}</td>
+                    <td>{{rep.description ||  'NA'}}</td>
+                    <td>{{rep.is_blocked=="1" ? 'Yes' : 'No'}}</td>
+                    <td>{{rep.number_of_users}}</td>
+                    <td>{{rep.number_of_active_users}}</td>
+                    <td>{{rep.times_purchased}}</td>
+                    <td>{{rep.price}}</td>
+                    <td>{{rep.total_revenue}}</td>
+                    <td>
+                        <span>
+                            {{rep.created_at | date: 'MMM d, y' : 'UTC'}}
+                        </span>
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+        <div class="no-data-found" ng-if="users.length == 0 && dataLoaded">
+            {{'NO DATA FOUND' | translate}}
+        </div>
+
+        <div ng-if="subscriptions.length > 0 && dataLoaded" class="row pagination">
+            <ul ng-if="pager.pages && pager.pages.length">
+                <li ng-class="{disabled:pager.currentPage === 1}">
+                    <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === 1}">
+                    <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                </li>
+                <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                    <a ng-click="setPage(page)">{{page}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                    <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                    <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .reporttop .btns {
+        margin-bottom: 0;
+        margin-top: 32px;
+        position: relative;
+    }
+
+    .chev-btn {
+        background-color: transparent;
+        float: right;
+        outline: none;
+    }
+
+    .chev-btn:active {
+        outline: none;
+    }
+
+    .notification {
+        color: #4a4a4a;
+        width: 50%;
+        margin-top: 7px;
+        font-weight: 500;
+        margin-left: 10px;
+    }
+
+    .notification-textarea {
+        padding: 10px 15px;
+        width: 100%;
+        border-radius: 4px;
+    }
+</style>

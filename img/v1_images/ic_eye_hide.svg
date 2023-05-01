@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_eye_hide</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ic_show_pass_not-show" transform="translate(4.000000, 4.000000)">
+            <path d="M8,14 C11.3137085,14 16,11.3137085 16,8 C16,6.10862744 14.4732959,4.42165533 12.5465152,3.32192447 C11.8027527,2.89741407 10.9993765,2.56040615 10.201188,2.33292107 C9.44438288,2.11723029 8.69224154,2 8,2 C4.6862915,2 0,4.6862915 0,8 C0,9.23282314 0.648637794,10.3788044 1.63391569,11.3319234 C2.15594121,11.8369103 2.77246673,12.2877579 3.4370888,12.6686976 C4.88979961,13.5013442 6.57229598,14 8,14 Z" id="Oval" stroke="#9B8B5F"></path>
+            <circle id="Oval-2" stroke="#9B8B5F" stroke-width="2" cx="8" cy="8" r="1"></circle>
+            <path d="M0.5,14.5 L15.5,-0.5" id="Line" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"></path>
+            <path d="M0.5,15.5 L15.5,0.5" id="Line-Copy-2" stroke="#9B8B5F" stroke-linecap="round"></path>
+        </g>
+    </g>
+</svg>

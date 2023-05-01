@@ -1,0 +1,505 @@
+<div class="wrapper">
+    <div class="category" ng-if="!is_add">
+
+        <div class="toptabs">
+            <ul class="nav nav-tabs ">
+                <li class="nav-item">
+                    <a class="nav-link" style="text-transform: capitalize;" ng-click="changeTab(1)">
+                        {{localisation.extra_products | translate}}</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-4 col-sm-4">
+                    <input type="text" placeholder="{{'SEARCH' | translate}}" ng-model="search"
+                        ng-keypress="searchProduct($event)">
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)">
+                                <button type="button" class="simple" ng-click="refresh()"><img
+                                        src="img/v1_images/ic_rotate.svg">{{'REFRESH' | translate}}</button>
+                            </li>
+                            <!-- ng-if="permissions('products', 'create') == 1" -->
+                            <li style="filter: grayscale(0)" ng-if="profile == 'ADMIN'">
+                                <button type="button" class="bold create" ng-click="changeView(true)">+
+                                    {{'ADD' | translate}}
+                                    {{localisation.extra_product | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF; padding-bottom: 20px;">
+
+            <div class="tab-content">
+                <div class="tab-pane  active" id="home">
+
+                    <table class="table-striped">
+                        <thead>
+                            <tr>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{'NAME' | translate}}</th>
+                                <th>{{'QUANTITY' | translate}}</th>
+                                <!-- <th>Left {{localisation.inventory | translate}}</th> -->
+
+                                <th style="width: 130px">
+                                    {{' Selling Price' | translate}}</th>
+                                <th>Image</th>
+                                <th style="width: 200px;" ng-if="profile == 'ADMIN'">{{'ACTIONS' | translate}}</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr ng-repeat="product in products">
+                                <td>{{product.id}}</td>
+                                <td>{{product.name}}</td>
+                                <td>{{product.quantity}}</td>
+                                <!-- <td>{{product.left_qty}}</td> -->
+                                <td>{{currency}}{{product.price}}</td>
+                                <td><img src="{{compressImage(product.image, '80x80')}}"></td>
+                                <td ng-if="profile == 'ADMIN'">
+                                    <!-- ng-class="!product.is_active ? 'blocked' : ''" -->
+                                    <button type="button" class="bg-success"
+                                        ng-click="editProduct(product)">{{'EDIT' | translate}}</button>
+                                    <button type="button" class="bg-success"
+                                        ng-click="deleteProduct(product.id)">{{'DELETE' | translate}}</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="no-data-found" ng-if="products.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+
+                    <div ng-if="products.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="category" ng-if="is_add" style="width: 80%; margin: 0 auto">
+
+        <div class="secnav">
+            <a href="" style="float: right" class="backbtn" ng-click="changeView(false)"><img
+                    src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{localisation.extra_product | translate}} {{'REGISTRATION' | translate}}</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="addban m-top-30 innpad">
+            <div class="persinfo">
+                <form role="form" prevent-enter-press class="supplier-reg" id="addExtraProductForm"
+                    name="addExtraProductForm" ng-submit="submitProduct(addExtraProductForm)" novalidate>
+
+                    <div class="row">
+                        <div class="col-md-12 document-image persinfo">
+                            <div class="col-2 mx-auto d-flex justify-content-center flex-wrap">
+                               <div class="form-group">
+                                    <label>{{'Image' | translate}}<span class="star">*</span></label>
+                                    <div class="form-group pic">
+                                    <input filestyle="" type="file" accept="image/*" name="product_image" class="cursor" ng-model="extra_product.image"
+                                        style="width: 242px;"
+                                        onchange="angular.element(this).scope().upload_image(this.files)"
+                                        data-button-text="Single" data-class-button="btn btn-default"
+                                        data-classinput="form-control inline" nv-file-select="" uploader="uploader"
+                                        required />
+                                    <span ng-if="product_image_url" style="height: 135px;">
+                                        <img style="width: 100%; height: 100%; object-fit: contain;" id="product_image"
+                                            ng-src="{{product_image_url}}">
+                                    </span>
+                                    <span ng-if="!product_image_url">
+                                        <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                                    </span>
+
+                                    <div class="error"
+                                        ng-show="addExtraProductForm.product_image.$invalid && addExtraProductForm.$submitted">
+                                        <small
+                                            ng-show="addExtraProductForm.product_image.$error.required">{{'Please select image' | translate}}</small>
+
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'NAME' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="name" ng-model="extra_product.name" placeholder="Name"
+                                    required>
+                                <div class="error"
+                                    ng-show="addExtraProductForm.name.$invalid && addExtraProductForm.$submitted">
+                                    <small ng-show="addExtraProductForm.name.$error.required">Please enter
+                                        {{'NAME' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="is_secondary_language == 1">
+                            <div class="form-group">
+                                <label>{{'NAME' | translate}}
+                                    ({{languages[1].name}})<span class="star">*</span></label>
+                                <input type="text" name="nameAr" ng-model="extra_product.nameAr" placeholder="Name"
+                                    required>
+                                <div class="error"
+                                    ng-show="addExtraProductForm.nameAr.$invalid && addExtraProductForm.$submitted">
+                                    <small ng-show="addExtraProductForm.nameAr.$error.required">Please enter
+                                        {{'NAME' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{' SELLING PRICE' | translate}}<span class="star">*</span></label>
+                                <input type="number" name="price" integers
+                                    ng-model="extra_product.price" ng-min="0"
+                                    placeholder="{{'SELLING PRICE' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addExtraProductForm.price.$invalid && addExtraProductForm.$submitted">
+                                    <small ng-show="addExtraProductForm.price.$error.required">{{'Please enter
+                                        Price' | translate}}</small>
+                                    <small ng-show="addExtraProductForm.price.$error.min">Invalid amount.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'SUPPLIER' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="supplier" ng-model="extra_product.supplier"
+                                    placeholder="Supplier" required>
+                                <div class="error"
+                                    ng-show="addExtraProductForm.supplier.$invalid && addExtraProductForm.$submitted">
+                                    <small ng-show="addExtraProductForm.supplier.$error.required">{{'Please enter
+                                        Supplier' | translate}}</small>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'MANUFACTURER' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="manufacturer" ng-model="extra_product.manufacturer"
+                                    placeholder="Manufacturer" required>
+                                <div class="error"
+                                    ng-show="addExtraProductForm.manufacturer.$invalid && addExtraProductForm.$submitted">
+                                    <small ng-show="addExtraProductForm.manufacturer.$error.required">{{'Please enter
+                                        Manufacturer' | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'MODEL NO' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="model" ng-model="extra_product.model"
+                                    placeholder="{{'Model no' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addExtraProductForm.model.$invalid && addExtraProductForm.$submitted">
+                                    <small ng-show="addExtraProductForm.model.$error.required">{{'Please enter
+                                        Model Number' | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'COST PRICE' | translate}}<span class="star">*</span></label>
+                                <input type="number" name="cost_price" integers
+                                    ng-model="extra_product.cost_price" ng-min="0"
+                                    placeholder="{{'Cost price' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addExtraProductForm.cost_price.$invalid && addExtraProductForm.$submitted">
+                                    <small ng-show="addExtraProductForm.cost_price.$error.required">{{'Please enter
+                                        Cost Price' | translate}}</small>
+                                    <small ng-show="addExtraProductForm.cost_price.$error.min">Invalid cost.</small>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'QUANTITY' | translate}}<span class="star">*</span></label>
+                                <input type="number" name="quantity" ng-model="extra_product.quantity" integers
+                                    ng-min="0" placeholder="{{'QUANTITY' | translate}}" 
+                                    ng-change="checkQuantity(extra_product.quantity)" required>
+                                <div class="error"
+                                    ng-show="addExtraProductForm.quantity.$invalid && addExtraProductForm.$submitted">
+                                    <small
+                                        ng-show="addExtraProductForm.quantity.$error.required">{{'Please enter' | translate}}
+                                        {{localisation.inventory | translate}}</small>
+                                    <small ng-show="addExtraProductForm.quantity.$error.min">Invalid
+                                        {{localisation.inventory | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <!-- <div class="row">
+                            <div class="col-md-6">
+                                    <button ng-click="addInventory()" type="button" class="button-primary"
+                                       style="width: auto; padding: 4px 20px; font-size: 16px;">+
+                                         {{'ADD' | translate}}
+                                    </button>
+                                    =======<button ng-click="removeInventory()" type="button" class="button-primary" ng-disabled="extra_product.serial_no_array.length == 1"
+                                   style="width: auto; padding: 4px 20px; font-size: 16px;">-
+                                     {{'REMOVE' | translate}}
+                                </button>========
+                               
+                            </div>
+                        </div> -->
+                    <div class="row" ng-if="addedQuantity > 0">
+                        <div class="col-md-12 error" ng-if="sameSerialNo">
+                            <small class="bold">Duplicate Serial No. Not Allowed </small>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <label>{{'Index' | translate}}</label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{'S.NO' | translate}}<span class="star">*</span></label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{'COST PRICE' | translate}}<span class="star">*</span></label>
+
+                                </div>
+                                <div class="col-md-3">
+                                    <label>{{'Action' | translate}}</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="max-height: 590px; overflow-y: auto;width: 100%;">
+                            <div class="col-md-12"
+                                ng-repeat="x in [].constructor(addedQuantity) track by $index">
+                                <!-- ng-repeat="row in extra_product.serial_no_array"> -->
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        <p style="margin-top: 20px;">{{$index + 1}}</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <!-- <label>{{'S.NO' | translate}}<span class="star">*</span></label> -->
+                                            <input type="text" name="serial_no{{$index}}"
+                                                ng-model="extra_product.serial_no_array[$index].serial_no"
+                                                placeholder="{{'S.no' | translate}}" required
+                                                ng-disabled="extra_product.serial_no_array[$index].is_aloted == 1"
+                                                ng-blur="checkSerialExists(extra_product.serial_no_array[$index].serial_no, $index)">
+                                            <div class="error"
+                                                ng-show="addExtraProductForm.serial_no{{$index}}.$invalid && addExtraProductForm.$submitted">
+                                                <small
+                                                    ng-show="addExtraProductForm.serial_no{{$index}}.$error.required">{{'Please enter
+                                        Serial Number' | translate}}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <!-- <label>{{'COST PRICE' | translate}}<span class="star">*</span></label> -->
+                                            <input type="number" name="cost_price{{$index}}" integers
+                                                ng-model="extra_product.serial_no_array[$index].cost_price" ng-min="0"
+                                                placeholder="{{'Cost price' | translate}}" required>
+                                            <div class="error"
+                                                ng-show="addExtraProductForm.cost_price{{$index}}.$invalid && addExtraProductForm.$submitted">
+                                                <small
+                                                    ng-show="addExtraProductForm.cost_price{{$index}}.$error.required">{{'Please enter
+                                        Cost Price' | translate}}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button ng-click="deleteSerial(extra_product.serial_no_array[$index].id,$index)"
+                                            type="button" class="button-primary"
+                                            ng-if="!!extra_product.serial_no_array[$index].id && extra_product.serial_no_array[$index].is_aloted == 0"
+                                            style="width: auto; padding: 4px 20px; font-size: 10px; margin-top: 20px;">-
+                                            {{'DELETE' | translate}}
+                                        </button>
+                                        <button ng-click="removeInventory()" type="button" class="button-primary"
+                                            ng-if="!extra_product.serial_no_array[$index].id"
+                                            style="width: auto; padding: 4px 20px; font-size: 10px; margin-top: 20px;">-
+                                            {{'REMOVE' | translate}}
+                                        </button>
+                                    </div>
+
+                                    <!-- <div class="col-md-2" ng-if="!!extra_product.serial_no_array[$index].id && extra_product.serial_no_array[$index].is_aloted == 0">
+                            <label>
+                                <div class="switch togglebtn">
+                                    <input type="checkbox" id="togBtn" ng-checked="extra_product.serial_no_array[$index].is_aloted"
+                                    ng-click="quantityAllocated(extra_product.serial_no_array[$index].id, $index)">
+                                    <div class="slider round">
+                                        <span class="on"></span>
+                                        <span class="off"></span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div> -->
+                                </div>
+                            </div>
+                        </div>
+                        <hr width="100%">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mt-3" style="text-align: right">
+                            <button type="submit" style="float: none; margin: 0px; text-align: center"
+                                class="submit">{{'SUBMIT' | translate}}</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<read-more text="read_more_text" label="read_more_label"></read-more>
+
+<style>
+    .save {
+        color: #ffffff;
+        border-radius: 4px;
+        background-color: var(--primary-color);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+        border: none;
+        font-size: 14px;
+        padding: 9px 25px;
+    }
+
+    .asgn-btn {
+        background: linear-gradient(180deg, #57d2d9 0%, var(--primary-color) 100%) !important;
+        border-radius: 8px !important;
+        color: #ffffff !important;
+    }
+
+    .chev-btn {
+        background-color: transparent;
+        float: right;
+        outline: none;
+    }
+
+    .chev-btn:active {
+        outline: none;
+    }
+
+    .notification {
+        color: #4a4a4a;
+        width: 50%;
+        margin-top: 7px;
+        font-weight: 500;
+        margin-left: 10px;
+    }
+
+    .notification-textarea {
+        padding: 10px 15px;
+        width: 100%;
+        border-radius: 4px;
+    }
+
+    .csv-body {
+        background-color: #e9eaeb;
+        padding: 20px !important;
+    }
+
+    .area {
+        width: 100%;
+        height: 200px;
+        position: relative;
+        border: 2px dashed #000;
+        background-image: url("../../img/import.png");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 64px 64px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        filter: alpha(opacity=50);
+        -khtml-opacity: 0.5;
+        -moz-opacity: 0.5;
+        opacity: 0.5;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .area:hover,
+    .area.dragging,
+    .area.uploading {
+        filter: alpha(opacity=100);
+        -khtml-opacity: 1;
+        -moz-opacity: 1;
+        opacity: 1;
+    }
+
+    .area input {
+        width: 400%;
+        height: 100%;
+        margin-left: -380%;
+        border: none;
+        cursor: pointer;
+    }
+
+    .area input:focus {
+        outline: none;
+    }
+
+    .download {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--primary-color) !important;
+    }
+
+    .download:hover {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .csv-body.modal-body label {
+        position: absolute;
+        bottom: 20px;
+        left: 0px;
+        width: 100%;
+    }
+
+    .remove-csv {
+        color: #ff2020 !important;
+        font-size: 12px;
+        position: absolute;
+        left: 0px;
+        bottom: 5px;
+        width: 100%;
+    }
+
+    .switch {
+        bottom: 15px;
+        top: unset;
+    }
+</style>

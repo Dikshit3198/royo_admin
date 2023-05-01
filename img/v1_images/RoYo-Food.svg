@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="185px" height="104px" viewBox="0 0 185 104" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>RoYo Food</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-75.0%" y="-75.2%" width="250.1%" height="250.5%" filterUnits="objectBoundingBox" id="filter-1">
+            <feGaussianBlur stdDeviation="0.205175672 0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+    </defs>
+    <g id="panel-header" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-47">
+            <g id="Group-46">
+                <g id="Group-10">
+                    <rect id="Rectangle" fill="#ED4B3F" x="0" y="0" width="185" height="104"></rect>
+                    <path d="M0,82.0210526 C16.3333333,67.1157895 43,58.5263158 80,56.2526316 C117,53.9789474 152,45.8947368 185,32 L185,104 L0,104 L0,82.0210526 Z" id="Path-2-Copy" fill="#F65549"></path>
+                </g>
+            </g>
+            <g id="Group-21" transform="translate(65.000000, 10.000000)">
+                <circle id="Oval" fill="#FFFFFF" cx="28" cy="28" r="28"></circle>
+                <g id="Group-24" transform="translate(13.222222, 14.000000)">
+                    <g id="Group-18" transform="translate(3.823110, 1.111393)">
+                        <ellipse id="Oval" fill="#ED4B3F" cx="9.63936818" cy="17.744788" rx="9.63936818" ry="9.61304588"></ellipse>
+                        <path d="M1.64074352,17.744788 C1.64074352,22.1502435 5.22184976,25.7215708 9.63936818,25.7215708 L9.63936818,25.7215708 M17.6379928,17.744788 C17.6379928,13.3393325 14.0568866,9.76800524 9.63936818,9.76800524" id="Shape" stroke="#FFFFFF" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M11.8442174,15.2933395 C13.4358909,15.0894557 13.313466,13.7555977 14.7982868,14.7127477 C16.2831076,15.6698977 17.3952461,18.9491152 14.9094956,21.4379649 C12.4237452,23.9268146 11.4921145,24.6656497 8.52627832,24.2962322 C5.56044213,23.9268146 3.5610864,19.9107594 3.5610864,17.1389792 C3.5610864,14.3671989 4.53507758,11.8713584 8.19830987,12.4670804 C11.8615422,13.0628024 10.252544,15.4972232 11.8442174,15.2933395 Z" id="Path-3" fill="#FFFFFF"></path>
+                        <g id="Group-17" transform="translate(8.818996, 18.153854)">
+                            <ellipse id="Oval" fill="#FFB248" cx="2.0509294" cy="2.04532891" rx="2.0509294" ry="2.04532891"></ellipse>
+                            <ellipse id="Oval-Copy-5" fill="#F9FFFF" filter="url(#filter-1)" cx="1.43565058" cy="1.02266446" rx="1" ry="1"></ellipse>
+                        </g>
+                        <polygon id="Path-4" fill="#ED4B3F" points="16.3768408 11.369314 17.6384935 9.79257316 16.3768408 8.75362996 14.9554613 10.2899236"></polygon>
+                        <path d="M20.4955186,-0.207709749 L20.4955186,-0.207709749 C21.3664402,-0.208888679 22.0734173,0.496177054 22.0745962,1.36709864 C22.0746236,1.38732398 22.0742619,1.40754797 22.0735113,1.4277594 L21.7275469,10.7430989 L19.2791977,10.7531682 L18.9198386,1.43210866 C18.886243,0.56070419 19.5654212,-0.172943366 20.4368257,-0.206539022 C20.456381,-0.207292948 20.4759487,-0.207683258 20.4955186,-0.207709749 Z" id="Rectangle" fill="#ED4B3F" transform="translate(20.496621, 5.272728) rotate(41.000000) translate(-20.496621, -5.272728) "></path>
+                    </g>
+                    <g id="Group-19" stroke="#B5DC6D" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.687338501">
+                        <path d="M6.46076096,6.65657035 L6.46076096,6.65657035 C7.21826353,6.65763784 7.83147419,6.04358194 7.8304067,5.28503671" id="Path" transform="translate(7.145584, 5.970804) rotate(-58.000000) translate(-7.145584, -5.970804) "></path>
+                        <path d="M8.26772917,7.17336279 C7.5102266,7.1722953 6.89701594,7.78635121 6.89808343,8.54489644" id="Path" transform="translate(7.582906, 7.859130) rotate(-58.000000) translate(-7.582906, -7.859130) "></path>
+                        <path d="M2.06453209,6.16724808 L2.06453209,6.16724808 C2.82203467,6.16831557 3.43524533,5.55425967 3.43417784,4.79571444" id="Path" transform="translate(2.749355, 5.481481) rotate(-58.000000) translate(-2.749355, -5.481481) "></path>
+                        <path d="M3.8715003,6.68404052 C3.11399773,6.68297303 2.50078707,7.29702894 2.50185456,8.05557417" id="Path" transform="translate(3.186677, 7.369807) rotate(-58.000000) translate(-3.186677, -7.369807) "></path>
+                        <path d="M8.93791711,2.05613697 L8.93791711,2.05613697 C9.69541968,2.05720446 10.3086303,1.44314856 10.3075628,0.684603326" id="Path" transform="translate(9.622740, 1.370370) rotate(-58.000000) translate(-9.622740, -1.370370) "></path>
+                        <path d="M10.7448853,2.57292941 C9.98738275,2.57186192 9.37417209,3.18591783 9.37523958,3.94446306" id="Path" transform="translate(10.060062, 3.258696) rotate(-58.000000) translate(-10.060062, -3.258696) "></path>
+                        <path d="M13.7492866,4.11169253 L13.7492866,4.11169253 C14.5067892,4.11276002 15.1199998,3.49870411 15.1189324,2.74015888" id="Path" transform="translate(14.434109, 3.425926) rotate(-58.000000) translate(-14.434109, -3.425926) "></path>
+                        <path d="M15.5562548,4.62848497 C14.7987523,4.62741748 14.1855416,5.24147338 14.1866091,6.00001861" id="Path" transform="translate(14.871432, 5.314252) rotate(-58.000000) translate(-14.871432, -5.314252) "></path>
+                        <path d="M0.689855092,12.3339147 L0.689855092,12.3339147 C1.44735766,12.3349822 2.06056832,11.7209263 2.05950083,10.9623811" id="Path" transform="translate(1.374678, 11.648148) rotate(-58.000000) translate(-1.374678, -11.648148) "></path>
+                        <path d="M2.4968233,12.8507072 C1.73932073,12.8496397 1.12611007,13.4636956 1.12717756,14.2222408" id="Path" transform="translate(1.812000, 13.536474) rotate(-58.000000) translate(-1.812000, -13.536474) "></path>
+                    </g>
+                </g>
+            </g>
+            <text id="RoYo-Food" font-family="Lato-Bold, Lato" font-size="18" font-weight="bold" fill="#FFFFFF">
+                <tspan x="48" y="89">RoYo Food</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,241 @@
+<div class="accstat">
+    <div class="row">
+        <li class="col-12">
+            <div class="box">
+                <small>{{'TOTAL AMOUNT' | translate}}</small>
+                <!-- <h2>To Be Paid By {{profile === 'ADMIN' ? 'Admin' : localisation.supplier}}</h2> -->
+                <h2 style="text-transform: uppercase;">
+                    {{localisation.to_agents_for_orders | capitalLetters| translate}}</h2>
+                <strong class="bold">{{currency}} {{total_amount ? (total_amount).toFixed(price_decimal_length) :
+                    '0.00' | number : addon_decimal_value}}</strong>
+            </div>
+        </li>
+    </div>
+    <div class="reporttop m-top-30"
+        style="border: 1px solid rgba(18,17,17,0.1); padding: 0px 25px 25px;	border-radius: 4px;	background-color: #FDFDFC;">
+        <form>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>{{'FROM DATE' | translate}}</label>
+                        <input type="text" id="datepicker_statement" placeholder="{{'Date'|translate}}">
+                        <span class="inputtag"><img src="/img/v1_images/calendar.svg"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group select-category" ng-if="profile === 'ADMIN' && is_single_vendor == 0">
+                        <label>{{localisation.supplier | translate}}</label>
+                        <select class="app" placeholder="Choose {{localisation.supplier | translate}}" tabindex="4"
+                            ng-model="selected_supplier" ng-options="supplier.supplier_name for supplier in suppliers"
+                            ng-change="changeSupplier(selected_supplier)">
+                            <option selected value="">{{'ALL' | translate}}</option>
+                        </select>
+                        <span class="inputtag"><img src="/img/v1_images/ic_dropdown.svg"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group select-category">
+                        <label>{{localisation.agent | translate}}</label>
+                        <select class="app" placeholder="Choose {{localisation.agent | translate}}" tabindex="4"
+                            ng-model="selected_agent" ng-options="agent.name for agent in agents"
+                            ng-change="changeAgent(selected_agent)">
+                            <option selected value="">{{'ALL' | translate}}</option>
+                        </select>
+                        <span class="inputtag"><img src="/img/v1_images/ic_dropdown.svg"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="btns">
+                        <button type="button" ng-click="downloadCSV()"
+                            style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'DOWNLOAD CSV' 
+                            | translate}}</button>
+                        <button type="button" ng-click="resetFilter()"
+                            style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'RESET'
+                            | translate}}</button>
+                        <button type="button" class="bg-success" ng-click="selectFilter()"
+                            style="color: #fff; border: 1px solid var(--primary-color); margin-left: 7px;">{{"FILTER" |
+                            translate}}</button>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group select-category" style="margin-top: 0px">
+                        <label>{{localisation.payment | translate}} {{'TYPE' | translate}}</label>
+                        <select class="app" ng-change="changepaymentStatus(filter.status)" ng-model="filter.status">
+                            <option selected value="">{{'ALL' | translate}}</option>
+                            <option value="1">{{'ONLINE' | translate}}</option>
+                            <option value="0">{{'CASH' | translate}}</option>
+                        </select>
+                        <span class="inputtag"><img src="/img/v1_images/ic_dropdown.svg"></span>
+                    </div>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+
+
+    <div class="repbtm m-top-40">
+        <div class="secnav ">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <input style="width: 330px" type="text"
+                        placeholder="{{'Search by' | translate}} {{localisation.agent | translate}} {{'id' | translate}} / {{localisation.agent | translate}} {{'name' | translate}}"
+                        ng-model="search" ng-keypress="searchOrder($event)">
+                </div>
+            </div>
+        </div>
+
+        <div class="tableouter m-top-20">
+            <table>
+                <thead>
+                    <tr>
+                        <th>{{'ORDER NO.' | translate}}</th>
+                        <th>{{localisation.agent | translate}} {{'ID'|translate}}</th>
+                        <th>{{localisation.agent | translate}}
+                            {{'NAME' | translate}}</th>
+                        <th>{{localisation.supplier | translate}}
+                            {{'NAME' | translate}}</th>
+                        <th>{{localisation.order | translate}} {{'DELIVERY DATE' | translate}}</th>
+                        <th>{{'DISTANCE' | translate}} (km)</th>
+                        <th>{{'DURATION' | translate}} ({{'mins' | translate}})</th>
+                        <th>{{'DELIVERY CHARGES' | translate}}</th>
+                        <th>{{localisation.agent | translate}} {{'TIP' | translate}}</th>
+
+                        <th>{{localisation.agent | translate}} {{'COMMISSION' | translate}}</th>
+                        <th ng-if="is_enabled_agent_base_price == 1">{{localisation.agent | translate}} {{'BASE PRICE' |
+                            translate}}</th>
+                        <th ng-if="is_enabled_agent_base_price == 1">{{localisation.agent | translate}} {{'DELIVERY
+                            CHARGE SHARE' | translate}}</th>
+
+                        <th>{{localisation.orders | translate}} {{'AMOUNT' | translate}}</th>
+                        <th ng-if="enable_order_desc_price_breakdown==1">
+                            {{localisation.pay_to_restaurant | translate}}
+                          </th>
+                          <th ng-if="enable_order_desc_price_breakdown==1">
+                            {{localisation.pay_to_compnay | translate}}
+                          </th>
+                        <th>{{'CUSTOMER' | translate}} {{localisation.payment | translate}} {{'TYPE' | translate}}</th>
+                        <th>{{'CUSTOMER' | translate}} {{localisation.payment | translate}}
+                            {{'ID' | translate}}
+                        </th>
+                        <th>{{'CUSTOMER' | translate}} {{localisation.payment | translate}}
+                            {{'REFERENCE NO' | translate}}
+                        </th>
+                        <th>{{'TRANSACTION STATUS' | translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="statement in statement_data">
+                        <!-- <td><label class="check"><input type="checkbox"><span></span></label></td> -->
+                        <td><span style="font-weight: 600; color: var(--primary-color); cursor: pointer;"
+                                ui-sref="orders.ordersDescription({order_id:account.order_id})">{{statement.order_id}}</span>
+                        </td>
+                        <td>{{statement.agent_id}}</td>
+                        <td>{{statement.name}}</td>
+                        <td>{{statement.supplier_name}}</td>
+                        <!-- <td>{{statement.email}}</td>
+                        <td>{{statement.phone_number}}</td> -->
+                        <td>
+                            <span>
+                                {{statement.delivery_date | date: 'MMM d, y' : 'UTC'}}
+                            </span> <br>
+                            <span>
+                                {{statement.delivery_date | date: 'hh:mm a' : 'UTC'}}
+                            </span>
+                        </td>
+                        <td>{{statement.distance | number : addon_decimal_value}}</td>
+                        <td>{{statement.duration}}</td>
+                        <td>{{(statement.delivery_charges).toFixed(price_decimal_length) | number : addon_decimal_value}}</td>
+                        <td>{{(statement.tip_agent).toFixed(price_decimal_length)}}</td>
+                        <!-- <td>{{statement.waiting_charges}}</td> -->
+                        <!-- <td>{{account.handling_admin}}</td> -->
+                        <td>{{(statement.commission_ammount).toFixed(price_decimal_length)}}</td>
+                        <td ng-if="is_enabled_agent_base_price == 1">
+                            {{(statement.agent_base_price).toFixed(price_decimal_length)}}</td>
+                        <td ng-if="is_enabled_agent_base_price == 1">
+                            {{(statement.agent_delivery_charge_share).toFixed(price_decimal_length)}}</td>
+                        <td>{{currency}} {{(statement.net_amount).toFixed(price_decimal_length) | number : addon_decimal_value}}</td>
+                        <!-- <td>{{account.total_amount}}</td> -->
+                        <td ng-if="enable_order_desc_price_breakdown==1">
+                            {{currency}}{{getPaytoRestaurant(statement)}}
+                        </td>
+                        <td ng-if="enable_order_desc_price_breakdown==1">
+                            {{currency}}{{getPaytoCompnay(statement)}}
+                        </td>
+                        <td>
+                            <p ng-if="statement.payment_type == 0">
+                                {{'CASH' | translate}}</p>
+                            <p ng-if="statement.payment_type == 1">
+                                {{ 'ONLINE' | translate}} <span>({{statement.payment_source || 'N/A'}})</span></p>
+                        </td>
+                        <td>{{statement.payment_id || 'N/A'}}</td>
+                        <td>{{statement.payment_reference_number || 'N/A'}}</td>
+                        <td>
+                            <p style="color: #7A9E50;">{{statement.payment_status | translate}}</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="no-data-found" ng-if="statement_data.length == 0 && dataLoaded">
+                {{'NO DATA FOUND' | translate}}
+            </div>
+
+            <div ng-if="statement_data.length > 0 && dataLoaded" class="row pagination">
+                <ul ng-if="pager.pages && pager.pages.length">
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                    </li>
+                    <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                        <a ng-click="setPage(page)">{{page}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .reporttop .btns {
+        margin-bottom: 0;
+        margin-top: 48px;
+        position: relative;
+    }
+
+    .box {
+        border: 1px solid #dddddd;
+        border-radius: 5px;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .box small {
+        font-size: 16px;
+        opacity: 0.8;
+    }
+
+    .box h2 {
+        font-size: 24px;
+        font-weight: 500;
+    }
+
+    .box strong {
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--primary-color) !important;
+    }
+</style>

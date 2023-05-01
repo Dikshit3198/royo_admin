@@ -1,0 +1,229 @@
+<div class="container back">
+    <button class="btn text-right m-top-10" ui-sref="profile.agent"> <i class="fa fa-arrow-left"
+            aria-hidden="true"></i>{{'Back' | translate}}</button>
+</div>
+
+
+<div class="container">
+    <div class="row profile">
+        <div class="col-4">
+            <img class="user-img" ng-if="user.image" src="{{user.image}}">
+            <img class="user-img" ng-if="!user.image" src="/img/default_user.png">
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col-4">
+                    <label>{{'NAME' | translate}}</label>
+                    <h3>{{user.name || 'N/A'}}</h3>
+                </div>
+                <div class="col-4">
+                    <label>{{'PHONE' | translate}}</label>
+                    <h3>{{user.phone_number || 'N/A'}}</h3>
+                </div>
+                <div class="col-4">
+                    <label>{{'EMAIL' | translate}}</label>
+                    <h3>{{user.email || 'N/A'}}</h3>
+                </div>
+                <div class="col-12 wallet-amount">
+                    <label style="font-weight: 600;">{{'WALLET AMOUNT' | translate}}</label>
+                    <h3>{{currency}} {{user.wallet_amount}}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'TRANSACTIONS' | translate}}</h1>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)">
+                                <button type="button" class="bold create" data-toggle="modal"
+                                    ng-click="changeView(true)"
+                                    data-target="#addMoney">{{'ADD MONEY' | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>{{'AMOUNT' | translate}}</th>
+                                <th>{{'TYPE' | translate}}</th>
+                                <th>{{'BY ADMIN' | translate}}</th>
+                                <th>{{'DATE' | translate}}</th>
+                                <th>{{'CREDIT/DEBIT MODE' | translate}}</th>
+                                <th>{{'SHARE THROUGH' | translate}}</th>
+                                <th>{{'SHARE USER NAME' | translate}}</th>
+                                <th>{{'SHARE EMAIL' | translate}}</th>
+                                <th>{{'COMMENT' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="transaction in transactions">
+                                <td>{{transaction.id}}</td>
+                                <td>{{transaction.amount}}</td>
+                                <td>
+                                    <span ng-if="transaction.is_add == 0" style="color:#cc1c00;">{{'DEBIT' }}</span>
+                                    <span ng-if="transaction.is_add == 1" style="color:green;">{{'CREDIT'}}</span>
+                                </td>
+                                <td>{{transaction.by_admin == 1 ? 'YES' : 'NO'}}</td>
+                                <td>{{transaction.created_at  | date: 'dd-MM-yyyy HH:mm:ss'}}</td>
+                                <td>
+                                    <span ng-if="transaction.added_deduct_through == 0">{{'ADDED TO ACCOUNT' }}</span>
+                                    <span ng-if="transaction.added_deduct_through == 1">{{'SHARED'}}</span>
+                                    <span ng-if="transaction.added_deduct_through == 2">{{'CANCEL/REFUND'}}</span>
+                                    <span ng-if="transaction.added_deduct_through == 3">{{'ORDER PURCHASED'}}</span>
+                                </td>
+                                <td>{{transaction.share_through || '--'}}</td>
+                                <td>{{transaction.share_user_name || '--'}}</td>
+                                <td>{{transaction.share_user_email || '--'}}</td>
+                                <td>{{transaction.comment || '--'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="transactions.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+
+                    <div ng-if="transactions.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="addMoney">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{'ADD MONEY' | translate}}</h3>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <form role="form" id="addMoneyForm" name="addMoneyForm" ng-submit="addMoney(addMoneyForm)"
+                        novalidate>
+
+                        <div class="form-group">
+                            <label>{{'AMOUNT' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="amount" production-qty limit-to="4" ng-model="money.amount"
+                                placeholder="{{'AMOUNT' | translate}}" required>
+                            <div class="error" ng-show="addMoneyForm.amount.$invalid && addMoneyForm.$submitted">
+                                <small ng-show="addMoneyForm.amount.$error.required">Please enter
+                                    amount.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label> Comment<span class="star">*</span></label>
+                            <textarea type="text" limit-to="60" name="comment" ng-model="money.comment"
+                                placeholder="Comment" required></textarea>
+                            <div class="error" ng-show="addMoneyForm.comment.$invalid && addMoneyForm.$submitted">
+                                <small ng-show="addMoneyForm.comment.$error.required">Please enter
+                                    comment.</small>
+                            </div>
+                        </div>
+                        <div class="submit-plan">
+                            <button type="submit">{{'SUBMIT' | translate}}</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .profile {
+        margin-top: 20px;
+        padding: 10px;
+        box-shadow: 4px 4px 12px #dddddd;
+    }
+
+    .wallet-amount {
+        margin-top: 41px;
+        text-align: center;
+        border: 1px solid var(--primary-color);
+        padding: 10px;
+        border-radius: 4px;
+    }
+
+    .wallet-amount h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .user-img {
+        width: 200px;
+        height: 200px;
+    }
+
+    .star {
+        position: relative;
+    }
+
+    label {
+        font-weight: 500;
+    }
+
+    .back {
+        text-align: right;
+        margin-top: 10px;
+    }
+
+    .back button {
+        border-radius: 4px;
+        background-color: var(--primary-color);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+        border: none;
+        font-size: 14px;
+        color: #ffffff;
+        padding: 9px 25px;
+        font-weight: 600;
+    }
+
+    .back i {
+        margin-right: 10px;
+    }
+</style>

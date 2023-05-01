@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_eye</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ic_show_pass_not-show-copy" transform="translate(4.000000, 6.000000)" stroke="#9B8B5F">
+            <path d="M8,12 C11.3137085,12 16,9.3137085 16,6 C16,4.10862744 14.4732959,2.42165533 12.5465152,1.32192447 C11.8027527,0.897414065 10.9993765,0.56040615 10.201188,0.332921067 C9.44438288,0.117230293 8.69224154,1.77635684e-15 8,0 C4.6862915,1.77635684e-15 0,2.6862915 0,6 C0,7.23282314 0.648637794,8.37880439 1.63391569,9.3319234 C2.15594121,9.83691031 2.77246673,10.2877579 3.4370888,10.6686976 C4.88979961,11.5013442 6.57229598,12 8,12 Z" id="Oval"></path>
+            <circle id="Oval-2" stroke-width="2" cx="8" cy="6" r="1"></circle>
+        </g>
+    </g>
+</svg>

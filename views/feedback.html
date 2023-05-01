@@ -1,0 +1,257 @@
+<div class="wrapper order_page" ng-if="profile === 'ADMIN'">
+    <div class="category">
+        <div class="toptabs">
+            <button type="button" ui-sref="feedback.suggestions" class="btn suggestion">{{'View Suggestions' | translate}}</button>
+
+            <ul class="nav nav-tabs ">
+                <li class="nav-item"> <a class="nav-link" ng-class="selectedType == 'USER' ? 'active' : ''"
+                        ng-click="changeTab('USER')">{{localisation.user | translate}} {{'FEEDBACK' | translate}}</a> </li>
+                <li class="nav-item" ng-if="is_single_vendor == 0"> <a class="nav-link"
+                        ng-class="selectedType == 'SUPPLIER' ? 'active' : ''"
+                        ng-click="changeTab('SUPPLIER')">{{localisation.supplier | translate}}
+                        {{'FEEDBACK' | translate}}</a></li>
+                <li class="nav-item"> <a class="nav-link" ng-class="selectedType == 'AGENT' ? 'active' : ''"
+                        ng-click="changeTab('AGENT')">{{localisation.agent | translate}} {{'FEEDBACK' | translate}}</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF; padding-bottom: 20px;">
+            <div class="tab-content">
+                <div class="tab-pane  active" id="menu1">
+                    <div class="dashpenord ">
+
+                        <div class="tableouter">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>{{'FEEDBACK ID' | translate}}</th>
+                                        <th>{{'NAME' | translate}}</th>
+                                        <th>{{'DESCRIPTION' | translate}}</th>
+                                        <th>{{'EMAIL' | translate}}</th>
+                                        <th>{{'PHONE' | translate}}</th>
+                                        <th>{{'NEW SUGGESTIONS' | translate}}</th>
+                                        <th>{{'SELECTED SUGGESTIONS' | translate}}</th>
+                                        <th style="width: 222px;">{{'ACTION' | translate}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="feedback in feedbackList">
+                                        <td>
+                                            {{feedback.id}}
+                                        </td>
+                                        <td>{{feedback.name ? feedback.name : 'NA'}}</td>
+                                        <td>{{feedback.description ? feedback.description : 'NA'}}</td>
+                                        <td>{{feedback.email_id ? feedback.email_id : 'NA'}}</td>
+                                        <td>{{feedback.phone ? feedback.phone : 'NA'}}</td>
+                                        <td>{{feedback.new_suggestions ? feedback.new_suggestions : 'NA'}}</td>
+                                        <td>
+                                            <span ng-if="!feedback.suggestions.length">NA</span>
+                                            <ul ng-if="feedback.suggestions.length">
+                                                <li ng-repeat="suggestion in feedback.suggestions">{{suggestion}}</li>
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="bg-success"
+                                                ng-click="deleteFeedback(feedback)">{{'DELETE' | translate}}</button>
+                                            <button type="button" class="bg-success" ng-if="feedback.new_suggestions"
+                                                ng-click="approveSuggestions(feedback, 1)">{{'Approve Suggestions' | translate}}</button>
+                                            <button type="button" class="bg-success" ng-if="feedback.new_suggestions"
+                                                ng-click="selectFeedbackToEdit(feedback)">{{'Edit Suggestions' | translate}}</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="no-data-found" ng-if="feedbackList.length == 0 && dataLoaded">
+                            {{'NO DATA FOUND' | translate}}
+                        </div>
+
+                        <div ng-if="feedbackList.length > 0 && dataLoaded" class="row pagination">
+                            <ul ng-if="pager.pages && pager.pages.length">
+                                <li ng-class="{disabled:pager.currentPage === 1}">
+                                    <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                                </li>
+                                <li ng-class="{disabled:pager.currentPage === 1}">
+                                    <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                                </li>
+                                <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                    <a ng-click="setPage(page)">{{page}}</a>
+                                </li>
+                                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                    <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                                </li>
+                                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                    <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="wrapper order_page" ng-if="profile === 'SUPPLIER'">
+    <div class="category" style="width: 80%; margin: 0 auto">
+
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">Feedback Form</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="addban m-top-30 innpad">
+            <div class="persinfo">
+                <form role="form" id="addFeedbackForm" name="addFeedbackForm" enctype="multipart/form-data"
+                    ng-submit="addFeedback(addFeedbackForm)" novalidate>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'NAME' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="name" ng-model="supplierFeedback.name"
+                                    placeholder="{{'NAME' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addFeedbackForm.name.$invalid && addFeedbackForm.$submitted">
+                                    <small
+                                        ng-show="addFeedbackForm.name.$error.required">{{'PLEASE ENTER NAME' | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" style="padding-left: 0px">
+                            <div class="form-group">
+                                <label>{{'PHONE' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="phone" ng-model="supplierFeedback.phone" production-qty
+                                    placeholder="{{'PHONE' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addFeedbackForm.phone.$invalid && addFeedbackForm.$submitted">
+                                    <small
+                                        ng-show="addFeedbackForm.phone.$error.required">{{'PLEASE ENTER PHONE' | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'EMAIL' | translate}}<span class="star">*</span></label>
+                                <input type="email" name="email" ng-model="supplierFeedback.email_id"
+                                    placeholder="{{'EMAIL' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addFeedbackForm.email.$invalid && addFeedbackForm.$submitted">
+                                    <small ng-show="addFeedbackForm.email.$error.required">Please enter email.</small>
+                                    <small ng-show="addFeedbackForm.email.$error.email">Please enter a valid
+                                        email.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'DESCRIPTION' | translate}}<span class="star">*</span></label>
+                                <textarea type="text" name="name" ng-model="supplierFeedback.description" rows="4"
+                                    placeholder="{{'DESCRIPTION' | translate}}"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'NEW SUGGESTION' | translate}}<span class="star">*</span></label>
+                                <textarea type="text" name="new_suggestions" ng-model="supplierFeedback.new_suggestions"
+                                    rows="4" placeholder="{{'NEW SUGGESTION' | translate}}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row suppro">
+                        <div class=" col-md-6">
+                            <div class="form-group">
+                                <div class="top">
+                                    <h2 class="bold">Select Suggestions</h2>
+                                </div>
+                                <div class="box" style="margin-top: 20px;">
+                                    <ul class="items">
+                                        <li ng-repeat="suggestion in  suggestions">{{suggestion.name}}
+                                            <label><input type="checkbox" name="{{suggestion.name}}"
+                                                    ng-click="selectSuggestion(suggestion)">
+                                                <span></span></label>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button m-top-20">
+                        <button type="submit" class="bold nxt">{{'SUBMIT' | translate}}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal" id="editSuggestion">
+    <div class="modal-dialog" style="max-width: 420px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead" style="padding: 24px 30px">
+                    <h2 class="bold" style="display: inline-block;">Edit Feedback Suggestion</h2>
+                    <button type="button" class="close" id="closeBrandModal" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <form role="form" id="editSuggestionForm" name="editSuggestionForm" ng-submit="editSuggestion(editSuggestionForm)" novalidate>
+
+                    <div class="modbody" style="padding: 20px 30px">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="bold">Suggestion<p class="star">*</p></label>
+                                    <input type="text" ng-model="selectedFeedback.suggestions" name="name"
+                                        placeholder="{{'TABLE NAME' | translate}}" required>
+                                    <div class="error" ng-show="editSuggestionForm.name.$invalid && addTableForm.$submitted">
+                                        <small ng-show="editSuggestionForm.name.$error.required">Please Enter
+                                            Suggestion</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="modfooter">
+                        <button type="submit" class="bg-success bold">{{'SAVE' | translate}}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .suggestion {
+        float: right;
+        color: #ffffff;
+        background-color: var(--primary-color);
+        font-size: 15px;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 4px;
+        vertical-align: middle;
+        margin-top: 4px;
+    }
+</style>

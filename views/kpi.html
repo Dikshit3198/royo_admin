@@ -1,0 +1,277 @@
+<div class="dashgra m-top-30">
+    <div class="row dash">
+        <div class="form-group">
+            <div class="col-md-12">
+                <input name="filter text_center" id="datepicker_dasboard" placeholder="Filter By Date"
+                    ng-style="{'text-align': enable_knock_theme ? 'center' : 'unset'}">
+                <button class="filter-button" style="margin-left: 10px" ng-click="getGraphData()">{{'FILTER BY
+                    DATE' | translate}}</button>
+            </div>
+        </div>
+    </div>
+    <div class="row dashboard-box-outter">
+        <div class="col-md-6 col-sm-6">
+            <div class="box">
+                <div class="top">
+                    <h3 class="bold">{{'REVENUE' | translate}}</h3>
+                    <div class="detail">
+                        <h4 style="text-align: right;">{{localisation.total_revenue | translate}}
+                            ({{localisation.delivered_orders | translate}}) : <span>
+                                {{currency}}{{dash_data.total_revenue ?
+                                (dash_data.total_revenue).toFixed(price_decimal_length) :
+                                zero_value.toFixed(price_decimal_length)}}</span>
+                        </h4>
+                        <h4 style="text-align: right; margin-top: 8px;">{{'REVENUE' | translate}}
+                            ({{start_date | date}} - {{end_date | date}}) :
+                            <span>{{currency}}{{dash_data.total_revenue_by_date ?
+                                (dash_data.total_revenue_by_date).toFixed(price_decimal_length) :
+                                zero_value.toFixed(price_decimal_length)}}</span>
+                        </h4>
+                    </div>
+                </div>
+                <div class="btm mt-3">
+                    <!--Graph-->
+                    <!-- <canvas id="bar" class="chart chart-bar" chart-data="totalRevenue" chart-labels="labels"
+                        chart-series="series" chart-colors="colors1" chart-options="options" chart-dataset-override="datasetOverride">
+                    </canvas> -->
+                    <canvas class="chart chart-bar" chart-data="totalRevenue" chart-labels="labels"
+                        chart-options="options" chart-dataset-override="datasetOverride_2">
+                    </canvas>
+                    <div class="nodata" ng-if="no_revenue">
+                        <p style="font-weight: bold;"> {{'NO DATA FOUND' | translate}} </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6">
+            <div class="box">
+                <div class="top">
+                    <h3 class="bold">{{localisation.orders | translate}}</h3>
+                    <div class="detail">
+                        <h4 style="text-align: right;">{{'TOTAL' | translate}}
+                            {{localisation.orders | translate}}
+                            ({{'PLACED' | translate}}) : <span>{{dash_data.total_orders}}</span></h4>
+                        <h4 style="text-align: right; margin-top: 8px;">{{localisation.orders | translate}}
+                            ({{start_date | date}} - {{end_date | date}}) :
+                            <span>{{dash_data.total_order_by_date}}</span>
+                        </h4>
+                    </div>
+                    <!-- <select class="app">
+                        <option>Monthly</option>
+                        <option>Weekly</option>
+                    </select> -->
+                </div>
+                <div class="btm mt-3">
+                    <!--Graph-->
+                    <!-- <canvas id="bar" class="chart chart-bar" chart-data="totalOrders" chart-labels="labels"
+                        chart-series="series" chart-colors="colors1" chart-options="options" chart-dataset-override="datasetOverride">
+                    </canvas> -->
+                    <canvas class="chart chart-bar" chart-data="totalOrders" chart-labels="labels"
+                        chart-options="options" chart-dataset-override="datasetOverride">
+                    </canvas>
+                    <div class="nodata" ng-if="no_orders">
+                        <p style="font-weight: bold;"> {{'NO DATA FOUND' | translate}} </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 m-top-30" ng-if="show_user_graph_dash == 1">
+            <div class="box">
+                <div class="top">
+                    <h3 class="bold">{{localisation.users | translate}}</h3>
+                    <div class="detail">
+                        <h4 style="text-align: right;">{{'TOTAL' | translate}}
+                            {{localisation.users | translate}}
+                            : <span>{{total_users}}</span></h4>
+                        <h4 style="text-align: right; margin-top: 8px;">{{localisation.users | translate}}
+                            ({{start_date | date}} - {{end_date | date}}) :
+                            <span>{{dash_data.total_user_by_date }}</span>
+                        </h4>
+                    </div>
+                </div>
+                <div class="btm mt-3">
+                    <canvas class="chart chart-bar" chart-data="totalUsers" chart-labels="labels"
+                        chart-options="options" chart-dataset-override="datasetOverride">
+                    </canvas>
+                    <div class="nodata" ng-if="total_users.length == 0 ">
+                        <p style="font-weight: bold;"> {{'NO DATA FOUND' | translate}} </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div  class="col-md-6 col-sm-6 m-top-30" >
+            <div class="box">
+                <div class="top">
+                    <h3 class="bold">{{'Average Order Duration'| translate}}</h3>
+                    <div class="detail">
+                        <h4 style="text-align: right;"> {{'Average Order Duration' | translate}}
+                            : <span>{{total_average_duration_per_order ? (total_average_duration_per_order).toFixed(price_decimal_length) :
+                                zero_value.toFixed(price_decimal_length) }}</span></h4>
+                                ({{start_date | date}} - {{end_date | date}}) :
+                                <span>{{dash_data.total_avarage_order_Duration_by_date}}</span>
+                        
+                    </div>
+                </div>
+                <div class="btm mt-3">
+                    <canvas class="chart chart-bar" chart-data="avarage_order_Duration" chart-labels="labels"
+                        chart-options="options" chart-dataset-override="datasetOverride">
+                    </canvas>
+                    <div class="nodata" ng-if="no_avarge_duration">
+                        <p style="font-weight: bold;"> {{'NO DATA FOUND' | translate}} </p>
+                    </div>
+                </div>
+            </div>
+        </div> 
+
+        <div  class="col-md-6 col-sm-6 m-top-30" >
+            <div class="box">
+                <div class="top">
+                    <h3 class="bold">{{'Average Number Of Deliveries/Orders Per Hour
+                        '| translate}}</h3>
+                    <div class="detail">
+                        
+                        <h4 style="text-align: right; margin-top: 8px;">{{'Weekely Order duration' | translate}}
+                            ({{start_date | date}} - {{end_date | date}}) :
+                            <span>{{avarage_no_of_Deliveries_per_Hour ? (avarage_no_of_Deliveries_per_Hour).toFixed(price_decimal_length) :
+                                zero_value.toFixed(price_decimal_length)}}</span>
+                        </h4>
+                    </div>
+                </div>
+                <div class="btm mt-3">
+                    <canvas class="chart chart-bar" chart-data="avarage_order_Duration" chart-labels="labels"
+                        chart-options="options" chart-dataset-override="datasetOverride">
+                    </canvas>
+                    <div class="nodata" ng-if="avarage_no_of_Deliveries_per_Hour == 0 ">
+                        <p style="font-weight: bold;"> {{'NO DATA FOUND' | translate}} </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div  class="col-md-6 col-sm-6 m-top-30">
+            <div class="box">
+                <div class="top">
+                    <h3 class="bold">{{'Percentage of Driver Is On Order
+                        '| translate}}</h3>
+                    <div class="detail">
+                        <h4 style="text-align: right;">{{' Percentage of Driver Is On Order' | translate}}
+                            : <span>{{Percentage_of_Driver_Is_On_Order}} %</span></h4>
+                            <h4 style="text-align: right; padding: 6px;">{{' Percentage of Driver Is On Idle' | translate}}
+                                : <span>{{Percentage_of_Driver_Is_On_Idle}} %</span></h4>
+
+
+                        <h4 style="text-align: right; margin-top: 8px; padding: 6px;">{{'Weekely Order duration' | translate}}
+                            ({{start_date | date}} - {{end_date | date}}) :
+                            <span>{{dash_data.total_active_driver_by_date ? (dash_data.total_active_driver_by_date).toFixed(price_decimal_length) :
+                                zero_value.toFixed(price_decimal_length)}}</span>
+                        </h4>
+                    </div>
+                </div>
+                <div class="btm mt-3">
+                    <canvas class="chart chart-bar" chart-data="Driver_Is_on_order" chart-labels="labels"
+                        chart-options="options" chart-dataset-override="datasetOverride">
+                    </canvas>
+                    <div class="nodata" ng-if="no_driver">
+                        <p style="font-weight: bold;"> {{'NO DATA FOUND' | translate}} </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+<style>
+	.mid li {
+		width: 50%;
+		font-size: 14px;
+	}
+
+	.modhead h3 {
+		color: #3c3c3cd9;
+		font-weight: 600;
+		margin-bottom: -20px;
+	}
+
+	.list-products img {
+		height: 50px;
+		width: 50px;
+		border-radius: 50%;
+	}
+
+	.list-products p {
+		display: inline-flex;
+		margin-left: 15px;
+		color: #585858d9;
+		font-weight: 600;
+	}
+
+	.list-products ul li {
+		margin-bottom: 16px;
+	}
+
+	.list-products ul li:last-child {
+		margin-bottom: 0px !important;
+	}
+
+	.list-products ul {
+		box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.12);
+		padding: 20px;
+	}
+
+	.sup-name {
+		font-size: 18px;
+		font-weight: 500;
+		text-transform: uppercase;
+		color: var(--primary-color);
+		margin-bottom: 20px;
+	}
+
+	.detail {
+		float: right;
+	}
+
+	.detail h4 {
+		font-size: 14px;
+		font-weight: 400;
+	}
+
+	.detail h4 span {
+		font-weight: 500;
+	}
+
+	.filter-button {
+		color: #ffffff;
+		border-radius: 8px;
+		background-color: var(--primary-color);
+		border: none;
+		font-size: 14px;
+		padding: 9px 25px;
+	}
+
+	.filter-button:hover {
+		/* background-color: #1997a3; */
+		background-color: var(--primary-color);
+		filter: brightness(0.9);
+	}
+
+	.dash input {
+		color: #5d5d5d !important;
+		font-weight: 500;
+		width: 295px !important;
+		border: 1px solid #c0c0c0 !important;
+	}
+
+	.receipt {
+		text-align: center;
+	}
+
+	.receipt img {
+		width: 100%;
+		height: 480px;
+		object-fit: contain;
+	}
+</style>

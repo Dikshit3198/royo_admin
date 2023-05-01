@@ -1,0 +1,114 @@
+<div class="reporttop m-top-30"
+    style="border: 1px solid rgba(18,17,17,0.1);	border-radius: 4px;	background-color: #FDFDFC;">
+    <form>
+        <div class="row">
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group" style="margin-top: 0px">
+                            <label>{{'SEARCH' | translate}}</label>
+                            <input type="text" ng-model="filter.email" placeholder="{{'SEARCH BY ID / NAME / EMAIL' | translate}}">
+                        </div>
+                    </div>
+
+                    <!-- <div class="col-md-4">
+                        <div class="form-group" style="margin-top: 0px">
+                            <label>{{localisation.product}} name</label>
+                            <input type="text" ng-model="filter.product" placeholder="{{localisation.product}} name">
+                        </div>
+                    </div> -->
+
+                    <div class="col-md-4">
+                        <div class="form-group" style="margin-top: 0px">
+                            <label>{{'REGISTERED ON' | translate}}</label>
+                            <input type="text" id="datepicker_supplier_report"
+                                placeholder="{{localisation.order_date | translate}}">
+                            <span class="inputtag"><img src="/img/v1_images/calendar.svg"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="btns" style="margin-top: 32px">
+                    <button type="button" ng-click="downloadCSV()"
+                    style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'DOWNLOAD CSV' | translate}}</button>
+                    <button type="button" ng-click="resetFilter()"
+                        style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'RESET' | translate}}</button>
+                    <button type="button" class="bg-success" ng-click="selectFilter()"
+                        style="color: #fff; border: 1px solid var(--primary-color); margin-left: 7px;">{{'FILTER' | translate}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <h3 ng-if="is_single_vendor == 0 && show_report_total_counts == 1"  style="text-align: end; font-weight: bold; margin: inherit;">{{'TOTAL ORDERS DELIVERED' | translate }} : {{ Total_order_delivered}}</h3>
+
+    <h3 ng-if="is_single_vendor == 0 && show_report_total_counts == 1" style="margin: inherit; text-align: end; font-weight: bold;">{{'TOTAL REVENUE' | translate }} : {{ Total_revenue}}</h3>
+
+</div>
+
+<div class="repbtm m-top-40">
+    <!-- <div class="secnav ">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <input type="text" placeholder="Search">
+            </div>
+        </div>
+    </div> -->
+
+    <div class="tableouter m-top-20">
+        <table>
+            <thead>
+                <tr>
+                    <th>{{'ID'|translate}}</th>
+                    <th>{{'NAME' | translate}}</th>
+                    <th>{{'EMAIL' | translate}}</th>
+                    <th class="cursor" ng-click="sortBy(2)">{{'REGISTERED ON' | translate}} <i class="fa fa-sort"></i></th>
+                    <th class="cursor" ng-click="sortBy(3)">{{localisation.orders | translate}} {{'DELIVERED' | translate}} <i class="fa fa-sort"></i></th>
+                    <th class="cursor" ng-click="sortBy(4)">{{'REVENUE' | translate}} <i class="fa fa-sort"></i></th>
+                    <th class="cursor" ng-click="sortBy(5)">{{'COMMISSION' | translate}} <i class="fa fa-sort"></i></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="supplier in suppliers">
+                    <td>{{supplier.s_id}}</td>
+                    <td>{{supplier.name}}</td>
+                    <td>{{supplier.email}}</td>
+                    <td>
+                        <span>
+                            {{supplier.created_on | date: 'MMM d, y'}}
+                        </span> <br>
+                        <span>
+                            {{supplier.created_on | date: 'hh:mm a'}}
+                        </span> 
+                    </td>
+                    <td>{{supplier.no_of_orders}}</i></td>
+                    <td>{{currency}} {{(supplier.revenue).toFixed(price_decimal_length) | number : addon_decimal_value}}</td>
+                    <td>{{supplier.commission}}%</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="no-data-found" ng-if="!suppliers.length && dataLoaded">
+            {{'NO DATA FOUND' | translate}}
+        </div>
+
+        <div ng-if="suppliers.length > 0 && dataLoaded" class="row pagination">
+            <ul ng-if="pager.pages && pager.pages.length">
+                <li ng-class="{disabled:pager.currentPage === 1}">
+                    <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === 1}">
+                    <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                </li>
+                <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                    <a ng-click="setPage(page)">{{page}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                    <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                    <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

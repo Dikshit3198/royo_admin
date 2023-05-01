@@ -1,0 +1,303 @@
+<div class="container-fluid back">
+
+</div>
+
+
+<div class="container">
+    <div class="row profile">
+        <div class="col-4">
+
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper" ng-if="!is_assiging">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'ZONE GEOFENCES' | translate}}</h1>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)" ng-if="permissions('promotions', 'create') == 1">
+                                <button type="button" class="bold create" data-toggle="modal"
+                                    ng-click="initGeofence(-1)">{{'ADD ZONE' | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{'NAME' | translate}}</th>
+                                <th>{{'IS LIVE' | translate}}</th>
+                                <th>{{'COORDINATES' | translate}}</th>
+                                <th>{{'ACTION' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="zone in geofence_areas track by $index">
+                                <td>{{zone.id}}</td>
+                                <td>{{zone.name || 'N/A'}}</td>
+                                <td>{{zone.is_live?'YES':'NO'}}</td>
+                                <td>
+                                    <!-- <span ng-repeat="co in zone.coordinates">
+                                        {{co.x}}&nbsp;{{co.y}},
+                                    </span> -->
+                                    <span class="delete" ng-click="viewZoneGeofence($index)">
+                                        {{'View Area On Map'}}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="delete" ng-click="deleteZoneGeofence(zone)">
+                                        {{'Delete'}}
+                                    </span>
+                                    <br />
+                                    <span class="delete" ng-click="updateZoneGeofence($index)">
+                                        {{'Update'}}
+                                    </span>
+                                    <br />
+                                    <span class="delete" ng-click="activeDeactiveZoneGeofence(zone)">
+                                        {{zone.is_live?'Deactivate':'Activate'}}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="geofence_areas.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+                    <div ng-if="geofence_areas.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container" ng-if="is_assiging">
+    <div class="row profile">
+        <div class="col-md-12">
+            <div class="row suppro" style="margin-bottom: 15px; margin-top: 20px;">
+
+                <div class="col-md-6" style="margin-bottom: 15px;" ng-init="parentIndex = $index">
+                    <div class="form-group">
+                        <div class="box">
+                            <h1 class="text-center m-4">
+                                {{'Supplier Zones' | translate}}
+                            </h1>
+                            <p class="text-center" ng-click="markAllZone()">
+                                {{!mark_all_zones?'Mark All':'Un Mark All'}}
+                            </p>
+
+                            <div class="scroll">
+                                <ul class="items">
+                                    <li ng-repeat="zone in zoneGeofenceList track by $index">
+                                        {{zone.name}}
+                                        <input type="checkbox" class="checkbx" ng-click="selectZone(zone)"
+                                            ng-checked="zone.checked">
+                                        <span ng-if="zone.checked==1" class="slct_time_slots"
+                                            ng-click="seeTimeSlots(zone)">see time slots</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <div class="submit-plan text-center mt-3" ng-if="profile=='ADMIN'">
+                                    <button type="submit" ng-click="assignZones()">{{'Assign Zones' |
+                                        translate}}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6" ng-if="selectedZoneSlotForAssign.timezone_list.length>0"
+                    style="margin-bottom: 15px;" ng-init="parentIndex = $index">
+                    <div class="form-group">
+                        <div class="box">
+                            <h1 class="text-center m-4">
+                                {{selectedZoneSlotForAssign.name}} {{'Zone Time Slots' | translate}}
+                            </h1>
+                            <div class="scroll">
+                                <ul class="items time_slot">
+                                    <li ng-repeat="zoneSlot in selectedZoneSlotForAssign.timezone_list track by $index">
+                                        <p>
+                                            <small><b>{{zoneSlot.day}}</b></small>
+                                            &nbsp;&nbsp;
+                                            {{zoneSlot.label}}
+                                        </p>
+                                        <input type="checkbox" class="checkbx" ng-click="selectZoneSlot(zoneSlot)"
+                                            ng-checked="zoneSlot.checked">
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal " id="geo">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                    <h2 class="bold" style="text-align: center;" ng-if="!is_viewing">{{is_updating?'UPDATE
+                        GEOFENCE':'ADD
+                        GEOFENCE' |
+                        translate}}</h2>
+                    <button type="button" class="close" data-dismiss="modal" id="close_geofence"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="geo" style="padding: 0px">
+                        <form role="form" id="addForm" name="addForm" ng-submit="setGeofence(addForm)" novalidate>
+                            <div class="form-group">
+                                <label>{{'NAME' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="name" ng-model="zone_geofence.name"
+                                    placeholder="{{'NAME' | translate}}" required>
+                                <div class="error" ng-show="addForm.name.$invalid && addForm.$submitted">
+                                    <small ng-show="addForm.name.$error.required">Please enter
+                                        name.</small>
+                                </div>
+                            </div>
+
+                            <div class="row suppro" style="margin-bottom: 15px; margin-top: 20px;"
+                                ng-if="enable_time_slot_in_zone_geofence==1">
+                                <div class="col-md-12" style="margin-bottom: 15px;" ng-init="parentIndex = $index">
+                                    <div class="form-group">
+                                        <div class="box">
+                                            <h1 class="text-center mt-4">
+                                                <label>{{'Select Time Slot' | translate}} </label>
+                                            </h1>
+                                            <div class="scroll">
+                                                <ul class="items time_slot">
+                                                    <li ng-repeat="slot in time_slots track by $index">
+                                                        <p>
+                                                            <small><b>{{slot.day}}</b></small>
+                                                            &nbsp;&nbsp;
+                                                            {{slot.label}}
+                                                        </p>
+                                                        <input type="checkbox" class="checkbx"
+                                                            ng-click="selectTimeSlot(slot)" ng-checked="slot.checked">
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div id="geo_map" style="height: 600px; width: 100%"></div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="btns">
+                                <div class="row">
+                                    <div class="col-md-12" ng-if="!is_viewing">
+                                        <button type="submit" class="bg-success bold">{{'SAVE' | translate}}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+<success-modal message="message"></success-modal>
+
+
+
+
+<style>
+    .delete {
+        cursor: pointer;
+    }
+
+    .delete:hover {
+        text-decoration: underline;
+        font-weight: 600;
+    }
+
+    .star {
+        position: relative !important;
+    }
+
+    .checkbx {
+        appearance: auto;
+        position: absolute;
+        right: 8px;
+        bottom: 16px;
+        height: 16px !important;
+    }
+
+    .suppro .box .time_slot {
+        height: 245px;
+        overflow: auto;
+    }
+
+    .slct_time_slots {
+        position: absolute;
+        right: 50px;
+        font-size: 11px;
+        bottom: 16px;
+        cursor: pointer;
+    }
+
+    .slct_time_slots:hover {
+        text-decoration: underline;
+        font-weight: 700;
+    }
+</style>

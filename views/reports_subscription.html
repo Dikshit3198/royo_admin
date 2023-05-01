@@ -1,0 +1,142 @@
+<div class="reporttop m-top-30"
+    style="border: 1px solid rgba(18,17,17,0.1); border-radius: 4px; background-color: #FDFDFC;">
+    <form>
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group" style="margin-top: 0px">
+                    <label>{{'SEARCH' | translate}}</label>
+                    <input type="text" ng-model="filter.search" placeholder="{{'SEARCH' | translate}}"  ng-keypress="search($event)">
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group" style="margin-top: 0px">
+                    <label>{{'SELECT DATE' | translate}}</label>
+                    <input type="text" id="datepicker_user_report" placeholder="{{'SELECT DATE' | translate}}">
+                    <span class="inputtag"><img src="/img/v1_images/calendar.svg"></span>
+                </div>
+            </div>
+
+            <div class="col-md-2"></div>
+
+            <div class="col-md-4">
+                <div class="btns" style="margin-top: 20px;">
+                    <button type="button" ng-click="downloadCSV()"
+                        style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'DOWNLOAD CSV' | translate}}</button>
+                    <button type="button" ng-click="resetFilter()"
+                        style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'RESET' | translate}}</button>
+                    <button type="button" class="bg-success" ng-click="filter()"
+                        style="color: #fff; border: 1px solid var(--primary-color); margin-left: 7px;">{{'FILTER' | translate}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<div class="repbtm m-top-40">
+
+    <div class="tableouter m-top-20">
+        <table>
+            <thead>
+                <tr>
+                    <th ng-if="notification_open && users.length">
+                        <label class="check"><input type="checkbox" ng-click="checkAll()"><span
+                                style="margin-top: 5px"></span></label>
+                    </th>
+                    <th>{{'ID' | translate}}</th>
+                    <th>{{'EMAIL' | translate}}</th>
+                    <th>{{'NAME' | translate}}</th>
+                    <th>{{'PHONE NUMBER' | translate}}</th>
+                    <th class="cursor" ng-click="sortBy(2)">{{'REGISTERED ON' | translate}} <i class="fa fa-sort"></i>
+                    </th>
+                    <th class="cursor" ng-click="sortBy(3)">{{'TOTAL' | translate}} {{localisation.orders | translate}}
+                        <i class="fa fa-sort"></i></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="user in users">
+                    <td ng-if="notification_open && users.length"><label class="check"><input type="checkbox"
+                                ng-checked="selected_users.includes(user.id)" ng-click="check(user)"><span
+                                style="margin-top: 5px"></span></label>
+                    </td>
+                    <td>{{user.id}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.firstname ? user.firstname : 'NA'}}</td>
+                    <td>{{user.mobile_no ? user.mobile_no : 'NA'}}</td>
+                    <td>
+                        <span>
+                            {{user.created_on | date: 'MMM d, y' : 'UTC'}}
+                        </span> <br>
+                        <span>
+                            {{user.created_on | date: 'hh:mm a' : 'UTC'}}
+                        </span>
+                    </td>
+                    <td>{{user.no_of_orders}}</td>
+                    <!-- <td>
+                        <button type="button" class="bg-secondary">PREVIEW</button>
+                        <button type="button" class="bg-success">GENERATE</button>
+                    </td> -->
+                </tr>
+            </tbody>
+        </table>
+        <div class="no-data-found" ng-if="users.length == 0 && dataLoaded">
+            {{'NO DATA FOUND' | translate}}
+        </div>
+
+        <div ng-if="users.length > 0 && dataLoaded" class="row pagination">
+            <ul ng-if="pager.pages && pager.pages.length">
+                <li ng-class="{disabled:pager.currentPage === 1}">
+                    <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === 1}">
+                    <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                </li>
+                <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                    <a ng-click="setPage(page)">{{page}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                    <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                    <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .reporttop .btns {
+        margin-bottom: 0;
+        margin-top: 32px;
+        position: relative;
+    }
+
+    .chev-btn {
+        background-color: transparent;
+        float: right;
+        outline: none;
+    }
+
+    .chev-btn:active {
+        outline: none;
+    }
+
+    .notification {
+        color: #4a4a4a;
+        width: 50%;
+        margin-top: 7px;
+        font-weight: 500;
+        margin-left: 10px;
+    }
+
+    .notification-textarea {
+        padding: 10px 15px;
+        width: 100%;
+        border-radius: 4px;
+    }
+</style>

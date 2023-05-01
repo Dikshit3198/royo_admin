@@ -1,0 +1,121 @@
+<div class="wrapper">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'Survey Templates' | translate}}</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="secnav m-top-40">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <input type="text" placeholder="{{'SEARCH' | translate}}" ng-model="search"
+                        ng-keypress="searchAdmin($event)">
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <div class="topfil">
+                        <div class="row select-category">
+                            <label>{{'Survey Category'}}</label>
+                            <div class="col-md-6" ng-if="surveyCategories.length" style="margin-bottom: 10px;">
+                                <select data-placeholder="Choose {{localisation.category | translate}}" class="app"
+                                    tabindex="4" ng-model="selectedCategory"
+                                    ng-options="category.name for category in surveyCategories"
+                                    ng-change="onSelectCategory(selectedCategory, true)">
+                                    <option value="" selected disabled>{{'SELECT CATEGORY' | translate}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{'NICK NAME' | translate}}</th>
+                                <th>{{'TITLE' | translate}}</th>
+                                <th>{{'PREVIEW' | translate}}</th>
+                                <th>{{'TOTAL QUESTION' | translate}}</th>
+                                <th>{{'DESCRIPTION' | translate}}</th>
+                                <th>{{'CATEGORY'| translate}}</th>
+                                <th>{{'AVAILABLE' | translate}}</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="srvTemp in surveyTemplates">
+                                <td>{{srvTemp.id}}</td>
+                                <td>{{srvTemp.name || 'N/A'}}</td>
+                                <td>{{srvTemp.title || 'N/A'}}</td>
+                                <td><a href="{{srvTemp.preview_link}}" target="_blank">Preview</a></td>
+                                <td>{{srvTemp.num_questions || 'N/A'}}</td>
+                                <td>{{srvTemp.description || 'N/A'}}</td>
+                                <td>{{srvTemp.category|| 'N/A'}}</td>
+                                <td>{{srvTemp.available || 'N/A'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="surveyTemplates.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND'}}
+                    </div>
+
+                    <div ng-if="surveyTemplates.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .submit-admin {
+        text-align: right;
+    }
+
+    .submit-admin button {
+        display: inline-block;
+        color: #ffffff;
+        font-size: 14px;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 4px;
+        vertical-align: middle;
+        background-color: var(--primary-color);
+    }
+
+    .str {
+        display: inline-block;
+        margin-left: 1px;
+        color: #e71818;
+    }
+</style>

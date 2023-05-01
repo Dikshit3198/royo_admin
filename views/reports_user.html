@@ -1,0 +1,222 @@
+<div class="reporttop m-top-30"
+    style="border: 1px solid rgba(18,17,17,0.1); border-radius: 4px; background-color: #FDFDFC;">
+    <form>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group" style="margin-top: 0px">
+                    <label>{{'SEARCH' | translate}}</label>
+                    <input type="text" ng-model="filter.id" placeholder="{{'SEARCH BY NAME/EMAIL/PHONE' | translate}}">
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group" style="margin-top: 0px">
+                    <label>{{'SELECT DATE' | translate}}</label>
+                    <input type="text" id="datepicker_user_report" placeholder="{{'SELECT DATE' | translate}}">
+                    <span class="inputtag"><img src="/img/v1_images/calendar.svg"></span>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="btns">
+                    <button type="button" ng-click="downloadCSV()"
+                        style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'DOWNLOAD CSV' | translate}}</button>
+                    <button type="button" ng-click="resetFilter()"
+                        style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'RESET' | translate}}</button>
+                    <button type="button" class="bg-success" ng-click="filter()"
+                        style="color: #fff; border: 1px solid var(--primary-color); margin-left: 7px;">{{'FILTER' | translate}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <h3 ng-if="is_single_vendor == 0 && show_report_total_counts == 1" style="text-align: end; margin: inherit; font-weight: bold"> {{'TOTAL ORDERS'| translate}} : {{TotalOrders}}</h3>
+</div>
+
+<div id="accordion" style="margin-top: 20px; margin-bottom: -10px;" ng-if="profile === 'ADMIN'">
+    <div class="card">
+        <div class="card-header" id="headingOne" style="background-color: #FDFDFC; padding: 5px 10px;">
+            <a class="chev-btn" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                style="padding: 5px 10px" ng-click="notificationOpen()" aria-controls="collapseOne">
+                <i data-toggle="collapse" data-target="#collapseOne" ng-if="!notification_open"
+                    class="fa fa-chevron-down"></i>
+                <i data-toggle="collapse" data-target="#collapseOne" ng-if="notification_open"
+                    class="fa fa-chevron-up"></i>
+            </a>
+            <h5 class="mb-0 notification text_upper">
+                {{'SEND NOTIFICATION/EMAIL TO' | translate}} {{localisation.users | translate}}
+            </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                <div class="persinfo" style="margin-bottom: 20px;">
+                    <div class="labelrad">
+                        <label style="margin-left: 0px">
+                            <input type="radio" name="type" value="1" required convert-to-number ng-model="message_type"
+                                ng-change="changeMsgType(message_type)"><span></span>{{'SEND AS NOTIFICATION' | translate}}
+                        </label>
+                        <label>
+                            <input type="radio" name="type" value="2" required convert-to-number ng-model="message_type"
+                                ng-change="changeMsgType(message_type)"><span></span>{{'SEND AS EMAIL' | translate}}
+                        </label>
+                    </div>
+                </div>
+
+                <textarea ng-if="message_type == 1" class="notification-textarea"
+                    placeholder="{{'Enter Notification Content'|translate}}" rows="4" ng-model="notification.msg"></textarea>
+
+                <div ng-if="message_type == 2" sty>
+                    <div class="top" style="margin-bottom: 30px">
+                        <div class="row">
+                            <div class="col-md-2" style="padding-top: 8px">
+                                <span>{{'SUBJECT' | translate}} : </span>
+                            </div>
+                            <div class="col-md-10">
+                                <input class="form-control" ng-model="email.subject" style="width: 100%"
+                                    placeholder="{{'SUBJECT' | translate}}">
+                            </div>
+                        </div>
+                    </div>
+                    <summernote config="summernote_config" ng-model="email.body"></summernote>
+                    <!-- <div summernote class="summernote" ng-model="email.email_msg"></div> -->
+                </div>
+
+                <div style="text-align: right; margin-top: 20px;">
+                    <button class="button-primary" style="font-size: 16px"
+                        ng-click="sendNotificationOrEmail()">{{'SEND' | translate}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="repbtm m-top-40">
+    <!-- <div class="secnav ">
+        <div class="row"> 
+            <div class="col-md-6 col-sm-6">
+                <input type="text" placeholder="Search">
+            </div>
+        </div>
+    </div> -->
+
+    <div class="tableouter m-top-20">
+        <table>
+            <thead>
+                <tr>
+                    <th ng-if="notification_open && users.length">
+                        <label class="check"><input type="checkbox" ng-click="checkAll()"><span
+                                style="margin-top: 5px"></span></label>
+                    </th>
+                    <th>{{'ID' | translate}}</th>
+                    <th>{{'EMAIL' | translate}}</th>
+                    <th>{{'NAME' | translate}}</th>
+                    <th>{{'PHONE NUMBER' | translate}}</th>
+                    <th ng-if="is_abn_business=='1'">{{'ABN NUMBER' | translate}}</th>
+                    <th ng-if="is_abn_business=='1'">{{'BUSINESS NAME' | translate}}</th>
+                    <th ng-if="is_nhs_filter_enable==1">{{'NHS STATUS'}}</th>
+                    <th class="cursor" ng-click="sortBy(2)">{{'REGISTERED ON' | translate}} <i class="fa fa-sort"></i>
+                    </th>
+                    <th class="cursor" ng-click="sortBy(3)">{{'TOTAL' | translate}} {{localisation.orders | translate}}
+                        <i class="fa fa-sort"></i></th>
+                    <th>{{'TOTAL ORDER PRICE' | translate}}</th>
+                    <th ng-if="user_order_detail_report == 1">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="user in users">
+                    <td ng-if="notification_open && users.length"><label class="check"><input type="checkbox"
+                                ng-checked="selected_users.includes(user.id)" ng-click="check(user)"><span
+                                style="margin-top: 5px"></span></label>
+                    </td>
+                    <td>{{user.id}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.firstname ? user.firstname : 'NA'}}</td>
+                    <td>{{user.mobile_no ? user.mobile_no : 'NA'}}</td>
+                    <td ng-if="is_abn_business=='1'">{{user.abn_number ? user.abn_number : 'NA'}}</td>
+                    <td ng-if="is_abn_business=='1'">{{user.business_name ? user.business_name : 'NA'}}</td>
+                    <td ng-if="is_nhs_filter_enable==1">{{user.nhs_status==1?'Yes':'No'}}</td>
+                    <td>
+                        <span>
+                            {{user.created_on | date: 'MMM d, y' : 'UTC'}}
+                        </span> <br>
+                        <span>
+                            {{user.created_on | date: 'hh:mm a' : 'UTC'}}
+                        </span>
+                    </td>
+                    <td>{{user.no_of_orders}}</td>
+                    <td>{{user.total_order_price || 'NA'}}</td>
+                    <td ng-if="user_order_detail_report == 1">
+                        <button type="button" class="bg-success"
+                        ui-sref="orders.ordersManager({status:2, user_id: user.id})">{{'Past Orders' | translate}}</button>
+                        <button type="button" class="bg-success"
+                        ui-sref="orders.ordersManager({status:1, user_id: user.id})">{{'Active Orders' | translate}}</button>
+                        <button type="button" class="bg-success"
+                        ui-sref="orders.ordersManager({status:2, order_status: 8, user_id: user.id})">{{'Cancelled Orders' | translate}}</button>
+                    </td>
+                    <!-- <td>
+                        <button type="button" class="bg-secondary">PREVIEW</button>
+                        <button type="button" class="bg-success">GENERATE</button>
+                    </td> -->
+                </tr>
+            </tbody>
+        </table>
+        <div class="no-data-found" ng-if="users.length == 0 && dataLoaded">
+            {{'NO DATA FOUND' | translate}}
+        </div>
+
+        <div ng-if="users.length > 0 && dataLoaded" class="row pagination">
+            <ul ng-if="pager.pages && pager.pages.length">
+                <li ng-class="{disabled:pager.currentPage === 1}">
+                    <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === 1}">
+                    <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                </li>
+                <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                    <a ng-click="setPage(page)">{{page}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                    <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                    <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .reporttop .btns {
+        margin-bottom: 0;
+        margin-top: 32px;
+        position: relative;
+    }
+
+    .chev-btn {
+        background-color: transparent;
+        float: right;
+        outline: none;
+    }
+
+    .chev-btn:active {
+        outline: none;
+    }
+
+    .notification {
+        color: #4a4a4a;
+        width: 50%;
+        margin-top: 7px;
+        font-weight: 500;
+        margin-left: 10px;
+    }
+
+    .notification-textarea {
+        padding: 10px 15px;
+        width: 100%;
+        border-radius: 4px;
+    }
+</style>

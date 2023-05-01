@@ -1,0 +1,61 @@
+<form role="form" prevent-enter-press novalidate>
+    <div class="persinfo">
+        <div class="bx">
+
+            <h2 class="bold">{{'Supplier rating details' | translate}}</h2>
+
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>{{'Description' | translate}}</label>
+                        <input type="text" name="sup_name" placeholder="{{'Description' | translate}}"
+                            ng-model="ratingDescription">
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>{{'Inspection date' | translate}}</label>
+                        <div style="position: relative">
+                            <input type="text" id="datepicker"
+                                placeholder="{{'DATE' | translate}}" readonly>
+                            <span style="position: absolute;right: 25px;top: 5px;" class="inputtag"><img
+                                    src="/img/v1_images/calendar.svg"></span>
+                        </div>
+                        <!-- <input type="date" name="sup_name" placeholder="{{'Inspection Date' | translate}}"
+                            ng-model="ratingDate" required> -->
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+            <label>{{'Supplier rating document' | translate}}</label>
+            <div class="row">
+                <div class="col-md-4 file" ng-repeat="image in ratingImageList track by $index">
+                    <div class="form-group pic">
+                        <span ng-if="image" ng-click= "image.selected = !image.selected" style="height: 104px; cursor: pointer; position: relative;">
+                            <img style="width: 100%; height: 100%; object-fit: contain;" id="croppr"
+                                src="{{image.image}}" ng-click= "selectedImageData(image, $index)" ng-class="{'selected-image': selectedIndex === $index}">
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="row col-md-12 btns">
+                <button ng-click="postRatingData()" type="button" class="submit" style="
+                text-align: center;">{{'SAVE'
+                    | translate}}</button>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+<style>
+  .selected-image {
+    box-shadow: 0 2px 5px 0 rgb(11 131 130 / 98%), 0 2px 6px 0 rgb(27 110 95 / 12%);
+}
+</style>

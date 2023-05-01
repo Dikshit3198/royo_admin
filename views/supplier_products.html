@@ -1,0 +1,1572 @@
+<div class="wrapper">
+
+    <div class="category" ng-if="!addProduct">
+        <a class="backbtn"
+            ui-sref="{{profile=='ADMIN' ? 'profile.supplierSetup.step_two({id: supplier_id, tab: 2, multi_b: is_multi_branch, b_id: sup_branch_id})' : 'production.productionSetup'}}"><img
+                src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+
+        <div class="toptabs">
+            <ul class="nav nav-tabs ">
+                <li ng-if="is_single_vendor == 0" class="nav-item"> <a class="nav-link active">
+                        {{localisation.branch_products | translate}}</a>
+                </li>
+                <li ng-if="is_single_vendor == 1" class="nav-item">
+                    <a class="nav-link active" ng-if="is_multiple_branch == 1">{{sup_branch_id ? 'BRANCH' : '' |
+                        translate}}
+                        {{localisation.products | translate}}</a>
+                    <a class="nav-link active" ng-if="is_multiple_branch == 0">{{localisation.product | translate}}</a>
+                </li>
+            </ul>
+        </div>
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-4 col-sm-4">
+                    <input style="width: 252px" type="text" placeholder="{{'SEARCH' | translate}}"
+                        ng-keypress="searchProduct($event, 1)">
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <div class="topfil">
+                        <ul>
+                            <li
+                                ng-if="disable_import == 0 && (enable_supplier_add_edit_delete_restriction==0 || profile == 'ADMIN')">
+                                <button type="button" class="simple" data-toggle="modal" data-target="#csvModel"><img
+                                        src="img/v1_images/ic_import.svg">{{'IMPORT' | translate}}</button>
+                            </li>
+                            <li>
+                                <button type="button" class="simple" ng-click="refresh()"><img
+                                        src="img/v1_images/ic_rotate.svg">{{'REFRESH' | translate}}</button>
+                            </li>
+                            <li
+                                ng-if="((permissions('catalogue', 'create') == 1 && profile == 'ADMIN' && !is_out_network) || (permissions('product', 'create') == 1 && ((profile == 'SUPPLIER' || profile == 'BRANCH') && restrict_supplier_add_edit_product == 0)))">
+                                <button type="button" class="bold create" ng-click="changeview(true, false)">{{'ADD' |
+                                    translate}}
+                                    {{localisation.product | translate}}</button>
+                            </li>
+                            <li ng-if="!is_out_network && sup_branch_id && is_single_vendor == 0 && no_catalogue == 0">
+                                <button type="button" class="bold create" ng-click="assignProducts()">{{'ASSIGN' |
+                                    translate}}
+                                    {{localisation.product | translate}} {{'TO BRANCH' | translate}}</button>
+                            </li>
+                            <li ng-if="profile === 'SUPPLIER' && !sup_branch_id">
+                                <button type="button" class="bold create"
+                                    ui-sref="production.assignProducts({id: supplier_id})">{{'ASSIGN' | translate}}
+                                    {{localisation.product | translate}}</button>
+                            </li>
+                            <li ng-class="is_grid ? 'active' : ''">
+                                <a ng-click="is_grid = true"><img src="img/v1_images/ic_grid_selected.svg"></a>
+                            </li>
+                            <li ng-class="!is_grid ? 'active' : ''">
+                                <a ng-click="is_grid = false"><img src="img/v1_images/ic_list_selected.svg"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="row select-category" style="margin-top: 20px" ng-if="is_pos_enabled == 1 && posKeyList.length">
+                <div class="col-md-3" style="margin-bottom: 10px;">
+                    <label class="cat-label">{{'SELECT POS KEY' | translate}}</label>
+                    <select data-placeholder="Choose {{localisation.category | translate}}" class="app" tabindex="4"
+                        ng-model="selected_POS" ng-options="pos.title for pos in posKeyList"
+                        ng-change="onSelectPOSKEY(selected_POS)">
+                        <option value="selected_POS.id" selected disabled>{{'SELECT' | translate}}</option>
+                    </select>
+                </div>
+                <div class="col-md-3 p-0" style="margin-bottom: 10px;">
+                    <button type="button" class="import_pos mt-4"
+                        style="width: 100%;margin-left: 20px; margin-top: 34px !important;"
+                        ng-click="onSelectPOSKEY(null)"><img src="img/v1_images/ic_import.svg">Import
+                        Via POS</button>
+                </div>
+            </div>
+
+
+
+
+            <div class="row select-category" style="margin-top: 20px">
+                <div class="col-md-3" ng-if="categories.length" style="margin-bottom: 10px;">
+                    <label class="cat-label">{{'SELECT' | translate}}
+                        {{localisation.category | translate}}</label>
+                    <select data-placeholder="Choose {{localisation.category | translate}}" class="app" tabindex="4"
+                        ng-model="selected_cat" ng-options="category.name for category in categories"
+                        ng-change="onSelectCategory(selected_cat, true)">
+                        <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3" style="margin-bottom: 10px;"
+                    ng-repeat="cat in dynamicSubCategories track by $index" ng-init="parentIndex = $index">
+                    <label class="cat-label" ng-if="parentIndex == 0">{{selected_cat.name}}</label>
+                    <label class="cat-label" ng-if="parentIndex > 0">{{selectedCategory[childIndex-1].name}}</label>
+                    <select data-placeholder="Choose Category" tabindex="4" class="app"
+                        ng-model="selectedCategory[childIndex]" ng-init="childIndex = $index"
+                        ng-options="subCat.name for subCat in cat"
+                        ng-change="changeSubCatId(selectedCategory[childIndex], parentIndex + 1, true)">
+                        <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row" ng-if="product_tags == 1" style="margin-top: 18px;">
+                <div class="col-md-4 col-sm-4">
+                    <input style="width: 252px" type="text" placeholder="Tag Search" ng-model="tagSearch"
+                        ng-keypress="searchProduct($event, 2)">
+                </div>
+            </div>
+        </div>
+
+        <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF;" ng-if="catLoaded">
+
+            <div class="catbox" ng-if="is_grid">
+                <div class="row">
+                    <div class="col-md-3" ng-repeat="product in products">
+                        <div class="box">
+                            <figure class="cursor" style="margin-bottom: 0; position: relative;"
+                                ng-click="((permissions('catalogue', 'update') == 1 && profile == 'ADMIN') || (permissions('product', 'update') == 1 && profile == 'SUPPLIER' && restrict_supplier_add_edit_product == 0)) ? productEdit(product) : ''">
+                                <img
+                                    src="{{compressImage(product.images[0].image_path, '290x180') || image_placeholder}}">
+                            </figure>
+                            <div class="text">
+                                <div class="Option">
+                                    <button type="button" class="edit dropdown-toggle" data-toggle="dropdown"> <img
+                                            src="img/v1_images/ic_more.svg"> </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item"
+                                            ng-if="is_mark_out_of_stock==1 && product.item_unavailable==1 && ((permissions('catalogue', 'delete') == 1 && profile == 'ADMIN') || (permissions('product', 'delete') == 1 && profile == 'SUPPLIER'))"
+                                            ng-click="makeProductUnavail(product)">{{'MAKE AVAILABLE' | translate}}
+                                            {{localisation.product | translate}}</a>
+                                        <a class="dropdown-item"
+                                            ng-if="is_mark_out_of_stock==1 && product.item_unavailable==0 && ((permissions('catalogue', 'delete') == 1 && profile == 'ADMIN') || (permissions('product', 'delete') == 1 && profile == 'SUPPLIER'))"
+                                            ng-click="makeProductUnavail(product)">{{'MAKE UNAVAILABLE' | translate}}
+                                            {{localisation.product | translate}}</a>
+                                        <a class="dropdown-item"
+                                            ng-if="((enable_supplier_add_edit_delete_restriction==0 || profile == 'ADMIN') && (disable_delete_product_for_suppliers == 0 || profile == 'ADMIN')) && ((permissions('catalogue', 'delete') == 1 && profile == 'ADMIN') || (permissions('product', 'delete') == 1 && profile == 'SUPPLIER'))"
+                                            ng-click="deleteProduct(product.id)">{{'DELETE' | translate}}
+                                            {{localisation.product | translate}}</a>
+                                        <a ng-if="product.regular_price && product.is_variant == 0 && enable_services_customize_flow == 0 "
+                                            class="dropdown-item" ng-click="editPrice(product, true)">{{'DISCOUNT PRICE'
+                                            | translate}}</a>
+                                        <a class="dropdown-item"
+                                            ng-if="([1].includes(app_type) || (app_type > 10 && [1].includes(flow_type)) || (enable_services_customize_flow == 1)) && sup_branch_id"
+                                            ui-sref="production.customization({product_id: product.id, level: 1, sup_id: supplier_id, b_id: sup_branch_id, type: (product.is_liquor || 0)})">{{'CUSTOMIZATION'
+                                            | translate}}</a>
+                                        <a class="dropdown-item" ng-if="is_variant == 1"
+                                            ui-sref="production.productVariants({id: product.id, type: user_type, supplierId: supplier_id, branchId: sup_branch_id, flow: flow_type})">{{'VARIANTS'
+                                            | translate}}</a>
+                                        <a class="dropdown-item"
+                                            ng-if="product.discount_price && product.is_variant == 0"
+                                            ng-click="removeDiscount(product)">{{'REMOVE DISCOUNT' | translate}}</a>
+                                        <a ng-if="is_flash_sale && product.regular_price && product.is_variant == 0"
+                                            class="dropdown-item" ng-click="editPrice(product, true, true)">{{'Flash
+                                            Sale Price' | translate}}</a>
+                                    </div>
+                                    <!-- <button type="button" ng-click="deleteProduct(product.id)"><img -->
+                                    <!-- src="/img/v1_images/delete.png"> </button> -->
+                                </div>
+                                <strong class="bold ellipsis" data-toggle="tooltip"
+                                    title="{{product.name_en}}">{{product.name_en}}</strong>
+                                <p ng-if="!is_out_network" class=" price" ng-click="editPrice(product, false)">
+                                    {{product.regular_price ? ((product.price[0]).pricing_type == 1 || (is_user_type ==
+                                    1 && user_type_check == 1) ? ('VIEW PRICE' | translate) : currency +
+                                    product.regular_price) : '+ ' + ('ADD PRICE' | translate)}}
+                                </p>
+
+                                <!-- <p style="display: inline" ng-bind-html="product.desc_en | limitHtml: 40 | toTrusted">
+                                </p>
+                                <a ng-if="product.desc_en.length > 40" class="read-more-card"><small
+                                        ng-click="viewDescription(product.desc_en)">...Read
+                                        More</small></a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table ng-if="!is_grid">
+                <thead>
+                    <tr>
+                        <th>{{'ID' | translate}}</th>
+                        <th>{{'NAME' | translate}}</th>
+                        <th>{{'DESCRIPTION' | translate}}</th>
+                        <th ng-if="add_sku_product == 1">SKU</th>
+                        <th ng-if="show_sku_brand_product == 1">{{'BRAND NAME' | translate}}</th>
+                        <th
+                            ng-if="([1,2].includes(app_type) || (app_type > 10 && [1,2].includes(flow_type))) && no_product_quantity == 0">
+                            {{'STOCK LEFT' | translate}}</th>
+                        <th
+                            ng-if="([1,2].includes(app_type) || (app_type > 10 && [1,2].includes(flow_type))) && no_product_quantity == 0">
+                            {{'TOTAL' | translate}} {{'INVENTORY' | translate}}</th>
+                        <th
+                            ng-if="([1,2,3,4,5,6,7].includes(app_type) || (app_type > 10 && [1,2,3,4,5,6,7].includes(flow_type)))">
+                            {{'Cost Price' | translate }}</th>
+                        <th>{{'PRICE' | translate}}</th>
+                        <th>{{'DISCOUNT PRICE' | translate}}</th>
+                        <th>{{'Profit' | translate}} (%)</th>
+                        <th>{{'IMAGE' | translate}}</th>
+                        <th>{{'ACTION' | translate}}</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr ng-repeat="product in products | filter : {name_en: search}">
+                        <td>{{product.id}}</td>
+                        <td>{{product.name_en}}</td>
+                        <td>
+                            <div ng-bind-html="product.desc_en | limitHtml: 40 | toTrusted"></div>
+                            <a ng-if="product.desc_en.length > 40"><small
+                                    ng-click="viewDescription(product.desc_en)">...{{'READ MORE' |
+                                    translate}}</small></a>
+                        </td>
+                        <td ng-if="add_sku_product == 1">{{product.sku}}</td>
+                        <td ng-if="show_sku_brand_product == 1">{{product.brand_name}}</td>
+                        <td
+                            ng-if="([1,2].includes(app_type) || (app_type > 10 && [1,2].includes(flow_type))) && no_product_quantity == 0">
+                            {{product.commission_package == 1 ? 'Unlimited' : (product.left_quantity ?
+                            product.left_quantity : 0)}}
+                        </td>
+                        <td
+                            ng-if="([1,2].includes(app_type) || (app_type > 10 && [1,2].includes(flow_type))) && no_product_quantity == 0">
+                            {{product.commission_package == 1 ? 'Unlimited' : (product.quantity ? product.quantity :
+                            0)}}
+                        </td>
+                        <td
+                            ng-if="([1,2,3,4,5,6,7].includes(app_type) || (app_type > 10 && [1,2,3,4,5,6,7].includes(flow_type)))">
+                            {{product.making_price}}</td>
+                        <td>
+                            <p class="price" ng-click="editPrice(product, false)">
+                                {{product.regular_price ? ((product.price[0]).pricing_type == 1 || (is_user_type == 1 &&
+                                user_type_check == 1) ? ('VIEW PRICE' | translate) : currency + product.regular_price) :
+                                '+ ' + ('ADD PRICE' | translate)}}
+                            </p>
+                        </td>
+                        <td>
+                            <p ng-if="product.regular_price && product.is_variant == 0" class="price"
+                                ng-click="editPrice(product, true)">
+                                {{product.discount_price ? ((product.price[0]).pricing_type == 1 || (is_user_type == 1
+                                && user_type_check == 1) ? ('VIEW PRICE' | translate) : currency +
+                                product.discount_price) : '+ ' + ('ADD DISCOUNT' | translate)}}
+                            </p>
+                            <p ng-if="product.regular_price && product.is_variant == 1">NA</p>
+                            <b style="font-size: 12px; color: #5d5d5d" ng-if="!product.regular_price">{{'REGULAR PRICE'
+                                | translate}} <br>
+                                {{'NOT ADDED' | translate}}</b>
+                        </td>
+                        <td>{{product.profit == 'Infinity' ? '--' : ((product.profit).toFixed(price_decimal_length))}}
+                        </td>
+                        <td><img src="{{compressImage(product.images[0].image_path, '80x80') || image_placeholder}}">
+                        </td>
+                        <td>
+                            <button type="button" class="bg-success"
+                                ng-if="((permissions('catalogue', 'update') == 1 && profile == 'ADMIN') || (permissions('product', 'update') == 1 && profile == 'SUPPLIER' && restrict_supplier_add_edit_product == 0))"
+                                ng-click="productEdit(product)">{{'EDIT' | translate}}</button>
+
+                            <button type="button" class="edit dropdown-toggle" data-toggle="dropdown"> <img
+                                    src="img/v1_images/ic_more.svg"> </button>
+                            <div class="dropdown-menu">
+                                <a ng-if="(enable_supplier_add_edit_delete_restriction==0 || profile == 'ADMIN') && (disable_delete_product_for_suppliers == 0 || profile == 'ADMIN')) && ((permissions('catalogue', 'delete') == 1 && profile == 'ADMIN') || (permissions('product', 'delete') == 1 && profile == 'SUPPLIER'))"
+                                    class="dropdown-item" ng-click="deleteProduct(product.id)">{{'DELETE' | translate}}
+                                    {{localisation.product | translate}}</a>
+                                <!-- <a class="dropdown-item" ng-click="editPrice(product, false)" data-toggle="modal"
+                                    data-target="#edit_pricing_modal">Add/Edit Price</a> -->
+                                <!-- <a ng-if="product.regular_price" class="dropdown-item"
+                                    ng-click="editPrice(product, true)" data-toggle="modal"
+                                    data-target="#edit_pricing_modal">Discount Price</a> -->
+                                <a class="dropdown-item"
+                                    ng-if="([1].includes(app_type) || (app_type > 10 && [1].includes(flow_type))) && sup_branch_id"
+                                    ui-sref="production.customization({product_id: product.id, level: 1, sup_id: supplier_id, b_id: sup_branch_id, type: (product.is_liquor || 0)})">{{'CUSTOMIZATION'
+                                    | translate}}</a>
+                                <a class="dropdown-item" ng-if="is_variant == 1"
+                                    ui-sref="production.productVariants({id: product.id, type: user_type, supplierId: supplier_id, branchId: sup_branch_id, flow: flow_type})">{{'VARIANTS'
+                                    | translate}}</a>
+                                <a class="dropdown-item" ng-if="product.discount_price && product.is_variant == 0"
+                                    ng-click="removeDiscount(product)">{{'REMOVE DISCOUNT' | translate}}</a>
+                                <a ng-if="is_flash_sale && product.regular_price && product.is_variant == 0"
+                                    class="dropdown-item" ng-click="editPrice(product, true, true)">{{'Flash Sale Price'
+                                    | translate}}</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="no-data-found" ng-if="products.length == 0 && dataLoaded">
+                {{'NO DATA FOUND' | translate}}
+            </div>
+
+            <div class="no-data-found" ng-if="products.length == 0 && !dataLoaded">
+                {{'PLEASE SELECT CATEGORY' | translate}}
+            </div>
+
+            <div ng-if="products.length > 0 && dataLoaded" class="row pagination">
+                <ul ng-if="pager.pages && pager.pages.length">
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                    </li>
+                    <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                        <a ng-click="setPage(page)">{{page}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="addcat" ng-if="addProduct">
+        <div class="top">
+            <!-- ((localisation.product | translate) + ' ' + -->
+            <h2 class="bold">
+                {{is_pricing ? ('PRICING' | translate) : is_edit ? (('EDIT' | translate) + ' ' + (localisation.product |
+                translate)) : (('ADD' | translate) + ' ' + (localisation.product | translate))}}
+            </h2>
+
+            <a ng-click="changeview(false, false)" class="back"><img
+                    src="img/v1_images/ic_dropdown.svg">{{localisation.product_list | capitalLetters | translate}}</a>
+            <!-- {{localisation.product | translate}} {{'LIST' | translate}} -->
+        </div>
+        <div class="box m-top-20">
+            <div class="formsec">
+
+                <form role="form" id="addSupplierProductForm" name="addSupplierProductForm" ng-if="!is_pricing"
+                    ng-submit="submitAdd(addSupplierProductForm)" autocomplete="off" novalidate>
+
+                    <div class="form-group">
+                        <div class="row select-category">
+                            <div class="col-md-3" ng-if="categories.length" style="margin-bottom: 10px;">
+                                <label class="cat-label">{{'SELECT' | translate}}
+                                    {{localisation.category | translate}}</label>
+                                <select data-placeholder="Choose {{localisation.category | translate}}" class="app"
+                                    tabindex="4" ng-model="selected_cat"
+                                    ng-options="category.name for category in categories"
+                                    ng-change="onSelectCategory(selected_cat, true)">
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3" style="margin-bottom: 10px;"
+                                ng-repeat="cat in dynamicSubCategories track by $index" ng-init="parentIndex = $index">
+                                <label class="cat-label" ng-if="parentIndex == 0">{{selected_cat.name}}</label>
+                                <label class="cat-label"
+                                    ng-if="parentIndex > 0">{{selectedCategory[childIndex-1].name}}</label>
+                                <select data-placeholder="Choose Category" tabindex="4" class="app"
+                                    ng-model="selectedCategory[childIndex]" ng-init="childIndex = $index"
+                                    ng-options="subCat.name for subCat in cat"
+                                    ng-change="changeSubCatId(selectedCategory[childIndex], parentIndex + 1, true)">
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group" ng-if="enable_food_varients==1 && variants.length>0">
+                        <div class="select-category">
+                            <div class="col-md-12">
+                                <label>Variants</label>
+                                <div class="row">
+                                    <div class="col-md-4" ng-repeat="variant in variants track by variant.id"
+                                        ng-if="variant.variant_values.length > 0">
+                                        <label class="small font-noraml">{{variant.variant_name[0].name}}</label>
+                                        <select class="app" data-placeholder="Choose Variant" tabindex="4"
+                                            name="var{{variant.id}}" ng-model="selectedVariant[$index]"
+                                            ng-required="!not_all_variant_required">
+                                            <option value="" selected disabled>Select</option>
+                                            <option ng-repeat="val in variant.variant_values track by val.id"
+                                                ng-value="val.id" selected="{{val.selected}}"
+                                                ng-style="{'background-color': val.value}">
+                                                {{val.value}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="form-group"
+                        ng-if="([1,8].includes(app_type) || (app_type > 10 && [1,8].includes(flow_type))) && !(app_type == 1 && is_single_vendor == 1 && selected_template == 1) && is_multiple_images == 0">
+                        <div class="row">
+                            <div class="col-md-6 file">
+                                <label>{{'IMAGE' | translate}}<p ng-show="!food_item_image_optional" class="star">*</p>
+                                </label>
+                                <p class="aspect-ratio">{{'ASPECT RATIO' | translate}} - 4 : 3 </p>
+                                <span style="height: 104px; width: 160px;">
+                                    <img ng-if="!product_img1" src="img/v1_images/ic_dummy.png">
+                                    <img ng-if="product_img1" style="height: 100%; width: 100%; object-fit: cover;"
+                                        src="{{product_img1}}">
+                                </span>
+                                <input filestyle="" type="file" accept="image/*" name="image2" ng-model="product_img1"
+                                    class="form-control"
+                                    onchange="angular.element(this).scope().file_to_upload_for_image(this.files, 1)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader"
+                                    ng-required="!food_item_image_optional" />
+                                <div class="error"
+                                    ng-show="addSupplierProductForm.image2.$invalid && addSupplierProductForm.$submitted">
+                                    <small ng-show="addSupplierProductForm.image2.$error.required">
+                                        {{'Please select image.' | translate }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" ng-if="is_multiple_images == 1">
+                        <div class="row">
+                            <div class="col-md-4 file" ng-repeat="image in product_images track by $index"
+                                ng-style="image.removed ? {'display': 'none'} : ''">
+                                <label>{{'IMAGE' | translate}}<p ng-if="!$last && product_images.length > 1"
+                                        class="star">*</p></label>
+                                <p class="aspect-ratio">Aspect Ratio - 4 : 3 </p>
+                                <span style="height: 104px; width: 160px; cursor: pointer; position: relative;">
+                                    <img ng-if="!image.img" src="img/v1_images/ic_dummy.png">
+                                    <img ng-if="image.img" style="height: 100%; width: 100%; object-fit: cover;"
+                                        src="{{image.img}}">
+                                    <a ng-if="!$last" class="remove-image" ng-click="removeImage($index)"><img
+                                            src="img/v1_images/ic_cross.svg"></a>
+                                </span>
+                                <input filestyle="" type="file" accept="image/*" name="img{{$index}}"
+                                    ng-model="image.file" class="form-control cursor" id="{{$index}}"
+                                    onchange="angular.element(this).scope().file_to_upload_for_multiple_images(this.files, parseInt(id))"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row select-category">
+                        <div class="col-md-6"
+                            ng-if="[5,6,7].includes(app_type) || (app_type > 10 && [5,6,7].includes(flow_type))">
+                            <div class="form-group">
+                                <label>{{'RENTAL PLAN' | translate}}</label>
+                                <select class="app" name="rental_plan" ng-model="rental_plan"
+                                    ng-change="changeRentalPlan(rental_plan)">
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                    <option value="0">{{'HOURLY' | translate}}</option>
+                                    <option value="1">{{'PER DAY' | translate}}</option>
+                                </select>
+                                <div class="error"
+                                    ng-show="addSupplierProductForm.rental_plan.$invalid && addSupplierProductForm.$submitted">
+                                    <small ng-show="addSupplierProductForm.rental_plan.$error.required">Please
+                                        select rental plan.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="[8,9,10].includes(app_type) || (app_type > 10 && [8,9,10].includes(flow_type))">
+                            <div class="form-group">
+                                <label>{{'PRICE TYPE' | translate}}</label>
+                                <select class="app" name="price_type" ng-model="price_type" convert-to-number
+                                    ng-change="changePriceType(price_type)">
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                    <option ng-show="disable_hourly_pricing_in_home_svc==0" value="1">{{'HOURLY' |
+                                        translate}}</option>
+                                    <option value="0">{{'FIXED' | translate}}</option>
+                                </select>
+                                <div class="error"
+                                    ng-show="addSupplierProductForm.price_type.$invalid && addSupplierProductForm.$submitted">
+                                    <small ng-show="addSupplierProductForm.price_type.$error.required">Please
+                                        select price type.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="(([5,6,7].includes(app_type) && rental_plan == 0) || ([8,9,10].includes(app_type) || (app_type > 10 && [8,9,10].includes(flow_type)))) && price_type == 1 && is_product_weight == 0">
+                            <div class="form-group">
+                                <label>{{'SERVICE DURATION' | translate}}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text cursor" ng-click="changeDuration('-')">-</span>
+                                    </div>
+                                    <input type="text"
+                                        style="width: 78%; border-radius: 0px; border-left: none; border-right: none;"
+                                        value="{{getTimeFromMins(selected_duration)}}" disabled>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text cursor" ng-click="changeDuration('+')">+</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{localisation.product_name | capitalLetters | translate}}<span
+                                        class="star">*</span></label>
+                                <input type="text" name="name" ng-model="outputs.inputs[0]"
+                                    placeholder="{{localisation.product_name | capitalLetters | translate}}" required>
+                                <div class="error"
+                                    ng-show="addSupplierProductForm.name.$invalid && addSupplierProductForm.$submitted">
+                                    <small ng-show="addSupplierProductForm.name.$error.required">
+                                        {{'Please enter' | translate }}
+                                        {{localisation.product | translate}} {{'Name' | translate }}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="is_secondary_language == 1">
+                            <div class="form-group">
+                                <label>{{localisation.product_name | capitalLetters | translate}}
+                                    ({{languages[1].name}})<span class="star">*</span></label>
+                                <input type="text" name="name_other" ng-model="outputs.inputs[1]"
+                                    placeholder="{{localisation.product_name | capitalLetters | translate}} ({{languages[1].name}})"
+                                    required>
+                                <div class="error"
+                                    ng-show="addSupplierProductForm.name_other.$invalid && addSupplierProductForm.$submitted">
+                                    <small ng-show="addSupplierProductForm.name_other.$error.required">
+                                        {{'Please enter' | translate }}
+                                        {{localisation.product | translate}} {{'Name' | translate }}
+                                        ({{languages[1].name}}).</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class=" col-md-6" ng-if="show_gender_category_dropdown == 1">
+                            <div class="form-group select-category">
+                                <label>{{'Gender Type' | translate}}<span class="star">*</span></label>
+                                <select class="app" name="gender_category" ng-model="product.gender_category"
+                                    ng-change="changeGenderCategory(product.gender_category)" convert-to-number>
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                    <option value="0">{{'BOTH' | translate}}</option>
+                                    <option value="1">
+                                        {{'FEMALE' | translate}}</option>
+                                    <option value="2">
+                                        {{'MALE' | translate}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="([1,2,3,4,5,6,7].includes(app_type) || (app_type > 10 && [1,2,3,4,5,6,7].includes(flow_type))) && is_product_weight == 1 || enable_weight_price_rate==1">
+                            <div class="form-group">
+                                <label>{{localisation.product | translate}} Weight(grams)</label>
+                                <input type="text" name="weight" integers ng-model="product.weight"
+                                    placeholder="{{localisation.product | translate}} Weight">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-If="enable_country_of_origin_in_product==1">
+                            <div class="form-group">
+                                <label>{{'Country Origin' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="country_of_origin" ng-model="product.country_of_origin"
+                                    placeholder="{{'Country Origin' | translate}}">
+                                <div class="error"
+                                    ng-show="addSupplierProductForm.country_of_origin.$invalid && addSupplierProductForm.$submitted">
+                                    <small ng-show="addSupplierProductForm.country_of_origin.$error.required">
+                                        {{'Please select country' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-If="enable_product_calories==1">
+                            <div class="form-group">
+                                <label>{{'Calories' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="calories" ng-model="product.calories"
+                                    placeholder="{{'Calories' | translate}}">
+                                <div class="error"
+                                    ng-show="addSupplierProductForm.calories.$invalid && addSupplierProductForm.$submitted">
+                                    <small ng-show="addSupplierProductForm.calories.$error.required">
+                                        {{'Please select calories' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="enable_size_chart_in_product==1">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6 file">
+                                        <label>{{'SIZE CHART' | translate}}</label>
+                                        <span style="height: 104px; width: 160px;">
+                                            <img ng-if="!Size_chart_url_toView" src="img/v1_images/ic_dummy.png">
+                                            <img ng-if="Size_chart_url_toView"
+                                                style="height: 100%; width: 100%; object-fit: cover;"
+                                                src="{{Size_chart_url_toView}}">
+                                        </span>
+                                        <input filestyle="" type="file" accept="image/*" name="image2"
+                                            ng-model="Size_chart_url" class="form-control"
+                                            onchange="angular.element(this).scope().file_to_upload_for_size_chart(this.files, 1)"
+                                            data-button-text="Single" data-class-button="btn btn-default"
+                                            data-classinput="form-control inline" nv-file-select=""
+                                            uploader="uploader" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="catBrandList.length">
+                            <div class="form-group">
+                                <label>{{'BRANDS' | translate}}</label>
+                                <select class="app" name="brand" placeholder="{{'BRANDS' | translate}}" ng-model="brand"
+                                    ng-options="x.name for x in catBrandList" ng-change="onSelectBrand(brand)">
+                                    <option value="" checked disabled>{{'SELECT' | translate}}</option>
+                                </select>
+                                <div class="error"
+                                    ng-show="addSupplierProductForm.brand.$invalid && addSupplierProductForm.$submitted">
+                                    <small ng-show="addSupplierProductForm.brand.$error.required">Please select
+                                        brand.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6"
+                            ng-if="([1,2,3,4,5,6,7].includes(app_type) || (app_type > 10 && [1,2,3,4,5,6,7].includes(flow_type))) && no_product_quantity == 0 && no_inventory == 0">
+                            <div class="form-group">
+                                <label>{{localisation.inventory | translate}}<span ng-if="inventory_optional == 0"
+                                        class="star">*</span></label>
+                                <input type="number" name="quantity" production-qty ng-model="product.quantity"
+                                    placeholder="{{localisation.inventory | translate}}"
+                                    ng-required="inventory_optional == 0">
+                                <div class="error"
+                                    ng-show="addSupplierProductForm.quantity.$invalid && addSupplierProductForm.$submitted">
+                                    <small ng-show="addSupplierProductForm.quantity.$error.required">
+                                        {{'Please enter' | translate }}
+                                        {{localisation.inventory | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="is_consider_qty_enable == 1 && ([1,2,3,4,5,6,7].includes(app_type) || (app_type > 10 && [1,2,3,4,5,6,7].includes(flow_type))) && no_product_quantity == 0">
+                            <div class="form-group">
+                                <label>{{localisation.consider_product_qty | translate}}</label>
+                                <select class="app" name="no_inventory" convert-to-number ng-model="no_inventory"
+                                    ng-change="onConsiderQty(no_inventory)">
+                                    <option value="1">{{'NO' | translate}}</option>
+                                    <option value="0">{{'YES' | translate}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="([1,2,3,4,5,6,7].includes(app_type) || (app_type > 10 && [1,2,3,4,5,6,7].includes(flow_type)))">
+                            <div class="form-group">
+                                <label>{{'Cost Price' | translate}}</label>
+                                <input type="number" name="making_price" integers ng-model="product.making_price"
+                                    placeholder="{{'Cost Price' | translate}}" ng-disabled="is_out_network">
+                                <!-- <div class="error"
+                                    ng-show="addSupplierProductForm.quantity.$invalid && addSupplierProductForm.$submitted">
+                                    <small ng-show="addSupplierProductForm.quantity.$error.required">Please enter
+                                        {{localisation.inventory | translate}}.</small>
+                                </div> -->
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="add_sku_product == 1">
+                            <div class="form-group">
+                                <label>{{'SKU Number' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="sku" integers ng-model="product.sku"
+                                    placeholder="{{'SKU Number' | translate}}" ng-disabled="is_out_network">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="product_tags == 1">
+                            <div class="form-group">
+                                <label>Tags</label>
+                                <input type="text" name="tags" id="tags" placeholder="Tags">
+                                <!-- <div class="error"
+                                ng-show="addSupplierProductForm.quantity.$invalid && addSupplierProductForm.$submitted">
+                                <small ng-show="addSupplierProductForm.quantity.$error.required">Please enter
+                                    {{localisation.inventory | translate}}.</small>
+                            </div> -->
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6" ng-if="product_pdf_upload == 1">
+                            <div class="form-group pdf-dwnld">
+                                <label>{{localisation.product_file_upload | translate}} (PDF)</label>
+                                <br>
+                                <button type="button">Choose file</button>
+                                <input type="file" name="recipe_pdf"
+                                    onchange="angular.element(this).scope().pdf_upload(this.files)"
+                                    ng-model="product.recipe_pdf" accept="application/pdf"
+                                    placeholder="{{localisation.product_file_upload | translate}}">
+                                <a ng-if="pdf_link && is_edit" type="button" style="margin-left: 10px;"
+                                    href="{{pdf_link}}" target="_blank"><i class="fa fa-file-pdf-o"></i> &nbsp; Open
+                                    PDF</a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="product_prescription == 1">
+                            <div class="form-group">
+                                <label>{{localisation.prescription_value | translate}} Upload<span
+                                        class="star">*</span></label>
+                                <select class="app" name="cart_image_upload" ng-model="product.cart_image_upload"
+                                    convert-to-number ng-change="prescriptionUploadChanges(product.cart_image_upload)"
+                                    required>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                                <div class="error"
+                                    ng-show="addProductForm.cart_image_upload.$invalid && addProductForm.$submitted">
+                                    <small ng-show="addProductForm.cart_image_upload.$error.required">Please select
+                                        {{localisation.prescription_value | translate}} value.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="order_request == 1">
+                            <div class="form-group">
+                                <label>{{'Order Screen Payment Process' | translate}}<span class="star">*</span></label>
+                                <select class="app" name="payment_after_confirmation"
+                                    ng-model="product.payment_after_confirmation" convert-to-number
+                                    ng-change="productPayLater(product.payment_after_confirmation)" required>
+                                    <option value="1" translate>{{'Payment after confirmation' | translate}}</option>
+                                    <option value="0" translate>{{'Payment before confirmation' | translate}}</option>
+                                </select>
+                                <div class="error"
+                                    ng-show="addProductForm.payment_after_confirmation.$invalid && addProductForm.$submitted">
+                                    <small ng-show="addProductForm.payment_after_confirmation.$error.required">Please
+                                        select
+                                        {{localisation.payment | translate}} value.</small>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6" ng-if="enable_item_purchase_limit == 1">
+                            <div class="form-group">
+                                <label>{{'PURCHASE LIMIT'}}</label>
+                                <input type="number" name="purchase_limit" integers ng-model="product.purchase_limit"
+                                    placeholder="PURCHASE LIMIT">
+                            </div>
+                        </div>
+                        <div class="col-md-6" ng-if="is_enable_subscription_required == 1">
+                            <div class="form-group">
+                                <label>{{'SUBSCRIPTION REQUIRED'}}</label>
+                                <select class="app" name="is_subscription_required"
+                                    ng-model="product.is_subscription_required" convert-to-number>
+                                    <option value="0">NO</option>
+                                    <option value="1">YES</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6" ng-if="enable_non_veg_filter == 1">
+                            <div class="form-group">
+                                <label>{{'ITEM TYPE'}}</label>
+                                <select class="app" name="is_non_veg" ng-change="changeProductType(product.is_non_veg)"
+                                    ng-model="product.is_non_veg" convert-to-number>
+                                    <option value="1">NON VEG</option>
+                                    <option value="2">VEG</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="enable_product_allergy == 1">
+                            <div class="form-group">
+                                <label>{{'IS PRODUCT ALLERGY'}}</label>
+                                <select class="app" name="is_allergy_product"
+                                    ng-change="changeProductAllergy(product.is_allergy_product)"
+                                    ng-model="product.is_allergy_product" convert-to-number>
+                                    <option value="0">NO</option>
+                                    <option value="1">YES</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="enable_product_appointment == 1">
+                            <div class="form-group">
+                                <label>{{localisation.product | translate}} {{'TYPE'}}</label>
+                                <select class="app" name="is_appointment" ng-model="product.is_appointment"
+                                    convert-to-number>
+                                    <option value="0">NORMAL FLOW</option>
+                                    <option value="1">APPOINTMENT FLOW</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="enable_product_special_instruction == 1 && enable_product_wise_special_instruction==1">
+                            <div class="form-group">
+                                <label>{{'IS SPECIAL INSTRUCTION'}}</label>
+                                <select class="app" name="is_special_instruction"
+                                    ng-change="changeSpecialInstruction(product.is_special_instruction)"
+                                    ng-model="product.is_special_instruction" convert-to-number>
+                                    <option value="0">NO</option>
+                                    <option value="1">YES</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+
+
+
+                    </div>
+
+                    <div class="form-group "
+                        ng-if="([2].includes(app_type) || (app_type > 10 && [2].includes(flow_type)) || (app_type == 1 && is_single_vendor == 1 && selected_template == 1)) && is_multiple_images == 0">
+                        <div class="row">
+                            <div class="col-md-6 file">
+                                <label>{{'ADD IMAGE 1' | translate}}<p ng-show="!food_item_image_optional" class="star">
+                                        *</p></label>
+                                <p class="aspect-ratio">{{'ASPECT RATIO' | translate}} - 4 : 3 </p>
+                                <span>
+                                    <img ng-if="!product_img1" src="img/v1_images/ic_dummy.png">
+                                    <img ng-if="product_img1" style="height: 100%; width: 100%; object-fit: cover;"
+                                        src="{{product_img1}}">
+                                </span>
+                                <input filestyle="" type="file" accept="image/*" name="image2" ng-model="product_img1"
+                                    class="form-control"
+                                    onchange="angular.element(this).scope().file_to_upload_for_image(this.files, 1)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader"
+                                    ng-required="!food_item_image_optional" />
+                                <div class="error"
+                                    ng-show="addSupplierProductForm.image2.$invalid && addSupplierProductForm.$submitted">
+                                    <small ng-show="addSupplierProductForm.image2.$error.required">Please select
+                                        image.</small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 file">
+                                <label>{{'ADD IMAGE 2' | translate}}<p ng-show="!food_item_image_optional" class="star">
+                                        *</p></label>
+                                <p class="aspect-ratio">{{'ASPECT RATIO' | translate}} - 4 : 3 </p>
+                                <span>
+                                    <img ng-if="!product_img2" src="img/v1_images/ic_dummy.png">
+                                    <img ng-if="product_img2" style="height: 100%; width: 100%; object-fit: cover;"
+                                        src="{{product_img2}}">
+                                </span>
+                                <input filestyle="" type="file" accept="image/*" name="image3" ng-model="product_img2"
+                                    class="form-control"
+                                    onchange="angular.element(this).scope().file_to_upload_for_image(this.files, 2)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader"
+                                    ng-required="!food_item_image_optional" />
+                                <div class="error"
+                                    ng-show="addSupplierProductForm.image3.$invalid && addSupplierProductForm.$submitted">
+                                    <small ng-show="addSupplierProductForm.image3.$error.required">Please select
+                                        image.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <div class="row">
+
+
+
+                            <div class="col-md-12" ng-if="product.is_allergy_product==1">
+                                <label>{{'PRODUCT ALLERGIES' | translate}}<span ng-show="product.is_allergy_product"
+                                        class="star">*</span></label>
+                                <summernote config="summernote_config" ng-model="product.allergy_description">
+                                </summernote>
+
+                                <div class="error" ng-show="addSupplierProductForm.$submitted">
+                                    <small
+                                        ng-show="!product.allergy_description && product.is_allergy_product==1">Please
+                                        enter
+                                        allergies.</small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label>{{'DESCRIPTION' | translate}}<span ng-show="!food_item_desc_optional"
+                                        class="star">*</span></label>
+                                <!-- <div summernote class="summernote" ng-model="description.english"></div> -->
+                                <!-- <div id="summernote_supp_product"></div> -->
+                                <summernote config="summernote_config" ng-model="description.english"></summernote>
+
+                                <div class="error" ng-show="addSupplierProductForm.$submitted">
+                                    <small ng-show="!description.english && !food_item_desc_optional">
+                                        {{'Please Enter Description.' | translate }}
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12" style="margin-top: 22px;" ng-if="is_secondary_language == 1">
+                                <label>{{'DESCRIPTION' | translate}} ({{languages[1].name}})</label>
+                                <summernote config="summernote_config" ng-model="description.arabic"></summernote>
+
+                                <div class="error" ng-show="addSupplierProductForm.$submitted">
+                                    <small ng-show="!description.arabic  && !food_item_desc_optional">
+                                        {{'Please Enter Description.' | translate }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row" ng-repeat="desc in allowedTabs">
+                            <div class="col-md-12" ng-style="!$first ? {'margin-top': '22px'} : {}">
+                                <label>{{desc.labelText | translate}}<span ng-show="!food_item_desc_optional"
+                                        class="star">*</span></label>
+                                <summernote config="summernote_config" ng-model="product[desc.labelDBColName]">
+                                </summernote>
+
+                                <!-- <div class="error" ng-show="addSupplierProductForm.$submitted">
+                                    <small ng-show="!description.english && !food_item_desc_optional">Please enter
+                                        Description.</small>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+                    <div class="button">
+                        <button type="submit" class="bold nxt">{{'NEXT' | translate}}</button>
+                    </div>
+
+                </form>
+
+                <form ng-if="is_pricing" role="form" id="addProductPriceForm" name="addProductPriceForm"
+                    ng-submit="submitPricing(addProductPriceForm)" autocomplete="off" novalidate>
+
+                    <div class="form-group" ng-if="price_type == 1">
+                        <div class="select-category" style="margin-bottom: 20px">
+                            <div class="row" data-ng-repeat="data in count_hours track by $index"
+                                ng-init="parentIndex = $index">
+                                <div
+                                    ng-class="rental_plan == 1 && ([5,6,7].includes(app_type) || (app_type > 10 && [5,6,7].includes(flow_type))) ? 'col-md-6' : 'col-md-4'">
+                                    <label ng-if="$first">{{(rental_plan == 1 ? 'SELECT DAYS' : 'FROM (Hours)') |
+                                        translate}}<span class="star">*</span></label>
+                                    <select name="from{{parentIndex}}" ng-style="!$first ? {'margin-top': '15px'} : ''"
+                                        class="app" ng-change="changeFrom(parentIndex)"
+                                        ng-model="from_hour[parentIndex]" required>
+                                        <option value="" selected disabled>Select</option>
+                                        <option ng-repeat="time in from_timing[parentIndex] track by $index"
+                                            ng-init="childIndex = $index" ng-value="{{time.value}}"
+                                            ng-selected="{{time.selected && (time.parent_index == parentIndex)}}">
+                                            {{time.name}}
+                                        </option>
+                                    </select>
+                                    <div class="error"
+                                        ng-show="addProductPriceForm.from{{parentIndex}}.$invalid && addProductPriceForm.$submitted">
+                                        <small
+                                            ng-show="addProductPriceForm.from{{parentIndex}}.$error.required">{{'PLEASE
+                                            SELECT' | translate}}
+                                            {{rental_plan == 1 ? 'days' : 'From time'}}.</small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4"
+                                    ng-if="rental_plan == 0 || [8,9,10].includes(app_type) || (app_type > 10 && [8,9,10].includes(flow_type))">
+                                    <label ng-if="$first">{{'TO (Hours)' | translate}}<span
+                                            class="star">*</span></label>
+                                    <select name="to{{parentIndex}}" ng-style="!$first ? {'margin-top': '15px'} : ''"
+                                        class="app" ng-model="to_hour[parentIndex]" required>
+                                        <option value="" disabled>{{'SELECT' | translate}}</option>
+                                        <option ng-repeat="time in to_timing[parentIndex] track by $index"
+                                            ng-init="childIndex = $index" ng-value="{{time.value}}">
+                                            {{time.name}}
+                                        </option>
+                                    </select>
+                                    <div class="error"
+                                        ng-show="addProductPriceForm.to{{parentIndex}}.$invalid && addProductPriceForm.$submitted">
+                                        <small ng-show="addProductPriceForm.to{{parentIndex}}.$error.required">Please
+                                            select to time.</small>
+                                    </div>
+                                </div>
+
+                                <div
+                                    ng-class="rental_plan == 1 && ([5,6,7].includes(app_type) || (app_type > 10 && [5,6,7].includes(flow_type))) ? 'col-md-4' : 'col-md-3'">
+                                    <label ng-if="$first">{{'PRICE' | translate}}<span class="star">*</span></label>
+                                    <input name="price{{parentIndex}}" ng-style="!$first ? {'margin-top': '15px'} : ''"
+                                        type="text" integers ng-model="hour_price[$index]" required>
+                                    </input>
+                                    <div class="error"
+                                        ng-show="addProductPriceForm.price{{parentIndex}}.$invalid && addProductPriceForm.$submitted">
+                                        <small ng-show="addProductPriceForm.price{{parentIndex}}.$error.required">Please
+                                            enter price.</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-1"
+                                    ng-style="!$first ? {'margin-top': '22px'} : {'margin-top': '38px'}">
+                                    <img style="height: 18px; margin-left: -10px" ng-if="$last" class="cursor"
+                                        src="/img/v1_images/add.png" ng-click="addMoreHours($index)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" ng-if="price_type == 0">
+
+                        <div class="user-types"
+                            ng-if="is_user_type == 1 && user_type_check == 1 && user_type_prices.length">
+                            <label>{{'PRICE' | translate}}<span class="star">*</span></label>
+                            <div class="row" ng-repeat="type in user_type_prices track by $index">
+                                <div class="col-md-3">
+                                    <p class="ellipsis">{{type.name}}</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" name="price{{$index}}" integers ng-model="type.price"
+                                        placeholder="{{'PRICE' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addProductPriceForm.price{{$index}}.$invalid && addProductPriceForm.$submitted">
+                                        <small ng-show="addProductPriceForm.price{{$index}}.$error.required">Please
+                                            enter price.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6" ng-if="is_user_type == 0 || user_type_check == 0">
+                                <div class="form-group">
+                                    <label>{{'PRICE' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="price" integers ng-model="pricing.price"
+                                        ng-change="calculateItemRate(pricing.price)"
+                                        placeholder="{{'PRICE' | translate}}" required ng-disabled="is_out_network">
+                                    <div class="error"
+                                        ng-show="addProductPriceForm.price.$invalid && addProductPriceForm.$submitted">
+                                        <small ng-show="addProductPriceForm.price.$error.required">Please enter
+                                            price.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Tax<span class="star">*</span></label>
+                                    <input type="text" name="tax" integers limit-to="3"
+                                        ng-model="pricing.handlingFeeAdmin" placeholder="Enter Tax" required>
+                                    <div class="error"
+                                        ng-show="addProductPriceForm.tax.$invalid && addProductPriceForm.$submitted">
+                                        <small ng-show="addProductPriceForm.tax.$error.required">Please enter
+                                            tax.</small>
+                                    </div>
+                                </div>
+                            </div> -->
+
+                            <div class="col-md-6"
+                                ng-if="is_pickup != 1 && ([2].includes(app_type) || (app_type > 10 && [2].includes(flow_type))) && ecom_agent_module == 0 && (profile == 'ADMIN' || (profile == 'SUPPLIER' && no_supplier_delivery_charge == 0))">
+                                <div class="form-group">
+                                    <label>{{'DELIVERY CHARGES' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="delivery" integers ng-model="pricing.deliveryCharges"
+                                        placeholder="{{'DELIVERY CHARGES' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addProductPriceForm.delivery.$invalid && addProductPriceForm.$submitted">
+                                        <small ng-show="addProductPriceForm.delivery.$error.required">Please enter
+                                            delivery
+                                            charges.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6" ng-if="enable_weight_price_rate">
+                                <div class="form-group">
+                                    <label>{{'Rate' | translate}} </label>
+                                    <input type="text" name="item_rate" integers ng-model="pricing.item_rate" disabled>
+                                    &nbsp; <small>{{'Rate = Price / Weight​'}}</small>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <div class="form-group" ng-if="price_type == 1">
+                        <div class="row">
+                            <!-- <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Tax<span class="star">*</span></label>
+                                    <input type="text" name="tax" integers limit-to="3"
+                                        ng-model="pricing.handlingFeeAdmin" placeholder="Enter Tax" required>
+                                    <div class="error"
+                                        ng-show="addProductPriceForm.tax.$invalid && addProductPriceForm.$submitted">
+                                        <small ng-show="addProductPriceForm.tax.$error.required">Please enter
+                                            tax.</small>
+                                    </div>
+                                </div>
+                            </div> -->
+
+                            <div class="col-md-6"
+                                ng-if="ecom_agent_module == 0 && ([1,2,3,4].includes(app_type) || (app_type > 10 && [1,2,3,4].includes(flow_type)))">
+                                <div class="form-group">
+                                    <label>{{'DELIVERY CHARGES' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="delivery" integers ng-model="pricing.deliveryCharges"
+                                        placeholder="{{'DELIVERY CHARGES' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addProductPriceForm.delivery.$invalid && addProductPriceForm.$submitted">
+                                        <small ng-show="addProductPriceForm.delivery.$error.required">Please enter
+                                            delivery
+                                            charges.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button row" style="margin-top: 50px">
+                        <button class="bold nxt mr-2" type="submit"
+                            style="width: auto; padding: 0px 30px; font-size: 16px; font-weight: 500"
+                            ng-if="([1].includes(app_type) || (app_type > 10 && [1].includes(flow_type))) && sup_branch_id"
+                            ng-click="submitPricingType(1)">{{'SAVE & ADD CUSTOMISATION' | translate}}</button>
+                        <button style="font-size: 16px; font-weight: 500" type="submit" class="bold nxt"
+                            ng-click="submitPricingType(0)">{{'SAVE' | translate}}</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="edit_pricing_modal" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead">
+                    <h2 class="bold" style="display: inline-block;">
+                        {{(is_discount ? 'DISCOUNT PRICING' : 'REGULAR PRICING') | translate}}
+                    </h2>
+                    <button type="button" class="close" id="closeBrandModal" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <form role="form" id="addProductPriceForm" name="addProductPriceForm"
+                    ng-submit="submitPricing(addProductPriceForm)" autocomplete="off" novalidate>
+
+                    <div class="modbody" ng-if="!is_discount">
+                        <div class="form-group" ng-if="price_type == 0">
+                            <div class="row" ng-if="is_user_type == 0 || user_type_check == 0">
+                                <div class="col-md-12">
+                                    <label>{{'PRICE' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="price" integers ng-model="pricing.price"
+                                        placeholder="{{'PRICE' | translate}}" required ng-disabled="is_out_network">
+                                    <div class="error"
+                                        ng-show="addProductPriceForm.price.$invalid && addProductPriceForm.$submitted">
+                                        <small ng-show="addProductPriceForm.price.$error.required">Please enter
+                                            price.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="user-types"
+                                ng-if="is_user_type == 1 && user_type_check == 1 && user_type_prices.length">
+                                <div class="row" ng-repeat="type in user_type_prices track by $index">
+                                    <div class="col-md-6">
+                                        <p class="ellipsis">{{type.name}}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" name="price{{$index}}" integers ng-model="type.price"
+                                            placeholder="{{'PRICE' | translate}}" required>
+                                        <div class="error"
+                                            ng-show="addProductPriceForm.price{{$index}}.$invalid && addProductPriceForm.$submitted">
+                                            <small ng-show="addProductPriceForm.price{{$index}}.$error.required">Please
+                                                enter price.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-if="price_type == 1">
+                            <div class="select-category" style="margin-bottom: 20px" ng-if="count_hours.length">
+                                <div class="row" data-ng-repeat="data in count_hours track by $index"
+                                    ng-init="parentIndex = $index">
+                                    <div
+                                        ng-class="rental_plan == 1 && ([5,6,7].includes(app_type) || (app_type > 10 && [5,6,7].includes(flow_type))) ? 'col-md-7' : 'col-md-4'">
+                                        <label ng-if="$first">{{(rental_plan == 1 ? 'SELECT DAYS' : 'FROM (Hours)') |
+                                            translate}}<span class="star">*</span></label>
+                                        <select name="from{{parentIndex}}"
+                                            ng-style="!$first ? {'margin-top': '15px'} : ''" class="app"
+                                            ng-change="changeFrom(parentIndex)" ng-model="from_hour[parentIndex]"
+                                            required>
+                                            <option value="" selected disabled>Select</option>
+                                            <option ng-repeat="time in from_timing[parentIndex] track by $index"
+                                                ng-init="childIndex = $index" ng-value="{{time.value}}"
+                                                ng-selected="{{time.selected && (time.parent_index == parentIndex)}}">
+                                                {{time.name}}
+                                            </option>
+                                        </select>
+                                        <div class="error"
+                                            ng-show="addProductPriceForm.from{{parentIndex}}.$invalid && addProductPriceForm.$submitted">
+                                            <small
+                                                ng-show="addProductPriceForm.from{{parentIndex}}.$error.required">Please
+                                                select
+                                                {{rental_plan == 1 ? 'days' : 'From time'}}.</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4"
+                                        ng-if="rental_plan == 0 || [8,9,10].includes(app_type) || (app_type > 10 && [8,9,10].includes(flow_type))">
+                                        <label ng-if="$first">{{'TO (Hours)' | translate}}<span
+                                                class="star">*</span></label>
+                                        <select name="to{{parentIndex}}"
+                                            ng-style="!$first ? {'margin-top': '15px'} : ''" class="app"
+                                            ng-model="to_hour[parentIndex]" required
+                                            ng-options="time.value as (time.name) for time in to_timing[parentIndex]">
+                                            <option value="" disabled>Select</option>
+                                            <!-- <option ng-repeat="time in to_timing[parentIndex] track by $index"
+                                                ng-init="childIndex = $index" ng-value="{{time.value}}">
+                                                {{time.name}}
+                                            </option> -->
+                                        </select>
+                                        <div class="error"
+                                            ng-show="addProductPriceForm.to{{parentIndex}}.$invalid && addProductPriceForm.$submitted">
+                                            <small
+                                                ng-show="addProductPriceForm.to{{parentIndex}}.$error.required">Please
+                                                select to time
+                                                price.</small>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        ng-class="rental_plan == 1 && ([5,6,7].includes(app_type) || (app_type > 10 && [5,6,7].includes(flow_type))) ? 'col-md-4' : 'col-md-3'">
+                                        <label ng-if="$first">{{'PRICE' | translate}}<span class="star">*</span></label>
+                                        <input name="price{{parentIndex}}"
+                                            ng-style="!$first ? {'margin-top': '15px'} : ''" type="text" integers
+                                            placeholder="Price" ng-model="hour_price[$index]" required>
+                                        </input>
+                                        <div class="error"
+                                            ng-show="addProductPriceForm.price{{parentIndex}}.$invalid && addProductPriceForm.$submitted">
+                                            <small
+                                                ng-show="addProductPriceForm.price{{parentIndex}}.$error.required">Please
+                                                enter
+                                                price.</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1"
+                                        ng-style="!$first ? {'margin-top': '22px'} : {'margin-top': '38px'}">
+                                        <img style="height: 18px; margin-left: -22px" ng-if="$last" class="cursor"
+                                            src="/img/v1_images/add.png" ng-click="addMoreHours(parentIndex)">
+                                        <i class="fa fa-minus minus" ng-if="$last && !$first"
+                                            ng-click="removeHours(parentIndex)"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group"
+                            ng-if="ecom_agent_module == 0 && ([2].includes(app_type) || (app_type > 10 && [2].includes(flow_type))) && is_pickup != 1">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>{{'DELIVERY CHARGES' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="delivery" integers ng-model="pricing.deliveryCharges"
+                                        placeholder="{{'DELIVERY CHARGES' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addProductPriceForm.delivery.$invalid && addProductPriceForm.$submitted">
+                                        <small ng-show="addProductPriceForm.delivery.$error.required">Please enter
+                                            delivery charges.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modbody" ng-if="is_discount">
+                        <div class="form-group">
+                            <div class="row" ng-if="is_user_type == 0 || user_type_check == 0">
+                                <div class="col-md-12">
+                                    <label>{{'DISCOUNT' | translate}} (%)<span class="star">*</span></label>
+                                    <input type="number" name="discount" integers min="1" max="100"
+                                        ng-model="pricing.discount_price" placeholder="{{'DISCOUNT' | translate}}"
+                                        required>
+                                    <div class="error"
+                                        ng-show="addProductPriceForm.discount.$invalid && addProductPriceForm.$submitted">
+                                        <small ng-show="addProductPriceForm.discount.$error.required">{{'Please enter
+                                            discount.' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin-top: 15px;">
+                                <div class="col-md-12">
+                                    <label>{{'EXPIRY DATE' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="expiry_date" readonly id="discount_end_date"
+                                        ng-model="pricing.discount_end_date" placeholder="{{'EXPIRY DATE' | translate}}"
+                                        required>
+                                    <div class="error"
+                                        ng-show="addProductPriceForm.expiry_date.$invalid && addProductPriceForm.$submitted">
+                                        <small ng-show="addProductPriceForm.expiry_date.$error.required">{{'Please
+                                            select expiry date.' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="user-types" style="margin-top: 30px;"
+                                ng-if="is_user_type == 1 && user_type_check == 1 && user_type_prices.length">
+                                <div class="row" ng-repeat="type in user_type_prices track by $index">
+                                    <div class="col-md-6">
+                                        <p class="ellipsis">{{type.name}}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" name="discount{{$index}}" integers
+                                            ng-model="type.discount_price" placeholder="{{'DISCOUNT' | translate}} (%)"
+                                            required>
+                                        <div class="error"
+                                            ng-show="addProductPriceForm.discount{{$index}}.$invalid && addProductPriceForm.$submitted">
+                                            <small
+                                                ng-show="addProductPriceForm.discount{{$index}}.$error.required">Please
+                                                enter price.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modfooter">
+                        <button type="submit" class="bg-success bold" ng-click="submitPricingType(0)">{{'SAVE' |
+                            translate}}</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Import Csv -->
+<div class="modal fade" id="csvModel" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" style="margin-top: 10%" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="csvModelLabel">{{'Import Csv' | translate}}</h5>
+                <a class="download" ng-click="downloadSampleFile()"> <span>{{'Download Sample File' | translate}}</span>
+                </a>
+            </div>
+            <div class="csv-body modal-body">
+                <div ng-show="!isCsv" class="area">
+                    <input type="file" id="upload" />
+                    <label for="upload"><strong>{{'Choose a file' | translate}}</strong><span class="box__dragndrop">
+                            {{'or drag it here' | translate}}</span>.</label>
+                </div>
+                <div ng-show="isCsv" class="area" style="opacity: 1;">
+                    <label>{{selectedCsv.name}}</label><br>
+                    <a ng-click="removeCsv()" class="remove-csv">{{'remove' | translate}}</a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="close-csv-btn" type="button" ng-click="removeCsv()" class="btn btn-secondary"
+                    data-dismiss="modal">{{'Close' | translate}}</button>
+                <button type="button" class="btn btn-primary" ng-class="{'disabled': !isCsv}"
+                    ng-click="uploadCsv()">{{'Upload' | translate}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+<read-more text="read_more_text"></read-more>
+
+<style>
+    .remove-variant {
+        float: right;
+        background: #ff2020;
+        color: #ffffff !important;
+        padding: 0px 9px 2px 8px;
+        font-weight: 700;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .toptabs .nav-tabs .nav-link.active:after {
+        background: none;
+    }
+
+    .commission {
+        float: right;
+        height: 25px !important;
+        font-size: 12px !important;
+        width: 117px !important;
+    }
+
+    .Option button {
+        border: none;
+        float: right;
+        background: transparent;
+    }
+
+    .Option button img {
+        height: 25px;
+    }
+
+    #parsley-id-multiple-discount {
+        display: inline-block;
+    }
+
+    .price {
+        color: var(--primary-color) !important;
+        /* #34a6b1 !important; */
+        font-weight: 600;
+        cursor: pointer;
+        text-transform: uppercase;
+        margin-top: 5px;
+    }
+
+    .price span {
+        font-size: 12px !important;
+        font-weight: 500 !important;
+    }
+
+    .price:hover {
+        /* color: #1d8c96 !important; */
+        color: var(--primary-color) !important;
+        filter: brightness(0.9);
+    }
+
+    .user-types label {
+        margin-bottom: 10px;
+    }
+
+    .user-types p {
+        margin-top: 10px;
+    }
+
+    .user-types .row {
+        margin: 15px -15px;
+    }
+
+    .pdf-dwnld input {
+        position: absolute;
+        left: 0px;
+        padding: 0;
+        height: 36px;
+        opacity: 0;
+        cursor: pointer;
+        top: 29px;
+        width: 142px !important;
+    }
+
+    .pdf-dwnld button,
+    .pdf-dwnld a {
+        border-radius: 4px;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+        background-image: none;
+        text-align: center;
+        color: #ffffff !important;
+        background-color: var(--primary-color);
+        border: none;
+        padding: 8px 20px;
+        font-size: 18px;
+    }
+
+    .csv-body {
+        background-color: #e9eaeb;
+        padding: 20px !important;
+    }
+
+    .area {
+        width: 100%;
+        height: 200px;
+        position: relative;
+        border: 2px dashed #000;
+        background-image: url("../../img/import.png");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 64px 64px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        filter: alpha(opacity=50);
+        -khtml-opacity: 0.5;
+        -moz-opacity: 0.5;
+        opacity: 0.5;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .area:hover,
+    .area.dragging,
+    .area.uploading {
+        filter: alpha(opacity=100);
+        -khtml-opacity: 1;
+        -moz-opacity: 1;
+        opacity: 1;
+    }
+
+    .area input {
+        width: 400%;
+        height: 100%;
+        margin-left: -380%;
+        border: none;
+        cursor: pointer;
+    }
+
+    .area input:focus {
+        outline: none;
+    }
+
+    .download {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--primary-color) !important;
+    }
+
+    .download:hover {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .csv-body.modal-body label {
+        position: absolute;
+        bottom: 20px;
+        left: 0px;
+        width: 100%;
+    }
+
+    .remove-csv {
+        color: #ff2020 !important;
+        font-size: 12px;
+        position: absolute;
+        left: 0px;
+        bottom: 5px;
+        width: 100%;
+    }
+
+    .Delete button {
+        border: none;
+        float: right;
+        background: transparent;
+        margin-top: -5px;
+    }
+
+    .Delete button img {
+        height: 20px;
+    }
+
+    .remove-image {
+        position: absolute;
+        right: -12px;
+        top: -12px;
+    }
+
+    .import_pos {
+        color: #4a4a4a;
+        height: 32px;
+        width: auto;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        font-size: 13px;
+        background-color: transparent;
+    }
+
+    .minus {
+        position: absolute;
+        top: 6px;
+        right: 8px;
+        color: #2ca6b1;
+        cursor: pointer;
+    }
+</style>

@@ -1,0 +1,619 @@
+<div class="wrapper">
+    <div class="category" ng-if="cart.length">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'CART' | translate}}</h1>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="tab-content m-top-30">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="cart-product-inner">
+                        <div class="single_item_detail" ng-repeat="product in cart track by $index">
+                            <div class="row">
+                                <div class="col-md-3 cart-image">
+                                    <img src={{product.image}} class="cart-product-img">
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="single_item_name">
+                                        <h5>{{product.name}}</h5>
+
+                                        <h6 [style.color]="style.baseColor">
+                                            {{ currency }}
+                                            {{ product.fixed_price.toFixed(price_decimal_length) }}
+                                            <span ng-if="product.price_type && product.is_product"> / Hour</span>
+                                            <span ng-if="product.price_type && !product.is_product">
+                                                / {{(product.selectedQuantity * timeInterval) | formatTimeInterval}}
+                                            </span>
+
+                                            <!-- && laundary_service_flow == 0 -->
+                                            <!-- <span
+                                            ng-if="!product.price_type && !product.is_product && laundary_service_flow == 0">
+                                            / {{ product.duration | formatTimeInterval }}</span> -->
+                                            <!-- <span
+                                            ng-if="!product.price_type && !product.is_product && laundary_service_flow == 1">
+                                            / Piece</span> -->
+                                        </h6>
+                                    </div>
+                                    <!-- {{product.quantity}} -->
+
+                                    <div class="single_item_quantity d-flex align-items-center justify-content-between">
+
+                                        <div class="incre-dires_btn" [ngClass]="{'quanity-btn-disabled': disabled}">
+                                            <div class="value-button decrease" id="decrease"
+                                                [style.background-color]="primary_color"
+                                                ng-click="mins(product, $index)" value="Decrease Value">-</div>
+                                            <input
+                                                ng-style="{'border-top-color': primary_color, 'border-bottom-color': primary_color}"
+                                                [style.width.px]="is_decimal_quantity_allowed == 1 ? '45' : (app_type == 8 ? '55' : '35')"
+                                                [type]="inputType" id="number" min="0"
+                                                (keyup.enter)="quantityInput($event.target.value)"
+                                                ng-value="(product.is_product && !product.price_type) ? product.selectedQuantity : ((product.price_type && !product.is_product) ?  ((product.selectedQuantity * timeInterval) | formatTimeInterval) : product.selectedQuantity) "
+                                                ng-readonly="is_decimal_quantity_allowed == 0" />
+                                            <div class="value-button increase" id="increase"
+                                                [style.background-color]="primary_color"
+                                                ng-click="add(product, $index)" value="Increase Value">+</div>
+                                        </div>
+
+                                        <div class="cart_button">
+                                            <a href="javascript:void(0)" ng-click="removeFromCart($index)"
+                                                ng-style="{'color': style.baseColor}">{{ "Remove" | translate }}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <!-- <ng-template #default> -->
+
+                    <div class="price_details"
+                        ng-style="{'background-color': style.cardBackgroundColor, 'border-color': style.secondaryColor }">
+                        <h5 [style.color]="style.baseColor" style="margin-bottom: 15px;">
+                            {{ "Price Details" | translate }}
+                            <!-- <a href="#promoCode" ng-if="!priceObj.discount && !is_voucher_applied"
+                                    ng-click="promoCode = ''" data-toggle="collapse"
+                                    [style.color]="primary_color">{{ "Apply Promo code" | translate }}</a> -->
+                            <!-- <a href="javascript:void(0)" ng-if="priceObj.discount || is_voucher_applied"
+                                    ng-click="priceObj.discount = 0; applyDiscount()" [style.color]="primary_color">{{ "Remove Promo
+                code" | translate }}</a> -->
+
+                            <!-- <div class="show-promo-code">
+                                    <div id="promoCode" #closePromoCode class="promo-form collapse">
+                                        <input [(ngModel)]="promoCode" (keypress)="restrictSpace($event)"
+                                            class="form-control" type="text"
+                                            placeholder="{{ 'Enter Promo Code' | translate }}" />
+                                        <button class="btn profile-submit-form ml-3" ng-style="saveBtn" type="button"
+                                            ng-click="submitPromoCode()">
+                                            {{ "Apply" | translate }}
+                                        </button>
+                                        <br />
+                                        <a ng-if="enable_promo_code_list == 1 || activePlan"
+                                            class="p-1 ml-3 p-code-btn" ng-style="saveBtn" type="button"
+                                            ng-click="openPromoCodeList()">
+                                            {{ "Promo Codes" | translate }}
+                                        </a>
+                                    </div>
+                                </div> -->
+                        </h5>
+
+                        <ul [style.color]="style.baseColor">
+                            <li> {{ "Sub Total" | translate }} <span>{{ currency }}
+                                    {{ (priceObj.amount).toFixed(price_decimal_length) }}</span>
+                            </li>
+                            <li ng-if="priceObj.discount > 0"> {{ "Discount" | translate }} <small class="uppercase"> -
+                                    ({{ promoCode || this.priceObj.gift.gift_name}})</small>
+                                <span> - {{ currency }}
+                                    {{ priceObj.discount.toFixed(price_decimal_length) }}</span>
+                            </li>
+                            <li ng-if="priceObj.walletDiscountAmount > 0"> {{ "Wallet Discount" | translate }}
+                                <span> - {{ currency }}
+                                    {{ priceObj.walletDiscountAmount.toFixed(price_decimal_length) }}</span>
+                            </li>
+                            <!-- <li>{{'Total' | translate}} <span>{{currency}} {{priceObj.subTotal}}</span></li> -->
+
+
+
+                            <li ng-if="(selfPickup != 1 && app_type != 8 && priceObj.deliveryCharges && is_dinin==0)">
+                                {{ "Delivery Charges" | translate }}
+                                <span>{{ currency }}
+                                    {{ deliveryType == 1 ? ((priceObj.deliveryCharges) +
+                    urgentPrice) :(priceObj.deliveryCharges).toFixed(price_decimal_length)}}</span>
+                            </li>
+
+                            <li ng-if="enable_supplier_express_schedule_delivery_provide==1 && 
+            supplier_express_delivery_provide_objj.express_delivery_charges">
+                                {{ "Express Delivery Charges" | translate }}
+                                <span>
+                                    {{currency}}&nbsp;
+                                    {{supplier_express_delivery_provide_objj.express_delivery_charges}}
+                                </span>
+                            </li>
+
+
+                            <!-- <li ng-if="app_type == 8 && hide_addOncharges==0">
+                                {{ "Addon Charges" | translate }} <span>{{ currency }}
+                                    {{ priceObj.questionPrice.toFixed(price_decimal_length) }}</span>
+                            </li> -->
+                            <li ng-if="disable_tax == 0 && hide_tax_for_user == 0">
+                                {{ localisation.tax | translate }} <span>{{ currency }}
+                                    {{ (priceObj.handingCharges).toFixed(price_decimal_length) }}</span>
+                            </li>
+                            <li ng-if="priceObj.agent_tip">{{localisation.agent}} {{localisation.tip}}
+                                <span>{{ currency }}
+                                    {{ priceObj.agent_tip.toFixed(price_decimal_length) }}</span> </li>
+                            <li ng-if="priceObj.referral_amount">{{'Referral Discount' | translate}} <span>-
+                                    {{ currency }}
+                                    {{ (priceObj.referral_amount > priceObj.netTotal ? priceObj.netTotal :
+                    priceObj.referral_amount).toFixed(price_decimal_length) }}</span>
+                            </li>
+                            <li ng-if="priceObj.slot_price && is_schdule_order == 1">Slot Price
+                                <span>{{ currency }}
+                                    {{ (priceObj.slot_price).toFixed(price_decimal_length) }}</span>
+                            </li>
+                            <li ng-if="is_dinin==1 && is_dinin == 1 && priceObj.slot_price>0">Slot
+                                Price <span>{{ currency }}
+                                    {{ (priceObj.slot_price).toFixed(price_decimal_length) }}</span>
+                            </li>
+
+                            <li ng-if="supplier_service_fee == 1">
+                                {{localisation.supplier_service_fee | translate}}
+                                <span>{{ currency }}
+                                    {{
+                    (priceObj.serviceCharge).toFixed(price_decimal_length)
+                    }}</span>
+                            </li>
+
+                            <li ng-if="enable_liquor_popup == 1 && priceObj.bottle_deposit_price">{{'Bottle Deposit' |
+                translate}}
+                                <span>{{ currency }}
+                                    {{
+                    (priceObj.bottle_deposit_price).toFixed(price_decimal_length)
+                    }}</span>
+                            </li>
+                            <li ng-if="enable_liquor_popup == 1 && priceObj.plt_tax">{{'PLT' | translate}}
+                                <span>{{ currency }}
+                                    {{ (priceObj.plt_tax).toFixed(price_decimal_length)
+                    }}</span>
+                            </li>
+
+                            <li
+                                ng-if="(priceObj.appliedLoyaltyAmount || priceObj.productLoyaltyDiscountAmount) && !loyality_discount_on_product_listing">
+                                Loyalty Discount
+                                <span>- {{ currency }}
+                                    {{ (priceObj.appliedLoyaltyAmount +
+                    priceObj.productLoyaltyDiscountAmount).toFixed(price_decimal_length) }}</span>
+                            </li>
+
+                            <li
+                                ng-if="table_book_mac_theme == 1 && !!table_booking_details && table_booking_details.table_booking_price">
+                                {{'Table Booking Fee' | translate}}
+                                <span>{{ currency }}
+                                    {{
+                    (table_booking_details.table_booking_price).toFixed(price_decimal_length)
+                    }}</span>
+                            </li>
+
+                            <li
+                                ng-if="table_book_mac_theme == 1 && !!table_booking_details && table_booking_details.table_booking_price">
+                                {{'Table Booking Discount' | translate}}
+                                <span>- {{ currency }}
+                                    {{
+                    (table_booking_details.table_booking_price).toFixed(price_decimal_length)
+                    }}</span>
+                            </li>
+                        </ul>
+                        <h6 [style.color]="style.baseColor"> {{ "Net Total" | translate }}
+                            <span [style.color]="style.baseColor">{{ priceObj.local_currency || currency }}
+                                {{ (priceObj.displayNetTotal).toFixed(price_decimal_length)}}
+
+                                <small ng-if="is_currency_exchange_rate == 1 && priceObj.currency_exchange_rate">(
+                                    XR:
+                                    {{currency}} 1 = {{priceObj.local_currency || currency }}
+                                    {{priceObj.currency_exchange_rate}} )
+                                </small></span>
+                        </h6>
+                        <p ng-if="enable_vat_inclusions==1" class="vat" [style.color]="style.baseColor">
+                            <small>(Inclusive of VAT)</small>
+                        </p>
+                    </div>
+
+
+                    <!-- <div class="col-md-12" style="text-align: right"> -->
+                    <button type="submit" style="float: none; margin: 0px; text-align: center" class="submit w-100"
+                        ng-click="placeOrder()">{{'BOOK NOW' | translate}}</button>
+                    <!-- </div> -->
+                    <!-- </ng-template> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="cart-product-inner" ng-if="!cart.length">
+        <div class="empty-cart">
+            <img src="/img/v1_images/no_data_found.png" height="150" width="200">
+            <h5 [style.color]="style.baseColor">{{localization.emptyCartMsg | translate}} </h5>
+            <p>
+                <a ng-style="{'color': primary_color}" ui-sref="profile.users"
+                    class="next-btn">{{"Continue" | translate }}</a>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<div class="modal" id="cart_date_time">
+    <div class="modal-dialog" style="max-width: 500px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead" style="padding: 15px 20px">
+                    <h2 class="bold" style="display: inline-block;" ng-if="!showSlots">{{'Select Date' | translate}}
+                    </h2>
+                    <h2 class="bold" style="display: inline-block;" ng-if="showSlots">{{'Select Slot' | translate}}</h2>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <!-- <form role="form" id="cartDateForm" name="cartDateForm"
+                    ng-submit="orderDateSelected(cartDateForm)" novalidate> -->
+                <div class="modbody" style="padding: 15px 20px">
+                    <div class="form-group" style="position: relative" ng-if="!showSlots">
+
+                        <!-- <li style="position: relative">
+                                <label style="position: absolute; top: -22px; left: 3px">{{'DATE' | translate}}</label> -->
+                        <input type="text" id="datepicker_order" placeholder="{{'DATE' | translate}}" readonly required>
+                        <span style="position: absolute; right: 13px; top: 3px" class="inputtag"><img
+                                src="/img/v1_images/calendar.svg"></span>
+                        <!-- </li> -->
+                    </div>
+
+                    <div class="form-group" style="position: relative" ng-if="showSlots">
+                        <div>
+                            <div class="tab-content pt-3 pb-3 px-sm-0" id="nav-tabContent">
+                                <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="nav-home-tab">
+
+                                    <div class="tab-content" ng-if="slotData.Morning.length">
+                                        <div class="tabsleft-content">
+                                            <img src="/img/v1_images/ic_morning.png" height="25px" width="32px">
+                                            <span>{{'Morning' | translate}}</span>
+                                        </div>
+                                        <div class="tabsright-content" [style.color]="style.defaultColor">
+                                            <!-- let i = index;trackBy:trackBySlotMorningFn -->
+                                            <div class="tabsright-content-data" ng-repeat="slot in slotData.Morning"
+                                                ng-init="i = $index">
+                                                <span (mouseover)="hover.index = i; hover.tab = 'Morning'"
+                                                    ng-click="selectSlot(slot)"
+                                                    ng-style="(hover.index === i && hover.tab === 'Morning') || slotTime === slot ? {'backgroundColor': primary_color, color: '#ffffff', 'borderColor': primary_color} : ''"
+                                                    (mouseleave)="hover.index = -1; hover.tab = null">{{slot}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-content bt" ng-if="slotData.Afternoon.length">
+                                        <div class="tabsleft-content">
+                                            <img src="/img/v1_images/ic_afternoon.png" height="25px" width="25px">
+                                            <span>{{'Afternoon' | translate}}</span>
+                                        </div>
+                                        <div class="tabsright-content" [style.color]="style.defaultColor">
+                                            <!-- let i = index; -->
+                                            <div class="tabsright-content-data" ng-repeat="slot in slotData.Afternoon"
+                                                ng-init="i = $index">
+                                                <span (mouseover)="hover.index = i; hover.tab = 'Afternoon'"
+                                                    ng-click="selectSlot(slot)"
+                                                    ng-style="(hover?.index === i && hover?.tab === 'Afternoon') || slotTime === slot ? {'backgroundColor': primary_color, color: '#ffffff', 'borderColor': primary_color} : ''"
+                                                    (mouseleave)="hover.index = -1; hover.tab = null">{{slot}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-content bt" ng-if="slotData.Evening.length">
+                                        <div class="tabsleft-content">
+                                            <img src="/img/v1_images/ic_evening.png" height="22px" width="20px">
+                                            <span>{{'Evening' | translate}}</span>
+                                        </div>
+                                        <div class="tabsright-content" [style.color]="style.defaultColor">
+                                            <div class="tabsright-content-data" ng-repeat="slot in slotData.Evening"
+                                                ng-init="i = $index">
+                                                <span (mouseover)="hover.index = i; hover.tab = 'Evening'"
+                                                    ng-click="selectSlot(slot)"
+                                                    ng-style="(hover.index === i && hover.tab === 'Evening') || slotTime === slot ? {'backgroundColor': primary_color, color: '#ffffff', 'borderColor': primary_color} : ''"
+                                                    (mouseleave)="hover.index = -1; hover.tab = null">{{slot}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-content bt" ng-if="slotData.Night.length">
+                                        <div class="tabsleft-content">
+                                            <img src="/img/v1_images/ic_night.png" height="25px" width="25px">
+                                            <span>{{'Night' | translate}}</span>
+                                        </div>
+                                        <div class="tabsright-content" [style.color]="style.defaultColor">
+                                            <div class="tabsright-content-data" ng-repeat="slot in slotData.Night"
+                                                ng-init="i = $index">
+                                                <span (mouseover)="hover.index = i; hover.tab = 'Night'"
+                                                    ng-click="selectSlot(slot)"
+                                                    ng-style="(hover.index === i && hover.tab === 'Night') || slotTime === slot ? {'backgroundColor': primary_color, color: '#ffffff', 'borderColor': primary_color} : ''"
+                                                    (mouseleave)="hover.index = -1; hover.tab = null">{{slot}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="no-data"
+                                ng-if="!slotData.Morning.length && !slotData.Afternoon.length && !slotData.Evening.length && !slotData.Night.length && noData">
+                                <h1 [style.color]="style.defaultColor">{{'No Slots Found' | translate}}</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modfooter" style="padding: 15px 20px">
+                    <button type="button" ng-if="!showSlots" class="bg-success bold"
+                        ng-click="orderDateSelected()">{{'Select Slot' | translate}}</button>
+                    <button type="button" ng-if="showSlots" class="bg-success bold"
+                        ng-click="submitSLots()">{{'PROCEED' | translate}}</button>
+                </div>
+                <!-- </form> -->
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<style>
+    .cart-product-inner {
+        padding: 0;
+        border: 1px solid #d6d6d6;
+        display: inline-block;
+        width: 100%;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .single_item_detail {
+        border-radius: 0;
+        float: left;
+        width: 100%;
+        margin-bottom: 0px;
+        border-bottom: 1px solid #d6d6d6;
+        padding: 20px;
+        padding-bottom: 30px;
+    }
+
+    .cart-image {
+        position: relative;
+        border-radius: 0px;
+    }
+
+    .single_item_detail img.cart-product-img {
+        border-radius: 5px;
+        min-height: 120px;
+        width: 150px;
+        height: 120px;
+        object-fit: cover;
+    }
+
+    .single_item_name {
+        float: left;
+        width: 100%;
+    }
+
+    .single_item_name h5 {
+        color: #515151;
+        font-size: 16px;
+        float: left;
+        width: 60%;
+        line-height: 24px;
+    }
+
+    .single_item_name h6 {
+        font-size: 16px;
+        color: #000;
+        text-align: right;
+        font-weight: 400;
+    }
+
+    .align-items-center {
+        align-items: center !important;
+    }
+
+    .justify-content-between {
+        justify-content: space-between !important;
+    }
+
+    .d-flex {
+        display: flex !important;
+    }
+
+    .single_item_quantity {
+        float: left;
+        width: 100%;
+        margin-top: 5px;
+    }
+
+    .cart_button {
+        float: right;
+        margin-top: -20px;
+        position: absolute;
+        bottom: 0;
+        right: 0px;
+    }
+
+    .cart_button a {
+        font-size: 16px;
+        color: #000;
+        padding: 7px 10px;
+        line-height: 27px;
+        font-weight: 500;
+    }
+
+    #decrease {
+        margin-right: -2px;
+        line-height: 8px;
+        transform: scaleX(-1);
+        border-radius: 0 4px 4px 0;
+        font-size: 21px;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .value-button {
+        display: inline-block;
+        border: 1px solid #25494d47;
+        margin: 0;
+        width: 28px;
+        height: 30px;
+        text-align: center;
+        vertical-align: bottom;
+        padding: 0;
+        background: #eee;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        line-height: 32px !important;
+        background-color: var(--primary-color);
+    }
+
+    #increase {
+        border: none;
+        margin-left: -2px;
+        line-height: 8px;
+        border-radius: 0 4px 4px 0;
+        color: #fff;
+        font-size: 19px;
+        padding-left: 3px;
+        cursor: pointer;
+    }
+
+    .incre-dires_btn input#number {
+        text-align: center;
+        border: none;
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid var(--primary-color);
+        margin: 0;
+        width: 60px;
+        position: relative;
+        height: 30px;
+        top: 0;
+        font-size: 13px;
+        color: #000000cf;
+
+        border-top-color: var(--primary-color);
+    }
+
+    .price_details {
+        padding: 10px 0;
+        margin-bottom: 20px;
+        background: #fff;
+        border-radius: 4px;
+        border: 1px solid #d6d6d6;
+    }
+
+    .price_details h5 {
+        color: #515151;
+        font-size: 16px;
+        padding: 15px 20px;
+        border-bottom: 1px solid hsla(0, 0%, 96.5%, .27);
+        font-weight: 500;
+        margin-bottom: 15px;
+    }
+
+    .price_details ul {
+        margin: 0 20px !important;
+        list-style: none;
+        margin-bottom: 20px;
+        border-bottom: 1px dashed #ccc;
+        padding: 0 0 10px;
+    }
+
+    .price_details ul li {
+        padding: 6px 0;
+        font-size: 16px;
+        font-weight: 300;
+    }
+
+    .price_details ul li span,
+    .price_details h6 span {
+        float: right;
+    }
+
+    .price_details h6 {
+        color: #515151;
+        font-size: 16px;
+        padding: 10px 20px;
+        font-weight: 300;
+        margin-bottom: 0px;
+    }
+
+    .w-100 {
+        width: 100% !important;
+    }
+
+    .tab-content {
+        width: 100%;
+        float: left;
+        margin-bottom: 30px;
+    }
+
+    .tabsleft-content {
+        margin-bottom: 10px;
+        text-align: left;
+    }
+
+    .tabsleft-content img {
+        margin-right: 10px;
+        vertical-align: bottom;
+    }
+
+    .tabsright-content-data {
+        width: 25%;
+        padding: 4px;
+        letter-spacing: normal;
+        float: left;
+    }
+
+    .tabsright-content-data span {
+        border-radius: 3px;
+        border: 1px solid #e0e0e4;
+        padding: 5px 20px;
+        display: inline-block;
+        text-align: center;
+        color: inherit;
+        cursor: pointer;
+        font-size: 13px;
+        width: 100%
+    }
+
+    .tabsright-content-data span:hover {
+        background-color: var(--primary-color);
+        color: #fff;
+    }
+
+    .empty-cart {
+        text-align: center;
+        padding: 100px;
+        border: 1px solid #c2c2c275;
+        border-radius: 4px;
+        width: auto;
+    }
+</style>

@@ -1,0 +1,26 @@
+<div class="wrapper">
+    <div class="category">
+        <div class="toptabs">
+            <ul class="nav nav-tabs">
+                <li class="nav-item" ng-if="is_product_rating == 1"> <a class="nav-link"
+                        ng-class="active_rating_tab == 1 ? 'active' : ''" ng-click="changeTab(1)"
+                        ui-sref="ratings.ratingList.products">{{localisation.products | translate}}
+                        {{'RATINGS' | translate}}</a>
+                </li>
+                <li ng-if="is_single_vendor === 0 && profile === 'ADMIN' && is_supplier_rating == 1" class="nav-item">
+                    <a class="nav-link" ng-class="active_rating_tab == 2 ? 'active' : ''" ng-click="changeTab(2)"
+                        ui-sref="ratings.ratingList.suppliers">{{localisation.supplier | translate}}
+                        {{'RATINGS' | translate}}</a>
+                </li>
+                <li ng-if="profile === 'ADMIN' && is_agent_rating == 1" class="nav-item">
+                    <a class="nav-link" ng-class="active_rating_tab == 3 ? 'active' : ''" ng-click="changeTab(3)"
+                        ui-sref="ratings.ratingList.agents">{{localisation.agent | translate}}
+                        {{'RATINGS' | translate}}</a>
+                </li>
+            </ul>
+        </div>
+
+        <div ui-view></div>
+
+    </div>
+</div>

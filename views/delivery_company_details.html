@@ -1,0 +1,271 @@
+<div class="wrapper">
+
+    <a href="" ng-if="profile === 'ADMIN' && is_single_vendor == 0" ui-sref="profile.deliveryCompany" class="backbtn"><img
+            src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+
+    <!-- <button type="button" class="chat-btn" ng-if="admin_to_supplier_chat == 1 && profile == 'SUPPLIER'"
+        ui-sref="orders.orderChat({created_id: user.user_created_id, name: user.firstname, type: 4})">Chat With
+        Admin</button> -->
+
+    <label ng-if="profile === 'ADMIN' && is_single_vendor == 0" class="toplab bold">{{'STATUS' | translate}}
+        <div class="switch togglebtn">
+            <input type="checkbox" id="togBtn" ng-checked="status" ng-click="activateCompany(!status)"
+                ng-disabled="permissions('suppliers', 'update') == 0">
+            <div class="slider round">
+                <span class="on"></span>
+                <span class="off"></span>
+            </div>
+        </div>
+    </label>
+
+    <div class="supdet m-top-20">
+        <!-- <div class="top" ng-if="(is_single_vendor == 0 && profile === 'ADMIN') || profile === 'SUPPLIER'">
+            <div class="cover" style="position: relative;">
+                <figure>
+                    <img ng-if="!is_cover_video" id="cover_image"
+                        src="{{cover_image ? cover_image : '/img/v1_images/back-placeholder.png'}}"
+                        onError="src = './img/v1_images/back-placeholder.png'">
+
+                    <video ng-if="is_cover_video" id="myVideo" width="100%" height="218" autoplay>
+                        <source src="{{cover_image}}" type="video/mp4">
+                        Your browser does not support HTML5 video.
+                    </video>
+                </figure>
+                <label ng-if="permissions('suppliers', 'update') == 1">
+                    <input filestyle="" type="file" accept="video/*,image/*" name="image1" ng-model="category_image"
+                        class="form-control" ng-disabled="if_image1"
+                        onchange="angular.element(this).scope().file_to_upload_for_sup_image(this.files)"
+                        data-button-text="Single" data-class-button="btn btn-default"
+                        data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                    <span class="bold">{{'EDIT COVER IMAGE' | translate}}</span>
+                </label>
+            </div>
+            <div class="supprofilpic">
+                <div class="left" style="position: relative;">
+                    <figure style="margin-bottom: 0;">
+                        <img ng-if="logo" src="{{logo}}">
+                        <img ng-if="!logo" src="img/default_user.png">
+                    </figure>
+                    <label ng-if="permissions('suppliers', 'update') == 1">
+                        <input filestyle="" type="file" accept="image/*" ng-model="info.uploaded_logo"
+                            class="logo_img_upload"
+                            onchange="angular.element(this).scope().file_to_upload_for_image(this.files)"
+                            data-button-text="Single" data-class-button="btn btn-default"
+                            data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                        <span class="bold"><img src="img/v1_images/ic_edit_pic.svg"></span>
+                    </label>
+                </div>
+
+                <div class="right">
+                    <h1 class="bold">{{supplierData.name}}</h1>
+                    <p>{{supplierData.address}}</p>
+                </div>
+            </div>
+        </div> -->
+
+        <div class="suptabs" style="position: relative;"
+            ng-style="(is_single_vendor == 0 && profile === 'ADMIN') || profile === 'SUPPLIER' ? {'margin-top': '40px'} : {'margin-top': '0px'}">
+
+            <!-- <div class="stripe-merchant"
+                ng-if="profile === 'SUPPLIER' && is_supplier_stripe_split_enabled == 1 && create_stripe_connect_account && !supplierData.stripe_account">
+                <button type="button" ng-click="stripeMerchantAccount()">Connect To Stripe Merchant Account</button>
+            </div>
+
+            <div class="stripe-merchant" ng-if="profile === 'ADMIN' && documents.length && is_vendor_registration == 1">
+                <button type="button" data-toggle="modal" data-target="#supplier_document_view">View Documents</button>
+            </div> -->
+
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" ng-class="tab == 1 ? 'active' : ''" style="text-transform: capitalize;"
+                        ui-sref="profile.deliveryCompanySetup.step_one({id: company_id, tab: 1})"
+                        ng-click="tab = 1">{{is_single_vendor == 1 ? ('MY DETAIL' | translate) : (localisation.delivery_company_detail  | translate)}}</a>
+                </li>
+
+                <!-- <li class="nav-item" ng-show="branch_flow == 1 && is_multi_branch == 1">
+                    <a class="nav-link" ng-class="tab == 3 ? 'active' : ''"
+                        ui-sref="profile.supplierSetup.step_three({id: supplier_id, tab: 3})"
+                        ng-click="tab = 3">{{'BRANCHES' | translate}}</a>
+                </li> -->
+
+                
+                <!-- <li class="nav-item" ng-show="no_rating_review == 0">
+                    <a class="nav-link" ng-class="tab == 4 ? 'active' : ''"
+                        ui-sref="profile.supplierSetup.step_four({id: supplier_id, tab: 4})"
+                        ng-click="tab = 4">{{'RATINGS & REVIEWS' | translate}}</a>
+                </li> -->
+
+                <!-- <li class="nav-item">
+                    <a class="nav-link" ng-class="tab == 5 ? 'active' : ''"
+                        ui-sref="profile.supplierSetup.step_five({id: supplier_id, tab: 5})"
+                        ng-click="tab = 5">{{'CONFIGURATION' | translate}}</a>
+                </li> -->
+
+                <!-- <li class="nav-item" ng-show="is_schdule_order == 1 && is_scheduled == 1">
+                    <a class="nav-link" ng-class="tab == 6 ? 'active' : ''"
+                        ui-sref="profile.supplierSetup.scheduling({id: supplier_id, tab: 6, dine_in: dine_in})"
+                        ng-click="tab = 6">{{'SCHEDULING' | translate}}</a>
+                </li> -->
+
+                <!-- <li class="nav-item" ng-show="profile === 'ADMIN'">
+                    <a class="nav-link" ng-class="tab == 8 ? 'active' : ''" data-target="#supplier_reset_pwd"
+                        ng-click="openResetPwd()">{{'RESET PASSWORD' | translate}}</a>
+                </li> -->
+
+                <!-- <li class="nav-item" ng-show="profile === 'ADMIN' && enable_min_order_distance_wise=='1'">
+                    <a class="nav-link" ng-class="tab == 9 ? 'active' : ''"
+                        ui-sref="profile.supplierSetup.order-distance({supplierId: supplier_id,tab: 9})"
+                        ng-click="tab = 9">{{'Order Distance' | translate}}</a>
+                </li> -->
+
+            </ul>
+
+            <div ui-view></div>
+
+        </div>
+    </div>
+</div>
+
+<success-modal message="msg_txt"></success-modal>
+
+<!--- Modals ---->
+<div class="modal" id="cover_image_modal" data-backdrop="static">
+    <div class="modal-dialog  modal-dialog-centered" style="max-width: 65%;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none; padding: 6px 16px;">
+                    <button type="button" class="close" data-dismiss="modal" ng-click="closeModal()"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody">
+                    <div class="cover-image">
+                        <img id="supp_cover_img" height="100%" width="100%" src="{{cover_to_upload}}">
+                    </div>
+                    <hr>
+                    <button ng-disabled="!cover_image_file" ng-class="cover_image_file ? '' : 'disabled' "
+                        ng-click="uploadCoverImage()" class="button-primary"
+                        style="width: 200px; margin-left: 20px;">{{'SET COVER IMAGE' | translate}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="supplier_document_view">
+    <div class="modal-dialog" style="max-width: 560px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>{{'DOCUMENTS' | translate}}</h3>
+                </div>
+
+                <div class="document-image">
+                    <div class="row">
+                        <div class="col-md-6 m-bottom-15" ng-repeat="document in documents">
+                            <img src={{document}} height="250px" width="100%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal" id="supplier_reset_pwd">
+    <div class="modal-dialog" style="max-width: 560px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>{{'RESET PASSWORD' | translate}}</h3>
+                </div>
+
+                <div class="document-image">
+                    <form role="form" class="setting" id="updateSupplierPwdForm" name="updateSupplierPwdForm"
+                        ng-submit="updateSupplierPwd(updateSupplierPwdForm)" autocomplete="off" novalidate>
+                        <div class="form-group">
+                            <input type="text" name="password" style="width: 100%;" class="form-control"
+                                placeholder="ENTER PASSWORD" ng-model="resetPwd_obj.password" required>
+
+                            <div class="error" ng-show="updateSupplierPwdForm.$submitted">
+                                <small ng-show="updateSupplierPwdForm.password.$error.required">Please enter a valid
+                                    password.</small>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="bold m-top-40 save">{{'SAVE' | translate}}</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<style>
+    .disabled {
+        opacity: 0.6;
+        cursor: default;
+    }
+
+    .stripe-merchant {
+        position: absolute;
+        right: 0;
+    }
+
+    .stripe-merchant button {
+        width: auto;
+        border: 1px solid var(--primary-color);
+        border-radius: 4px;
+        color: #ffffff;
+        background-color: var(--primary-color);
+        display: block;
+        text-align: center;
+        padding: 10px 20px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .chat-btn {
+        width: auto;
+        border: 1px solid var(--primary-color);
+        border-radius: 4px;
+        color: #ffffff;
+        background-color: var(--primary-color);
+        text-align: center;
+        padding: 10px 20px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .document-image {
+        margin: 14px 20px 20px;
+    }
+
+    .document-image img {
+        object-fit: contain;
+        border-radius: 4px;
+        border: 1px solid #00000026;
+        margin: 10px 0px;
+    }
+
+    a:not([href]):not([tabindex]) {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+</style>

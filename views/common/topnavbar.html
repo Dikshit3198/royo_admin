@@ -1,0 +1,299 @@
+<div class="topnav" ng-controller="HeaderCtrl">
+    <div class="side-top"> 
+        <ul ng-if="(profile == 'ADMIN' || (hide_top_navbar_supplier == 0 && profile == 'SUPPLIER'))">
+            <li>
+                <p style="margin-left: 10px;"
+                ng-style="{'color': enable_knock_theme ? theme_color : ''}">{{user_name}}</p>
+            </li>
+            <li ng-if="is_dine_in == 0 && no_website == 0"
+            ng-style="{'color': enable_knock_theme ? theme_color : ''}">
+            <a ng-click="openWebsite()"><img
+                        ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_website.svg' : 'img/web-pannel-assets/wb.svg'}}">{{'VIEW WEBSITE' | translate}}</a>
+            </li>
+            <li ng-if="is_dine_in == 0 && ride_admin_url"
+            ng-style="{'color': enable_knock_theme ? theme_color : ''}">
+            <a ng-click="openRoyoRides()"><img
+                ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_website.svg' : 'img/web-pannel-assets/wb.svg'}}">{{'VIEW RIDES PANEL' | translate}}</a>
+            </li>
+            <li
+                ng-if="is_dine_in == 0 && ios_app_url && (profile == 'ADMIN' || hide_app_links_supplier == 0) && hide_top_nav_links==0"
+                ng-style="{'color': enable_knock_theme ? theme_color : ''}">
+                <a ng-click="appLink('ios')"><img 
+                    ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_app.svg' : 'img/web-pannel-assets/ios-app.svg'}}">{{'IOS APP LINK' | translate}}</a>
+            </li>
+            <li
+                ng-if="is_dine_in == 0 && android_app_url && (profile == 'ADMIN' || hide_app_links_supplier == 0) && hide_top_nav_links==0"
+                ng-style="{'color': enable_knock_theme ? theme_color : ''}">
+                <a ng-click="appLink('android')"><img 
+                    ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_app.svg' : 'img/web-pannel-assets/ios-app.svg'}}">{{'ANDROID APP LINK' |
+                    translate}}</a>
+            </li>
+            <!-- <li ng-if="is_white_label == 0 && is_superAdmin == 1 && profile === 'ADMIN'"><a href="{{billing_link}}"
+                    target="_blank"
+                    ng-style="{'color': enable_knock_theme ? theme_color : ''}">
+                    <img style="height: 32px" 
+                    ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_billing.svg' : 'img/web-pannel-assets/billing.svg'}}">
+                    {{'BILLING' | translate}}</a></li> -->
+        </ul>
+    </div>
+
+    <div class="language" ng-if="is_data_filter_by_country" style="width: 215px; margin-left: 40px;">
+        <div class="form-group select-category">
+            <select class="app" ng-model="data_country" ng-change="changeCountry(data_country, 1)">
+                <option value="{{country.country_code+','+country.type}}" ng-repeat="country in countryData">
+                    {{country.country_name}}</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="language" ng-if="is_dev && is_instance_selection==1" style="width: 215px; margin-left: 40px;">
+        <div class="form-group select-category">
+            <select class="app" ng-model="base_api" ng-change="changeAPI(base_api)">
+                <option value="{{api}}" ng-repeat="api in api_arr">{{api}}</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="right">
+        <p class="days-left" ng-if="is_notification_blocked">{{'Notifications Blocked' | translate}}</p>
+
+        <!-- <p class="days-left" ng-if="is_subscribed == 0 && is_white_label == 0 && profile === 'ADMIN'">
+            {{'FREE TRIAL' | translate}} :
+            {{total_days | translate}}</p>
+        <p class="current-plan" ng-if="is_subscribed == 1 && is_white_label == 0 && profile === 'ADMIN'">
+            {{'SUBSCRIBED PLAN' | translate}} :
+            {{sub_plan_name}}</p> -->
+
+        <div class="language" ng-if="languages.length > 1 && is_secondary_language">
+            <div class="form-group select-category">
+                <select class="app" ng-model="lang" ng-change="changeLanguage(lang)">
+                    <option value="{{lang.code}}" ng-repeat="lang in languages">{{lang.name | translate}}</option>
+                </select>
+            </div>
+        </div>
+        <!-- <p style="margin-left: 10px;">{{user_name}}</p> -->
+
+        <div class="dropdown prof">
+            <button ng-style="{'backgroundColor': navBrandColor}" type="button" class=" dropdown-toggle"
+                data-toggle="dropdown">
+                <img ng-if="user_image" src="{{compressImage(user_image, '50x50', true)}}"
+                    onError="src = './img/default_user.png'">
+                    <!-- ng-style="{'background-color': theme_color}"> -->
+                <img ng-if="!user_image" src="img/default_user.png">
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" data-toggle="modal" data-target="#reset_password_modal">{{'RESET PASSWORD' |
+                    translate}}</a>
+                <a class="dropdown-item" data-toggle="modal" ng-click="updateUserImage(user_image)"
+                    ng-if="profile === 'BRANCH' && is_branch_image_optional == 1" data-target="#edit_user_image">{{'Edit
+                    Image' | translate}}</a>
+                <a class="dropdown-item" ng-click="Logout()">{{'LOGOUT' | translate}}</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="agentUniqueId">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3 class="agent-head">{{localisation.agent | translate}} Unique Id</h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="agent-id">
+                        {{agent_unique_id ? agent_unique_id : ''}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="reset_password_modal">
+    <div class="modal-dialog" style="max-width: 400px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead" style="padding: 15px 20px">
+                    <h2 class="bold" style="display: inline-block;">{{'RESET PASSWORD' | translate}}</h2>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <form role="form" id="passwordResetForm" name="passwordResetForm"
+                    ng-submit="passwordReset(passwordResetForm, new_admin_pass)" novalidate>
+                    <div class="modbody" style="padding: 15px 20px">
+                        <div class="form-group" style="position: relative">
+                            <label>{{'NEW PASSWORD' | translate}}<p class="star">*</p></label>
+                            <input autocomplete="off" type="password" ng-minlength="6" ng-maxlength="20" name="new_pass"
+                                ng-model="new_admin_pass" placeholder="{{'NEW PASSWORD' | translate}}" required>
+                            <div class="error"
+                                ng-show="passwordResetForm.new_pass.$invalid && passwordResetForm.$submitted">
+                                <small ng-show="passwordResetForm.new_pass.$error.required">{{'PLEASE ENTER A NEW PASSWORD.' | translate}}</small>
+                                <small ng-show="passwordResetForm.new_pass.$error.minlength">{{'PASSWORD LENGTH MUST BE MORE THAN 6 CHARACTERS' | translate}}</small>
+                                <small ng-show="passwordResetForm.new_pass.$error.maxlength">{{'PASSWORD LENGTH MUST BE LESS THAN 20 CHARACTERS' | translate}}.</small>
+                            </div>
+                        </div>
+                        <div class="form-group" style="position: relative">
+                            <label>{{'CONFIRM NEW PASSWORD' | translate}}<p class="star">*</p></label>
+                            <input autocomplete="off" type="password" name="confirm_new_pass"
+                                ng-model="confirm_new_admin_pass" placeholder="{{'CONFIRM NEW PASSWORD' | translate}}"
+                                equal="new_admin_pass" required>
+                            <div class="error"
+                                ng-show="passwordResetForm.confirm_new_pass.$invalid && passwordResetForm.$submitted">
+                                <small ng-show="passwordResetForm.confirm_new_pass.$error.required">{{'PLEASE CONFIRM NEW PASSWORD' | translate}}</small>
+                                <small
+                                    ng-show="!passwordResetForm.confirm_new_pass.$error.required && passwordResetForm.confirm_new_pass.$error.equal">{{"PASSWORDS DON'T MATCH" | translate}}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modfooter" style="padding: 15px 20px">
+                        <button type="submit" class="bg-success bold">{{'SUBMIT' | translate}}</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="edit_user_image">
+    <div class="modal-dialog" style="max-width: 400px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead" style="padding: 15px 20px">
+                    <h2 class="bold" style="display: inline-block;">{{'Edit Image' | translate}}</h2>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="col-md-12" ng-if="is_branch_image_optional == 1">
+                    <figure style="margin-bottom: 0;margin-top: 10px;">
+                        <img class="branchImg" ng-if="userImage" src="{{userImage}}">
+                        <img class="branchImg" ng-if="!userImage" src="img/default_user.png">
+                    </figure>
+                    <label>
+                        <input filestyle="" type="file" accept="image/*" ng-model="branch.logo" class="logo_img_upload"
+                            onchange="angular.element(this).scope().file_to_upload_for_user_image(this.files)"
+                            data-button-text="Single" data-class-button="btn btn-default"
+                            data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                    </label>
+                </div>
+
+                <div class="modfooter">
+                    <button type="button" ng-click="updateUserProfileImg()">{{'SAVE' | translate}}</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="passSuccess">
+    <div class="modal-dialog" style="max-width: 420px">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="modhead" style="border: none;padding: 8px 16px">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+                <div class="modbody" style="border: none;">
+                    <div class="success">
+                        <img src="img/v1_images/illustration.svg">
+                        <h2 class="bold">{{'SUCCESSFULL' | translate}}</h2>
+                        <p>{{'YOUR PASSWORD HAS BEEN RESET' | translate}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="db_clone_popup">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3 class="agent-head">{{'WELCOME!' | translate}}</h3>
+                </div>
+
+                <div class="modbody" style="border: none; padding: 20px 25px; text-align: center;">
+                    <h6 style="line-height: 26px">
+                        {{'IF YOU WISH TO CLONE A DEMO DATABASE INTO YOUR PANEL, YOU CAN DO SO BY GOING TO YOUR PANEL
+                        SETTINGS' | translate}}
+                    </h6>
+                </div>
+
+                <div class="modfooter">
+                    <button style="width: 100%;" type="button" class="bg-success bold" ui-sref="index.settings"
+                        data-dismiss="modal">{{'REDIRECT TO SETTINGS' | translate}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .agent-head {
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: #636363eb;
+    }
+
+    .agent-id {
+        box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.12);
+        text-align: center;
+        padding: 20px 10px;
+        color: #313131b8;
+        font-weight: 500;
+    }
+
+    .days-left {
+        padding: 0px 7px;
+        color: #ff4646 !important;
+        border: 1px solid #ff4646;
+        border-radius: 4px;
+        font-size: 14px !important;
+        margin-right: 10px;
+    }
+
+    .current-plan {
+        padding: 2px 7px;
+        margin-right: 15px;
+        color: var(--primary-color) !important;
+        border: 1px solid var(--primary-color);
+        border-radius: 4px;
+        font-size: 14px !important;
+    }
+
+    .language {
+        width: 100px;
+        margin-left: 10px;
+        margin-bottom: -15px;
+        margin-right: 10px;
+    }
+
+    .language select {
+        height: 28px;
+        font-size: 12px;
+        padding: 0px 15px 0px 8px;
+    }
+
+    .branchImg {
+        max-width: 300px;
+        max-height: 300px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>

@@ -1,0 +1,208 @@
+<div class="accsettle m-top-30">
+
+    <div class="reporttop m-top-30"
+        style="border: 1px solid rgba(18,17,17,0.1);	border-radius: 4px;	background-color: #FDFDFC;">
+        <form>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-4 mb-2" ng-if="profile === 'ADMIN'">
+                            <div class="form-group select-category" style="margin-top: 0px">
+                                <label>{{localisation.supplier | translate}}</label>
+                                <select class="app" data-placeholder="Choose {{localisation.supplier}}" tabindex="4"
+                                    ng-model="selected_supplier"
+                                    ng-options="supplier.supplier_name for supplier in suppliers"
+                                    ng-change="changeSupplier(selected_supplier)">
+                                    <option selected disabled value="">{{'SELECT' | translate}}
+                                        {{localisation.supplier | translate}}
+                                    </option>
+                                </select>
+                                <span class="inputtag"><img src="/img/v1_images/ic_dropdown.svg"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group select-category" style="margin-top: 0px">
+                                <label>{{(localisation.payment + ' STATUS') | translate}}</label>
+                                <select class="app" ng-change="changepaymentStatus(filter.status)"
+                                    ng-model="filter.status">
+                                    <option selected disabled value="">{{'SELECT STATUS' | translate}}</option>
+                                    <option value="3">{{'ALL' | translate}}</option>
+                                    <option value="0">{{'PENDING' | translate}}</option>
+                                    <option value="1">{{'ACCEPTED' | translate}}</option>
+                                    <option value="2">{{'REJECTED' | translate}}</option>
+                                </select>
+                                <span class="inputtag"><img src="/img/v1_images/ic_dropdown.svg"></span>
+                            </div>
+                        </div>
+                        <!-- 
+                        <div class="col-md-4">
+                            <div class="form-group" style="margin-top: 0px">
+                                <label>{{'DATE' | translate}}</label>
+                                <input type="text" id="datepicker_settelment" placeholder="Date">
+                                <span class="inputtag"><img src="/img/v1_images/calendar.svg"></span>
+                            </div>
+                        </div> -->
+
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="btns" style="margin-top: 18px">
+                        <button type="button" ng-click="clearFilter()"
+                            style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'RESET' | translate}}</button>
+                        <button type="button" class="bg-success" ng-click="changeFilter()"
+                            style="color: #fff; border: 1px solid var(--primary-color); margin-left: 7px;">{{'FILTER' | translate}}</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="repbtm m-top-40">
+        <div ng-if="enable_search_filter_in_supplier_payout" class="secnav ">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <input style="width: 330px" type="text" placeholder="{{'SEARCH BY ORDER NO. / SUPPLIER NAME' | translate}}"
+                        ng-model="search.text" ng-keypress="searchOrder($event)">
+                </div>
+            </div>
+        </div>
+
+    <div class="tab-content">
+        <div class="tab-pane  active">
+            <div class="repbtm m-top-40">
+                <!-- <div class="secnav ">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="topfil">
+                                <ul>
+                                    <li ng-if="is_supplier_stripe_split_enabled == 1" style="filter: grayscale(0)"
+                                        ng-if="permissions('accounting', 'update') == 1">
+                                        <select style="width: 120px; height: 40px;"
+                                            ng-change="changePaymentMode(payment_type)" ng-model="payment_type"
+                                            convert-to-number>
+                                            <option selected disabled value="">{{'SELECT PAYMENT MODE' | translate}}
+                                            </option>
+                                            <option value="0">{{'CASH' | translate}}</option>
+                                            <option value="1">{{'ONLINE' | translate}}</option>
+                                        </select>
+                                    </li>
+                                    <li style="filter: grayscale(0)" ng-if="permissions('accounting', 'update') == 1">
+                                        <button type="button" class="bold create"
+                                            ng-click="payUser()">{{'PAY' | translate}}</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+                <div class="tableouter m-top-20">
+                    <table>
+                        <thead>
+                            <tr>
+                                <!-- <th></th> -->
+                                <th>{{'REQUEST NO.' | translate}}</th>
+                                <th>{{'ORDER NO.' | translate}}</th>
+                                <!-- <th>{{localisation.supplier | translate}} ID</th> -->
+                                <th>{{localisation.supplier | translate}} {{'NAME' | translate}}</th>
+                                <th>{{'REQUEST DATE' | translate}}</th>
+                                <th style="width: 110px">{{'PAYABLE AMOUNT' | translate}}</th>
+                                <th>{{('REQUEST STATUS') | translate}}</th>
+                                <th>{{(localisation.payment + ' STATUS') | translate}}</th>
+                                <th>{{'ACTION' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="payout in payoutRequestList">
+                                <!-- <td><label ng-if="payout.payment_status == 0" class="check"><input type="checkbox"
+                                            ng-click="check(payout)"><span></span></label></td> -->
+                                <td>{{payout.id}}</td>
+                                <td><span style="font-weight: 600; color: var(--primary-color); cursor: pointer;"
+                                        ui-sref="orders.ordersDescription({order_id:account.order_id})">{{payout.order_id}}</span>
+                                </td>
+                                <td>{{payout.supplier_name ? payout.supplier_name : 'NA'}}</td>
+                                <td>
+                                    <span>
+                                        {{payout.created_at | date: 'MMM d, y' }}
+                                    </span> <br>
+                                    <span>
+                                        {{payout.created_at | date: 'hh:mm a' }}
+                                    </span>
+                                </td>
+                                <td>{{payout.payable_amount}}</td>
+                                <td>
+                                    <span ng-if="payout.request_status == '0'">{{'PENDING' | translate}}</span>
+                                    <span ng-if="payout.request_status == '1'">{{'ACCEPTED' | translate}}</span>
+                                    <span ng-if="payout.request_status == '2'">{{'REJECTED' | translate}}</span>
+                                </td>
+                                <td>
+                                    <span ng-if="payout.payment_status == '0'">{{'NOT PAID' | translate}}</span>
+                                    <span ng-if="payout.payment_status == '1'">{{'PAID' | translate}}</span>
+                                </td>
+                                <td>
+                                    <div ng-if="payout.request_status == '0'">
+                                        <button class="btn-accept"
+                                            ng-click="acceptReject(payout.id, 1)">{{'ACCEPT' | translate}}</button>
+                                        <button class="btn-reject"
+                                            ng-click="acceptReject(payout.id, 2)">{{'REJECT' | translate}}</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="payoutRequestList.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+
+                    <div ng-if="payoutRequestList.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .btn-accept {
+        color: #ffffff;
+        border-radius: 4px;
+        background-color: var(--primary-color);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+        border: none;
+        font-size: 14px;
+    }
+
+    .btn-reject {
+        color: #ffffff;
+        border-radius: 4px;
+        background-color: var(--danger);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+        border: none;
+        font-size: 14px;
+    }
+</style>

@@ -1,0 +1,165 @@
+<div class="persinfo">
+  <div class="bx">
+      <!-- 'DELIVERY TIMINGS' -->
+    <h2 class="bold" ng-if="is_pickup != 1">{{localisation.delivery_timing | translate}}</h2>
+
+    <form role="form" id="addConfigForm" name="addConfigForm" ng-submit="onSubmit(addConfigForm)" autocomplete="off"
+      novalidate>
+
+      <div class="row" ng-if="app_type == 1 || checkFlow([1])">
+        <div class="col-md-4">
+          <div class="form-group timeslot" style="padding: 0px; border: none;">
+            <label>{{localisation.preparation_time | translate}}</label>            
+            <div class="input" clock-picker data-autoclose="true">
+              <input autocomplete="off" type="text" ng-model="prep_time" id="preptime" ng-change="changePrepTime(prep_time)" readonly>
+              <span class="inputtag"><img src="img/v1_images/timeg.png"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="row select-category">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label>{{localisation.order}} Prior Days</label>
+            <select data-placeholder="Choose Category" class="app" tabindex="4" ng-model="order_prior_day"
+              ng-options="day.name for day in prior_days" ng-change="dayChange(order_prior_day)" required>
+              <option value="" selected disabled>Select {{localisation.order}} Prior Day</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label>{{localisation.order}} Prior time</label>
+            <select data-placeholder="Choose Category" class="app" tabindex="4" ng-model="order_prior_time"
+              ng-options="time.name for time in timing" ng-change="timeChange(order_prior_time)" required >
+              <option value="" selected disabled>Select {{localisation.order}} Prior Time</option>
+            </select>
+          </div>
+        </div>
+      </div> -->
+      <div class="row select-category" ng-if="is_pickup != 1 && (profile === 'ADMIN' || hide_delivery_time_supplier == 0)">
+
+        <div class="col-md-4" ng-if="is_dine_in == 0">
+          <div class="form-group ">
+            <label>{{'MINIMUM DELIVERY TIME' | translate}}<span class="star">*</span></label>
+            <select data-placeholder="Choose Category" name="min_delivery" class="app" tabindex="4"
+              ng-model="selected_min_delivery" ng-options="min.name for min in min_delivery"
+              ng-change="onSelectMinDelivery(selected_min_delivery)" required>
+              <option value="" selected disabled>{{'SELECT MINIMUM DELIVERY TIME' | translate}}</option>
+            </select>
+            <div class="error" ng-show="addCategoriesForm.min_delivery.$invalid && addCategoriesForm.$submitted">
+              <small ng-show="addCategoriesForm.min_delivery.$error.required">{{'PLEASE SELECT MINIMUM DELIVERY TIME' | translate}}</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4" ng-if="is_dine_in == 0">
+          <div class="form-group drop">
+            <label>{{'MAXIMUM DELIVERY TIME' | translate}}<span class="star">*</span></label>
+            <select name="max_delivery" data-placeholder="Choose Category" class="app" tabindex="4"
+              ng-model="selected_max_delivery" ng-options="max.name for max in max_delivery"
+              ng-change="onSelectMaxDelivery(selected_max_delivery)" required>
+              <option value="" selected disabled>{{'SELECT MAX DELIVERY TIME' | translate}}</option>
+            </select>
+            <div class="error" ng-show="addCategoriesForm.max_delivery.$invalid && addCategoriesForm.$submitted">
+              <small ng-show="addCategoriesForm.max_delivery.$error.required">{{'PLEASE SELECT MAXIMUM DELIVERY TIME' | translate}}</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="col-md-4">
+          <div class="form-group">
+            <label>Urgent Delivery Time<span class="star">*</span></label>
+            <select data-placeholder="Choose Category" class="app" tabindex="4" ng-model="urgent_delivery_time"
+              ng-options="time.name for time in timing" ng-change="onUrgentTimeChange(urgent_delivery_time)" required>
+              <option value="" selected disabled>Select Urgent Delivery Time</option>
+            </select>
+          </div>
+        </div> -->
+      </div>
+
+      <div class="form-group timeslotwrap">
+        <label>{{'SET TIME SLOT' | translate}}</label>
+        <div class="timeslot">
+
+          <div class="row" ng-repeat="day in work_days">
+            <div class="col-md-2">
+              <p>{{day.name | translate}}</p>
+            </div>
+
+            <div class="col-md-3 text-center">
+              <div class="input" clock-picker data-autoclose="true">
+                <input autocomplete="off" type="text" ng-model="day.from" id="clockpickerFrom{{$index}}" readonly>
+                <span class="inputtag"><img src="img/v1_images/timeg.png"></span>
+              </div>
+            </div>
+
+            <div class=" text-center" 
+            ng-class="enable_supplier_config_closing_day == 0 ? 'col-md-2' : 'col-md-1'">
+              <p>{{'TO' | translate}}</p>
+            </div>
+
+            <div class="col-md-2 text-center" ng-if="enable_supplier_config_closing_day == 1">
+              <div class="select-category ">
+              <select class="app" tabindex="4" ng-model="day.close_week_id">
+                <option value="">Select Closing Day</option>
+                <option ng-value="day.week_id">{{day.name | translate}}</option>
+                <option ng-value="$last ? work_days[0].week_id : work_days[$index+1].week_id">{{$last ? work_days[0].name : work_days[$index+1].name | translate}}</option>
+              </select>
+            </div>
+            </div>
+
+            <div class="col-md-3 text-center">
+              <div class="input" clock-picker data-autoclose="true">
+                <input autocomplete="off" type="text" ng-model="day.to" id="clockpickerTo{{$index}}" readonly>
+                <span class="inputtag"><img src="img/v1_images/timeg.png"></span>
+              </div>
+            </div>
+
+            <div class="text-right"
+            ng-class="enable_supplier_config_closing_day == 0 ? 'col-md-2' : 'col-md-1'">
+              <label>
+                <div class="switch togglebtn">
+                  <input type="checkbox" id="togBtn{{$index}}" ng-click="toggle(day)" ng-checked="day.value">
+                  <div class="slider round">
+                    <span class="on"></span>
+                    <span class="off"></span>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="save" ng-if="permissions('suppliers', 'update') == 1">
+        <button type="submit">{{'SAVE' | translate}}</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<success-modal message="msg_description"></success-modal>
+
+
+<style>
+  .save {
+    text-align: left;
+  }
+
+  .save button {
+    color: #ffffff;
+    border-radius: 4px;
+    background-color: var(--primary-color);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+    border: none;
+    font-size: 14px;
+    padding: 9px 25px;
+    width: 119px;
+    background-image: none;
+    text-align: center;
+    margin-top: 20px;
+  }
+</style>

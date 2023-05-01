@@ -1,0 +1,639 @@
+<div class="wrapper promotion_page">
+    <div class="category" ng-if="!is_add">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{localisation.vouchers | translate}}</h1>
+                </div>
+            </div>
+        </div>
+        <div class="secnav m-top-20">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <input type="text" placeholder="{{'SEARCH' | translate}}" name="search" ng-model="search"
+                        style="width: 235px" ng-keypress="searchPromo($event)">
+                </div>
+                <div class="col-lg-8 col-md-12 col-sm-12">
+                    <div class="topfil">
+                        <ul>
+                            <li style="position: relative">
+                                <label style="position: absolute; top: -22px; left: 3px">{{'DATE' | translate}}</label>
+                                <input style="width: 200px" type="text" id="datepicker_promo"
+                                    placeholder="{{'DATE' | translate}}" readonly>
+                                <span style="position: absolute; right: 13px; top: 3px" class="inputtag"><img
+                                        src="/img/v1_images/calendar.svg"></span>
+                            </li>
+                            <li style="position: relative">
+                                <label style="position: absolute;top: -22px;">{{'USER TYPE' | translate}}</label>
+                                <select style="width: 142px" ng-model="user_type" ng-change="selectUserType(user_type)"
+                                    convert-to-number>
+                                    <option value="1">{{'ALL' | translate}}</option>
+                                    <option value="2">{{'ALL USERS' | translate}}</option>
+                                    <option value="3">{{'FIRST TIME USERS' | translate}}</option>
+                                </select>
+                            </li>
+                            <li style="position: relative" ng-if="user_type == 2">
+                                <label style="position: absolute;top: -25px;">{{'SORT BY' | translate}}</label>
+                                <select style="width: 145px" ng-model="sort_by" ng-change="selectSortBy(sort_by)"
+                                    convert-to-number>
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                    <option value="1">{{'REDEEMS PER USER' | translate}}</option>
+                                    <option value="2">{{'TOTAL VOUCHERS' | translate}}</option>
+                                </select>
+                            </li>
+                            <li style="filter: grayscale(0)" ng-if="permissions('promotions', 'create') == 1">
+                                <button type="button" class="bold create" ng-click="changeView(true)">+
+                                    {{localisation.voucher | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mainbanner promocod m-top-30">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-6" ng-repeat="voucher in promoCodeList">
+                    <div class="bx">
+                            <!-- voucher.discountType!=2 &&  -->
+                        <div class="top back text-center"
+                            style="background-image: url(img/v1_images/promo_back.png); color: #fff; border-radius: 4px 4px 0px 0px; cursor: default;">
+                            <i ng-if="permissions('promotions', 'update') == 1"
+                                class="fa fa-edit edit-promo" ng-click="editPromo(voucher)"></i>
+                            <i ng-if="permissions('promotions', 'delete') == 1" class="fa fa-trash delete-promo"
+                                ng-click="deletePromo(voucher.promoCode)"></i>
+                            <p class="bold">{{voucher.promoDesc}}</p>
+                            <h2 class="bold">{{voucher.name}}</h2>
+                            <small style="color: #ffffff">{{'EXPIRY DATE' | translate}} :
+                                {{voucher.endDate | date}}</small>
+                        </div>
+                        <div class="btm">
+                            <ul>
+                                <li ng-if="voucher.firstTime">{{'VALID FOR FIRST TIME USER ONLY' | translate}}</li>
+                                <li ng-if="!voucher.firstTime">{{'VALID FOR ALL USERS' | translate}}</li>
+                                <!-- <li>Voucher applicable on {{voucher.type == 1 ? 'category' : 'supplier'}}</li> -->
+                                <li>{{'Min. Orden Amount is' | translate}} {{currency}}{{voucher.minPrice}}
+                                </li>
+                                <!-- {{localisation.order | translate}}  -->
+                                <li>{{'VOUCHER QUANTITY IS' | translate}} {{voucher.maxUsers}}</li>
+                            </ul>
+                            <p ng-if="is_single_vendor == 0 && app_type != 1" class="bold text-center cursor"
+                                ng-click="openCategorySupplier(voucher)">{{'VALID FOR' | translate}}
+                                {{(voucher.promoType == 1 ? (localisation.category | translate) : localisation.supplier) | translate}}
+                            </p>
+                            <p ng-if="is_single_vendor == 0 && app_type == 1 && profile == 'ADMIN'"
+                                class="bold text-center cursor" ng-click="openCategorySupplier(voucher)">
+                                {{'VIEW' | translate}}
+                                {{localisation.suppliers | translate}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="no-data-found" ng-if="promoCodeList.length == 0 && dataLoaded">
+                {{'NO DATA FOUND' | translate}}
+            </div>
+
+            <div ng-if="promoCodeList.length > 0 && dataLoaded" class="row pagination">
+                <ul ng-if="pager.pages && pager.pages.length">
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                    </li>
+                    <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                        <a ng-click="setPage(page)">{{page}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="category" ng-if="is_add" style="width: 80%; margin: 0 auto">
+
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{(is_edit ? 'EDIT' : 'ADD') | translate}} {{localisation.voucher | translate}}</h1>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <a href="" class="backbtn" ng-click="changeView(false)" style="float: right"><img
+                            src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="addban m-top-30 innpad">
+            <div class="persinfo">
+                <form role="form" id="addVoucherForm" name="addVoucherForm" enctype="multipart/form-data"
+                    ng-submit="addPromoCode(addVoucherForm)" novalidate>
+
+                    <div class="row">
+                        <div class="col-md-6" style="padding-left: 0px">
+                            <div class="form-group">
+                                <div class="labelrad">
+                                    <label class="cursor">
+                                        <input type="radio" name="user" value="0" convert-to-number
+                                            ng-model="voucher.is_first_user"><span></span>{{'FOR ALL USERS' | translate}}
+                                    </label>
+                                    <label class="cursor">
+                                        <input type="radio" name="user" value="1" convert-to-number
+                                            ng-model="voucher.is_first_user"><span></span>{{'FOR FIRST TIME USER ONLY' | translate}}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row select-category">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{(localisation.voucher + ' NAME') | translate}}<span
+                                        class="star">*</span></label>
+                                <input type="text" limit-to="60" name="promo_name" ng-model="voucher.name"
+                                    no-special-char placeholder="{{(localisation.voucher + ' NAME') | translate}}"
+                                    required>
+                                <div class="error"
+                                    ng-show="addVoucherForm.promo_name.$invalid && addVoucherForm.$submitted">
+                                    <small
+                                        ng-show="addVoucherForm.promo_name.$error.required">{{'PLEASE ENTER NAME' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{(localisation.voucher + ' DESCRIPTION') | translate}}<span
+                                        class="star">*</span></label>
+                                <input type="text" name="promo_description" limit-to="150" ng-model="voucher.desc"
+                                    placeholder="{{(localisation.voucher + ' DESCRIPTION') | translate}}" required>
+                                <div class="error"
+                                    ng-show="addVoucherForm.promo_description.$invalid && addVoucherForm.$submitted">
+                                    <small
+                                        ng-show="addVoucherForm.promo_description.$error.required">{{'PLEASE ENTER DESCRIPTION' | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'BUY X QUANTITY' | translate}}<span class="star">*</span></label>
+                                <select class="app" name="buy_x_quantity" ng-model="voucher.buy_x_quantity"
+                                    ng-change="setBuyXPromoValue(voucher.buy_x_quantity)" convert-to-number required>
+                                    <option value="0" selected disabled>{{'SELECT' | translate}}</option>
+                                    <option value="{{data.value}}" ng-repeat="data in buyxArr">{{data.label}}</option>
+                                </select>
+
+                                <div class="error"
+                                    ng-show="addVoucherForm.buy_x_quantity.$invalid && addVoucherForm.$submitted">
+                                    <small ng-show="addVoucherForm.buy_x_quantity.$error.required">Please enter
+                                        buy x quantity.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'GET X QUANTITY' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="get_x_quantity_label" readonly
+                                    ng-model="voucher.get_x_quantity_label"
+                                    placeholder="{{'GET X QUANTITY' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addVoucherForm.get_x_quantity_label.$invalid && addVoucherForm.$submitted">
+                                    <small ng-show="addVoucherForm.get_x_quantity_label.$error.required">Please
+                                        enter
+                                        get x quantity.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'MAXIMUM BUY X QUANTITY' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="max_buy_x_get" production-qty limit-to="4"
+                                    ng-model="voucher.max_buy_x_get"
+                                    placeholder="{{'MAXIMUM BUY X QUANTITY' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addVoucherForm.max_buy_x_get.$invalid && addVoucherForm.$submitted">
+                                    <small ng-show="addVoucherForm.max_buy_x_get.$error.required">Please enter
+                                        maximum buy quantity.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'MINIMUM BASKET VALUE' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="promo_min_basket_value" production-qty limit-to="4"
+                                    ng-model="voucher.basket_val_MO"
+                                    placeholder="{{'MINIMUM BASKET VALUE' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addVoucherForm.promo_min_basket_value.$invalid && addVoucherForm.$submitted">
+                                    <small ng-show="addVoucherForm.promo_min_basket_value.$error.required">Please enter
+                                        minimum basket value.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- <div ng-if="is_single_vendor == 0" class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'PROMO BEARER' | translate}}<span class="star">*</span></label>
+                                <select class="app" ng-model="voucher.bear_by" placeholder="Promo Bearer" name="bear_by"
+                                    convert-to-number required ng-disabled="voucher.discount_type == 2">
+                                    <option selected disabled value="">{{'SELECT' | translate}}</option>
+                                    <option value="2" ng-disabled="profile=='SUPPLIER'">{{'BOTH' | translate}}</option>
+                                    <option value="0" ng-disabled="profile=='SUPPLIER'">Admin</option>
+                                    <option value="1">{{localisation.supplier | translate}}</option>
+                                </select class="app">
+                                <div class="error" ng-show="addVoucherForm.bear_by.$invalid && addVoucherForm.$submitted">
+                                    <small ng-show="addVoucherForm.bear_by.$error.required">Please Promo Bearer.</small>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <div ng-if="is_single_vendor == 0 && hide_promo_commission ==0" class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'APPLY COMMISSION ON' | translate}}<span class="star">*</span></label>
+                                <select class="app" ng-model="voucher.commission_on"
+                                    placeholder="{{'APPLY COMMISSION ON' | translate}}" name="commission_on"
+                                    convert-to-number required>
+                                    <option selected disabled value="">{{'SELECT' | translate}}</option>
+                                    <option value="0">{{'ORIGINAL PRICE' | translate}}</option>
+                                    <option value="1">{{'DISCOUNTED PRICE' | translate}}</option>
+                                </select class="app">
+                                <div class="error"
+                                    ng-show="addVoucherForm.commission_on.$invalid && addVoucherForm.$submitted">
+                                    <small ng-show="addVoucherForm.commission_on.$error.required">Please Commission
+                                        On.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="voucher.is_first_user == 0">
+                            <div class="form-group">
+                                <label>{{'NO. OF VOUCHERS AVAILABLE' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="promo_total_vouchers" production-qty limit-to="4"
+                                    ng-model="voucher.no_of_voucher"
+                                    placeholder="{{'NO. OF VOUCHERS AVAILABLE' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addVoucherForm.promo_total_vouchers.$invalid && addVoucherForm.$submitted">
+                                    <small ng-show="addVoucherForm.promo_total_vouchers.$error.required">Please enter
+                                        no. of vouchers available.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="voucher.is_first_user == 0">
+                            <div class="form-group">
+                                <label>{{'NO. OF REDEEMS ALLOWED (PER USER)' | translate}}<span
+                                        class="star">*</span></label>
+                                <input type="text" name="promo_redeems" production-qty limit-to="4"
+                                    ng-model="voucher.no_of_redeem"
+                                    placeholder="{{'NO. OF REDEEMS ALLOWED (PER USER)' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addVoucherForm.promo_redeems.$invalid && addVoucherForm.$submitted">
+                                    <small ng-show="addVoucherForm.promo_redeems.$error.required">Please enter no. of
+                                        redeems allowed.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group pro" style="position: relative">
+                                <label>{{'VOUCHER VALIDITY' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="promo_validity" ng-model="validity" id="datepicker"
+                                    style="padding-left: 45px;" placeholder="{{'VOUCHER VALIDITY' | translate}}"
+                                    readonly required>
+                                <span class="inputtag calender"
+                                    ng-style="addVoucherForm.promo_validity.$invalid && addVoucherForm.$submitted ? {'bottom' : '32px'} : {'bottom' : '10px'}"><img
+                                        src="/img/v1_images/calendar.svg"></span>
+                                <div class="error"
+                                    ng-show="addVoucherForm.$submitted && addVoucherForm.promo_validity.$invalid">
+                                    <small ng-show="addVoucherForm.promo_validity.$error.required">Please select voucher
+                                        validity.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row" ng-if="!(app_type == 1 && is_single_vendor == 1) ">
+                        <div class="col-md-6" ng-if="profile == 'ADMIN'">
+
+                            <div class="row form-group " style="margin-top: 20px;">
+                                <!-- ng-if="is_single_vendor == 0 && profile == 'ADMIN'" -->
+                                <div class=" col-md-12">
+                                    <label>{{app_type == 1 ? (('Select' + ' ' + localisation.suppliers) | translate) : ('SELECT ' + localisation.voucher + ' TYPE' | translate)}}<span
+                                            class="star">*</span></label>
+                                    <div class="radio" ng-if="app_type != 1">
+                                        <label style="margin-right: 13px">
+                                            <input ng-model="voucher.type" value="0" type="radio" name="type"
+                                                convert-to-number
+                                                ng-click="markAll(mark_all);"><span></span>{{'BY' | translate}}
+                                            {{localisation.supplier | translate}}
+                                        </label>
+                                        <label style="margin-right: 13px">
+                                            <input ng-model="voucher.type" value="1" type="radio" name="type"
+                                                convert-to-number
+                                                ng-click="markAll(mark_all);"><span></span>{{'BY ' + localisation.category| translate}}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row suppro" ng-style=" app_type==1 ? {'margin-top': '-15px' } : ''">
+                                <div class=" col-md-12">
+                                    <div class="form-group">
+                                        <div class="row select-category" ng-if="voucher.type == 0 && app_type != 1"
+                                            style="margin-bottom: 20px">
+                                            <div class="col-md-12">
+                                                <select class="app" data-placeholder="Choose Category" tabindex="4"
+                                                    ng-model="selected_category"
+                                                    ng-options="category.name for category in categories"
+                                                    ng-change="chooseCategory(selected_category)">
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="box">
+                                            <div class="top">
+                                                <h2 class="bold">
+                                                    {{voucher.type == 1 ? (localisation.categories | translate) : (localisation.supplier | translate)}}
+                                                </h2>
+                                                <label style="margin-right: 13px"
+                                                    ng-if="voucher.discount_type!=2">{{'Mark All' | translate}}<input
+                                                        type="checkbox" name="mark_all" ng-click="markAll(!mark_all)"
+                                                        ng-model="mark_all">
+                                                    <span style="margin-left: 8px; top: 2px;"></span></label>
+                                            </div>
+
+                                            <ul class="items" ng-if="voucher.type == 1">
+                                                <li ng-repeat="category in  categories">{{category.name}}
+                                                    <label><input type="checkbox" name="{{category.name}}"
+                                                            ng-click="selectCategory(category)"
+                                                            ng-checked="category.checked">
+                                                        <span></span></label>
+                                                </li>
+                                            </ul>
+
+                                            <ul class="items" ng-if="voucher.type == 0 && suppliers.length">
+                                                <li ng-repeat="supplier in  suppliers">{{supplier.name}}
+                                                    <label><input type="checkbox" name="{{supplier.name}}"
+                                                            ng-click="selectSupplier(supplier)"
+                                                            ng-checked="supplier.checked">
+                                                        <span></span></label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="error" ng-if="!selected_count && addVoucherForm.$submitted">
+                                            <small>{{'PLEASE SELECT' | translate}}
+                                                {{voucher.type == 1 ? (localisation.categories | translate) : (localisation.supplier | translate)}}.</small>
+                                        </div>
+                                    </div>
+                                    <div class="supprobtmtxt">
+                                        <p>{{selected_count}}
+                                            {{voucher.type == 1 ? (localisation.category | translate) : (localisation.suppliers | translate)}}
+                                            {{'Selected' | translate}}</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class=" col-md-6"
+                            ng-if="(selected_count || profile == 'SUPPLIER') && filteredCategories.length">
+
+                            <div class="row form-group " style="margin-top: 20px;">
+                                <div class=" col-md-6">
+                                    <label>{{('SELECT CATEGORY' | translate)}}<span
+                                            class="star">*</span></label>
+                                </div>
+                            </div>
+                            <div class="row suppro" ng-style=" app_type==1 ? {'margin-top': '-15px' } : ''">
+                                <div class=" col-md-12">
+                                    <div class="form-group">
+                                        <div class="box">
+                                            <div class="top">
+                                                <h2 class="bold">
+                                                    {{(localisation.categories | translate)}}
+                                                </h2>
+                                                <label style="margin-right: 13px"
+                                                    ng-if="voucher.discount_type!=2">{{'Mark All' | translate}}<input
+                                                        type="checkbox" name="mark_category_all"
+                                                        ng-click="markCatProductAll(!mark_category_all, 1)"
+                                                        ng-model="mark_category_all">
+                                                    <span style="margin-left: 8px; top: 2px;"></span></label>
+                                            </div>
+
+                                            <ul class="items">
+                                                <li ng-repeat="categ in filteredCategories">{{categ.name}}
+                                                    <label><input type="checkbox" name="{{categ.name}}"
+                                                            ng-click="selectFilterCategory(categ)"
+                                                            ng-checked="categ.checked">
+                                                        <span></span></label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <!-- <div class="error" ng-if="!selected_category_count && addVoucherForm.$submitted">
+                                    <small>{{'PLEASE SELECT' | translate}} {{localisation.categories | translate}}.</small>
+                                </div> -->
+                                    </div>
+                                    <div class="supprobtmtxt">
+                                        <p>{{selected_category_count}} {{localisation.categories | translate}}
+                                            {{'Selected' | translate}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ng-if="is_single_vendor == 0 && profile == 'ADMIN'" -->
+                        <div class=" col-md-6"
+                            ng-if="(selected_count || profile == 'SUPPLIER') && filteredProducts.length">
+                            <div class="row form-group " style="margin-top: 20px;">
+                                <div class=" col-md-12">
+                                    <label>{{(('Select ' + localisation.products) | translate)}}<span
+                                            class="star">*</span></label>
+                                </div>
+                            </div>
+
+                            <!-- ng-if="(selected_count) && filteredProducts.length" -->
+                            <!-- profile == 'ADMIN' &&  -->
+                            <div class="row suppro" ng-if="!(app_type == 1 && is_single_vendor == 1) "
+                                ng-style=" app_type==1 ? {'margin-top': '-15px' } : ''">
+
+                                <div class=" col-md-12">
+                                    <div class="form-group">
+                                        <div class="box">
+                                            <div class="top">
+                                                <h2 class="bold">
+                                                    {{(localisation.products | translate)}}
+                                                </h2>
+                                                <label style="margin-right: 13px"
+                                                    ng-if="voucher.discount_type!=2">{{'Mark All' | translate}}<input
+                                                        type="checkbox" name="mark_product_all"
+                                                        ng-click="markCatProductAll(!mark_product_all, 2)"
+                                                        ng-model="mark_product_all">
+                                                    <span style="margin-left: 8px; top: 2px;"></span></label>
+                                            </div>
+
+                                            <ul class="items">
+                                                <li ng-repeat="product in filteredProducts">{{product.name}}
+                                                    <label><input type="checkbox" name="{{product.name}}"
+                                                            ng-click="selectFilterProduct(product)"
+                                                            ng-checked="product.checked">
+                                                        <span></span></label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <!-- <div class="error" ng-if="!selected_product_count && addVoucherForm.$submitted">
+                                    <small>{{'PLEASE SELECT' | translate}} {{localisation.categories | translate}}.</small>
+                                </div> -->
+                                    </div>
+                                    <div class="supprobtmtxt">
+                                        <p>{{selected_product_count}} {{localisation.products | translate}}
+                                            {{'Selected' | translate}}</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-12" style="margin-top: 20px;" ng-if="comboOffer.length">
+                            <div class="tableouter">
+                                <table>
+                                    <tr>
+                                        <th>{{localisation.products | translate}}</th>
+                                        <th>{{localisation.suppliers | translate}}</th>
+                                        <th>{{localisation.categories | translate}}</th>
+                                        <th>{{'ACTION' | translate}}</th>
+                                    </tr>
+                                    <tr ng-repeat="data in comboOffer">
+                                        <td>{{data.product.name}}</td>
+                                        <td>{{data.supplier.name}}</td>
+                                        <td>{{data.category.name}}</td>
+                                        <td>
+                                            <button type="button"
+                                                class="nxt" style="height: auto; width: auto;font-size: 14px;padding: 4px 14px;"
+                                                ng-click="removeCombo(data.product.id, $index)">{{'DELETE' | translate}}</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="button m-top-20">
+                        <button type="submit" class="bold nxt">{{'DONE' | translate}}</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="viewPromo">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead">
+                    <h2 class="bold" style="display: inline-block;">{{localisation.voucher | translate}}</h2>
+                    <button type="button" class="close" id="closePromoModal" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+                <div class="modbody promo">
+                    <h1>{{'VOUCHER APPLIED ON' | translate}}
+                        {{promo_to_display.type == 1 ? 'category' : localisation.supplier | translate}}
+                    </h1>
+
+                    <div class="row">
+                        <div class="col-md-6 box" ng-repeat="data in promo_to_display.array">
+                            <p ng-if="promo_to_display.type == 1">{{data.categoryName}}</p>
+                            <p ng-if="promo_to_display.type == 0">{{data.supplierName}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .delete-promo {
+        position: absolute;
+        right: 12px;
+        top: 10px;
+        font-size: 21px;
+        z-index: 9;
+        cursor: pointer;
+    }
+
+    .edit-promo {
+        position: absolute;
+        left: 12px;
+        top: 10px;
+        font-size: 22px;
+        z-index: 9;
+        cursor: pointer;
+    }
+
+    .calender {
+        bottom: 10px;
+        position: absolute;
+        left: 10px;
+    }
+
+    .promo {
+        margin-bottom: 20px;
+    }
+
+    .promo h1 {
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: #00000099;
+        font-size: 16px;
+    }
+
+    .promo .box p {
+        border: 1px solid #0000001f;
+        border-radius: 4px;
+        padding: 4px 8px;
+        color: #494949;
+    }
+
+    #category .multiSelect .checkboxLayer {
+        height: auto !important;
+        min-height: 1px;
+        max-height: 210px;
+        overflow-y: auto;
+    }
+
+    .multiSelect .tickMark {
+        right: 16px;
+    }
+
+    .multiSelect .multiSelectItem {
+        width: 100%;
+    }
+
+    .multiSelect .checkboxLayer button {
+        background: none;
+        width: auto;
+    }
+</style>

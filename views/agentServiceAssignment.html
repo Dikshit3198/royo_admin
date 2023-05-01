@@ -1,0 +1,155 @@
+<div class="wrapper">
+  <div class="category">
+
+    <a class="backbtn" style="float: right"
+    ui-sref="profile.agent({page: '1'})"><img
+        src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+
+    <div class="secnav">
+      <div class="row">
+        <div class="col-md-6 col-sm-6">
+          <h1 class="bold">{{'ASSIGN' | translate}} {{localisation.product | translate}} to the
+            {{localisation.agent | translate}} <br> <span class="agent-name">{{name}}</span></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="secnav m-top-30">
+      <div class="row select-category" style="margin-top: 20px">
+        <div class="col-md-3" ng-if="supplier_id != 0">
+          <label class="cat-label">{{'SELECT BRANCH' | translate}}</label>
+          <select class="app" data-placeholder="Choose Category" tabindex="4" ng-model="selected_branch"
+            ng-options="branch.branch_name for branch in branches" ng-change="onSelectBranch(selected_branch)">
+            <option value="" selected disabled>{{'SELECT' | translate}}</option>
+          </select>
+        </div>
+
+        <div class="col-md-3" ng-if="categories.length || supplier_id == 0" style="margin-bottom: 10px;">
+          <label class="cat-label">{{'SELECT' | translate}} {{localisation.category | translate}}</label>
+          <select data-placeholder="Choose {{localisation.category | translate}}" class="app" tabindex="4"
+            ng-model="selected_cat" ng-options="category.name for category in categories"
+            ng-change="onSelectCategory(selected_cat, true)">
+            <option value="" selected disabled>{{'SELECT' | translate}}</option>
+          </select>
+        </div>
+
+        <div class="col-md-3" style="margin-bottom: 10px;" ng-repeat="cat in dynamicSubCategories track by $index"
+          ng-init="parentIndex = $index">
+          <label class="cat-label" ng-if="parentIndex == 0">{{selected_cat.name}}</label>
+          <label class="cat-label" ng-if="parentIndex > 0">{{selectedCategory[childIndex-1].name}}</label>
+          <select data-placeholder="Choose Category" tabindex="4" class="app" ng-model="selectedCategory[childIndex]"
+            ng-init="childIndex = $index" ng-options="subCat.name for subCat in cat"
+            ng-change="changeSubCatId(selectedCategory[childIndex], parentIndex + 1, true)">
+            <option value="" selected disabled>{{'SELECT' | translate}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="formsec">
+      <div class="addcatbrwrap">
+
+        <div class="row" style="margin-bottom: 25px;"
+          ng-if="products.length > 0 && dataLoaded && permissions('agents', 'update') == 1">
+          <div class="col-md-6">
+            <h1 class="prod">{{localisation.product | translate}} {{'LISTING' | translate}}</h1>
+          </div>
+          <div class="col-md-3" style="text-align: right; padding-right: 0px">
+            <button class="btn" data-ng-click="assignServices()">{{'ASSIGN SELECTED' | translate}}
+              {{localisation.product | translate}}
+            </button> </div>
+          <div class="col-md-3">
+            <button class="btn" data-ng-click="unassignServices()">
+              {{'UNASSIGN SELECTED' | translate}} {{localisation.product | translate}}
+            </button>
+          </div>
+        </div>
+
+        <div class="addcatbr">
+          <div class="row">
+            <div class="col-md-3" ng-repeat="product in products">
+              <div class="agent-assign" style="margin-top: 15px;">
+                <label style="margin-bottom: 0px">
+                  <input type="checkbox" ng-model="selectedService[product.id]" ng-click="changeAccess(product)">
+                  <span></span>
+                  <img src="{{product.images[0].image_path}}" style="height: 150px">
+                </label>
+                <p class="bold ellipsis" data-toggle="tooltip" title="{{product.name}}">{{product.name}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="no-data-found" ng-if="products.length == 0 && dataLoaded">
+          {{'NO DATA FOUND' | translate}}
+        </div>
+
+        <div class="no-data-found" ng-if="!dataLoaded">
+          {{'PLEASE SELECT' | translate}} {{localisation.category | translate}}
+        </div>
+
+        <div ng-if="products.length > 0 && dataLoaded" class="row pagination">
+          <ul ng-if="pager.pages && pager.pages.length">
+            <li ng-class="{disabled:pager.currentPage === 1}">
+              <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+            </li>
+            <li ng-class="{disabled:pager.currentPage === 1}">
+              <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+            </li>
+            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+              <a ng-click="setPage(page)">{{page}}</a>
+            </li>
+            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+              <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+            </li>
+            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+              <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+  .agent-name {
+    color: #5d5d5d;
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+
+  .agent-assign {
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    border: 1px solid #dadada;
+  }
+
+  .agent-assign p {
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #484848;
+  }
+
+  .btn {
+    color: #ffffff;
+    border-radius: 4px;
+    background-color: var(--primary-color);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+    border: none;
+    font-size: 14px;
+    padding: 9px 25px;
+  }
+
+  .prod {
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #494949;
+    margin-top: 5px;
+  }
+</style>

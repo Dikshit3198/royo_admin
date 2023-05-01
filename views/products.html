@@ -1,0 +1,872 @@
+<div class="wrapper">
+
+    <div class="category" ng-if="!addProduct">
+        <a class="backbtn" style="float: right" ui-sref="production.productionSetup"><img
+                src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+
+        <div class="toptabs">
+            <ul class="nav nav-tabs ">
+                <li class="nav-item"> <a class="nav-link active">{{localisation.products | translate}}</a> </li>
+            </ul>
+        </div>
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-4 col-sm-4">
+                    <input style="width: 252px" type="text" placeholder="{{'SEARCH' | translate}}"
+                        ng-keypress="searchProduct($event, 1)">
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <div class="topfil">
+                        <ul>
+                            <li ng-if="disable_import == 0">
+                                <button type="button" class="simple" data-toggle="modal" data-target="#csvModel"><img
+                                        src="img/v1_images/ic_import.svg">{{'IMPORT' | translate}}</button>
+                            </li>
+                            <li>
+                                <button type="button" class="simple" ng-click="refresh()"><img
+                                        src="img/v1_images/ic_rotate.svg">{{'REFRESH' | translate}}</button>
+                            </li>
+                            <!-- <li>
+                                <button type="button" class="simple"><img src="img/v1_images/ic_sortby.svg">Sort
+                                    By</button>
+                            </li> -->
+                            <li
+                                ng-if="(enable_supplier_add_edit_delete_restriction==0 || profile == 'ADMIN') && permissions('catalogue', 'create') == 1">
+                                <button type="button" class="bold create" ng-click="changeview(true, false)">{{'ADD' |
+                                    translate}}
+                                    {{localisation.product | translate}}</button>
+                            </li>
+                            <li ng-class="is_grid ? 'active' : ''">
+                                <a ng-click="is_grid = true"><img src="img/v1_images/ic_grid_selected.svg"></a>
+                            </li>
+                            <li ng-class="!is_grid ? 'active' : ''">
+                                <a ng-click="is_grid = false"><img src="img/v1_images/ic_list_selected.svg"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row select-category" style="margin-top: 20px" ng-if="is_pos_enabled == 1 && posKeyList.length">
+                <div class="col-md-3" style="margin-bottom: 10px;">
+                    <label class="cat-label">{{'SELECT POS KEY' | translate}}</label>
+                    <select data-placeholder="Choose {{localisation.category | translate}}" class="app" tabindex="4"
+                        ng-model="selected_POS" ng-options="pos.title for pos in posKeyList"
+                        ng-change="onSelectPOSKEY(selected_POS)">
+                        <option value="selected_POS.id" selected disabled>{{'SELECT' | translate}}</option>
+                    </select>
+                </div>
+                <div class="col-md-3 p-0" style="margin-bottom: 10px;">
+                    <button type="button" class="import_pos mt-4"
+                        style="width: 100%;margin-left: 20px; margin-top: 34px !important;"
+                        ng-click="onSelectPOSKEY(null)"><img src="img/v1_images/ic_import.svg">Import
+                        Via POS</button>
+                </div>
+            </div>
+
+            <div class="row select-category" style="margin-top: 20px" ng-if="show_categories">
+                <div class="col-md-3" ng-if="categories.length" style="margin-bottom: 10px;">
+                    <label class="cat-label">{{'SELECT' | translate}} {{localisation.category | translate}}</label>
+                    <select data-placeholder="Choose {{localisation.category | translate}}" class="app" tabindex="4"
+                        ng-model="selected_cat" ng-options="category.name for category in categories"
+                        ng-change="onSelectCategory(selected_cat, true)">
+                        <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3" style="margin-bottom: 10px;"
+                    ng-repeat="cat in dynamicSubCategories track by $index" ng-init="parentIndex = $index">
+                    <label class="cat-label" ng-if="parentIndex == 0">{{selected_cat.name}}</label>
+                    <label class="cat-label" ng-if="parentIndex > 0">{{selectedCategory[childIndex-1].name}}</label>
+                    <select data-placeholder="Choose Category" tabindex="4" class="app"
+                        ng-model="selectedCategory[childIndex]" ng-init="childIndex = $index"
+                        ng-options="subCat.name for subCat in cat"
+                        ng-change="changeSubCatId(selectedCategory[childIndex], parentIndex + 1, true)">
+                        <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF;">
+            <div class="catbox" ng-if="is_grid">
+                <div class="row">
+                    <div class="col-md-3" ng-repeat="product in products | filter : {name_en: search}">
+                        <div class="box">
+                            <figure class="cursor" style="margin-bottom: 0; position: relative;"
+                                ng-click="permissions('catalogue', 'update') == 1 ? productEdit(product) : ''">
+                                <!-- <img src="{{product.images[0].image_path}}"> -->
+                                <img src="{{compressImage(product.images[0].image_path, '290x180')}}">
+
+                            </figure>
+                            <div class="text">
+                                <!-- <div class="Delete" ng-if="permissions('catalogue', 'delete') == 1">
+                                    <button type="button" ng-click="deleteProduct(product.id)"><img
+                                            src="/img/v1_images/delete.png"> </button>
+                                </div> -->
+
+                                <div class="Option">
+                                    <button type="button" class="edit dropdown-toggle" data-toggle="dropdown"> <img
+                                            src="img/v1_images/ic_more.svg"> </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item"
+                                            ng-if="(enable_supplier_add_edit_delete_restriction==0 || profile == 'ADMIN') && permissions('catalogue', 'delete') == 1"
+                                            ng-click="deleteProduct(product.id)">{{'DELETE' | translate}}
+                                            {{localisation.product | translate}}</a>
+                                        <a class="dropdown-item"
+                                            ng-if="([1].includes(app_type) || (app_type > 10 && [1].includes(flow_type)))"
+                                            ui-sref="production.customization({product_id: product.id, level: 0, type: product.is_liquor})">{{'CUSTOMIZATION'
+                                            | translate}}</a>
+                                    </div>
+                                </div>
+
+                                <strong class="bold ellipsis" data-toggle="tooltip"
+                                    title="{{product.name_en}}">{{product.name_en}}</strong>
+                                <p ng-bind-html="product.desc_en | limitHtml: 40 | toTrusted">
+                                </p>
+                                <a style="position: unset; margin-left: 0px;" ng-if="product.desc_en.length > 40"
+                                    class="read-more-card"><small style="float: none"
+                                        ng-click="viewDescription(product.desc_en)">...{{'READ MORE' |
+                                        translate}}</small></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table ng-if="!is_grid">
+                <thead>
+                    <tr>
+                        <th>{{'ID'|translate}}</th>
+                        <th>{{'NAME' | translate}}</th>
+                        <th ng-if="show_sku_brand_product == 1">{{'BRAND NAME' | translate}}</th>
+                        <th>{{'DESCRIPTION' | translate}}</th>
+                        <th ng-if="add_sku_product == 1">SKU</th>
+                        <!-- <th>Commission</th> -->
+                        <th>{{'IMAGE' | translate}}</th>
+                        <th ng-if="permissions('catalogue', 'update') == 1 || permissions('catalogue', 'delete') == 1">
+                            {{'ACTION' | translate}}</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr ng-repeat="product in products | filter : {name_en: search}">
+                        <td>{{product.id}}</td>
+                        <td>{{product.name_en}}</td>
+                        <td ng-if="show_sku_brand_product == 1">{{product.brand_name}}</td>
+                        <td>
+                            <div ng-bind-html="product.desc_en | limitHtml: 40 | toTrusted"></div>
+                            <a ng-if="product.desc_en.length > 40"><small
+                                    ng-click="viewDescription(product.desc_en)">...{{'READ MORE' |
+                                    translate}}</small></a>
+                        </td>
+                        <td ng-if="add_sku_product == 1">{{product.sku}}</td>
+                        <!-- <td>{{product.commission}}</td> -->
+                        <td><img src="{{compressImage(product.images[0].image_path, '80x80')}}"></td>
+                        <td ng-if="permissions('catalogue', 'update') == 1 || permissions('catalogue', 'delete') == 1">
+                            <button ng-if="permissions('catalogue', 'update') == 1" type="button" class="bg-success"
+                                ng-click="productEdit(product)">{{'EDIT' | translate}}</button>
+                            <button ng-if="permissions('catalogue', 'delete') == 1" type="button"
+                                class="edit dropdown-toggle" data-toggle="dropdown"> <img
+                                    src="img/v1_images/ic_more.svg">
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" ng-click="deleteProduct(product.id)">{{'DELETE' | translate}}
+                                    {{localisation.product | translate}}</a>
+                                <a class="dropdown-item"
+                                    ng-if="([1].includes(app_type) || (app_type > 10 && [1].includes(flow_type)))"
+                                    ui-sref="production.customization({product_id: product.id, level: 0, type: product.is_liquor})">{{'CUSTOMIZATION'
+                                    | translate}}</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="no-data-found" ng-if="products.length == 0 && dataLoaded">
+                {{'NO DATA FOUND' | translate}}
+            </div>
+
+            <div class="no-data-found" ng-if="!dataLoaded">
+                {{'PLEASE SELECT' | translate}} {{localisation.category | translate}}
+            </div>
+
+            <div ng-if="products.length > 0 && dataLoaded" class="row pagination">
+                <ul ng-if="pager.pages && pager.pages.length">
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                    </li>
+                    <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                        <a ng-click="setPage(page)">{{page}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="addcat" ng-if="addProduct">
+        <div class="top">
+            <h2 class="bold">{{(is_edit ? 'EDIT' : 'ADD') | translate}} {{localisation.product | translate}}</h2>
+
+            <a ng-click="changeview(false, false)" class="back"><img
+                    src="img/v1_images/ic_dropdown.svg">{{localisation.product_list | translate}}</a>
+            <!-- {{localisation.product | translate}} {{'LIST' | translate}} -->
+        </div>
+        <div class="box m-top-20">
+            <div class="formsec">
+
+                <form role="form" id="addProductForm" name="addProductForm" ng-submit="submitAdd(addProductForm)"
+                    novalidate>
+
+                    <div class="form-group" ng-if="show_categories">
+                        <div class="row select-category">
+                            <div class="col-md-3" ng-if="categories.length" style="margin-bottom: 10px;">
+                                <label class="cat-label">{{'SELECT' | translate}}
+                                    {{localisation.category | translate}}</label>
+                                <select data-placeholder="Choose {{localisation.category | translate}}" class="app"
+                                    tabindex="4" ng-model="selected_cat"
+                                    ng-options="category.name for category in categories"
+                                    ng-change="onSelectCategory(selected_cat, true)">
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3" style="margin-bottom: 10px;"
+                                ng-repeat="cat in dynamicSubCategories track by $index" ng-init="parentIndex = $index">
+                                <label class="cat-label" ng-if="parentIndex == 0">{{selected_cat.name}}</label>
+                                <label class="cat-label"
+                                    ng-if="parentIndex > 0">{{selectedCategory[childIndex-1].name}}</label>
+                                <select data-placeholder="Choose Category" tabindex="4" class="app"
+                                    ng-model="selectedCategory[childIndex]" ng-init="childIndex = $index"
+                                    ng-options="subCat.name for subCat in cat"
+                                    ng-change="changeSubCatId(selectedCategory[childIndex], parentIndex + 1, true)">
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr ng-if="show_categories">
+
+
+
+
+                    <div class="form-group" ng-if="enable_food_varients==1 && variants.length>0">
+                        <div class="select-category">
+                            <div class="col-md-12">
+                                <label>Variants</label>
+                                <div class="row">
+                                    <div class="col-md-4" ng-repeat="variant in variants track by variant.id"
+                                        ng-if="variant.variant_values.length > 0">
+                                        <label class="small font-noraml">{{variant.variant_name[0].name}}</label>
+                                        <select class="app" data-placeholder="Choose Variant" tabindex="4"
+                                            name="var{{variant.id}}" ng-model="selectedVariant[$index]"
+                                            ng-required="!not_all_variant_required">
+                                            <option value="" selected disabled>Select</option>
+                                            <option ng-repeat="val in variant.variant_values track by val.id"
+                                                ng-value="val.id" selected="{{val.selected}}"
+                                                ng-style="{'background-color': val.value}">
+                                                {{val.value}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group"
+                        ng-if="([1,8].includes(app_type) || (app_type > 10 && [1,8].includes(flow_type))) && is_multiple_images == 0">
+                        <div class="row">
+                            <div class="col-md-6 file">
+                                <label>{{'IMAGE' | translate}}<p class="star" ng-show="!food_item_image_optional">*</p>
+                                </label>
+                                <p class="aspect-ratio">{{'ASPECT RATIO' | translate}} - 4 : 3 </p>
+                                <span style="height: 104px; width: 160px; cursor: pointer">
+                                    <img ng-if="!product_img1" src="img/v1_images/ic_dummy.png">
+                                    <img ng-if="product_img1" style="height: 100%; width: 100%" src="{{product_img1}}">
+                                    <!-- src="{{compressImage(product_img1, '290x180')}}" -->
+                                </span>
+                                <input filestyle="" type="file" accept="image/*" name="image2" ng-model="product_img1"
+                                    class="form-control cursor"
+                                    onchange="angular.element(this).scope().file_to_upload_for_image(this.files, 1)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form -control inline" nv-file-select="" uploader="uploader"
+                                    ng-required="!food_item_image_optional" />
+                                <div class="error"
+                                    ng-show="addProductForm.image2.$invalid && addProductForm.$submitted">
+                                    <small ng-show="addProductForm.image2.$error.required">{{'Please select
+                                        image'|translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group" ng-if="is_multiple_images == 1">
+                        <div class="row">
+                            <div class="col-md-4 file" ng-repeat="image in product_images track by $index"
+                                ng-style="image.removed ? {'display': 'none'} : ''">
+                                <label>{{'IMAGE' | translate}}<p ng-if="!$last && product_images.length > 1"
+                                        class="star">*
+                                    </p></label>
+                                <p class="aspect-ratio">Aspect Ratio - 4 : 3 </p>
+                                <span style="height: 104px; width: 160px; cursor: pointer; position: relative;">
+                                    <img ng-if="!image.img" src="img/v1_images/ic_dummy.png">
+                                    <img ng-if="image.img" style="height: 100%; width: 100%" src="{{image.img}}">
+                                    <!-- src="{{compressImage(image.img, '290x180')}}" -->
+                                    <a ng-if="!$last" class="remove-image" ng-click="removeImage($index)"><img
+                                            src="img/v1_images/ic_cross.svg"></a>
+                                </span>
+                                <input filestyle="" type="file" accept="image/*" name="img{{$index}}"
+                                    ng-model="image.file" class="form-control cursor" id="{{$index}}"
+                                    onchange="angular.element(this).scope().file_to_upload_for_multiple_images(this.files, parseInt(id))"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-6" ng-if="[5,6,7].includes(app_type)">
+                            <div class="form-group">
+                                <label>{{'RENTAL PLAN' | translate}}</label>
+                                <select class="app" name="rental_plan" ng-model="rental_plan"
+                                    ng-change="changeRentalPlan(rental_plan)" required>
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                    <option value="0">{{'HOURLY' | translate}}</option>
+                                    <option value="1">{{'PER DAY'}}</option>
+                                </select>
+                                <div class="error"
+                                    ng-show="addProductForm.rental_plan.$invalid && addProductForm.$submitted">
+                                    <small ng-show="addProductForm.rental_plan.$error.required">Please select rental
+                                        plan.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="[8,9,10].includes(app_type) || (app_type > 10 && [8,9,10].includes(flow_type))">
+                            <div class="form-group">
+                                <label>{{'PRICE TYPE' | translate}}</label>
+                                <select class="app" name="price_type" ng-model="price_type" convert-to-number
+                                    ng-change="changePriceType(price_type)">
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                    <option ng-show="disable_hourly_pricing_in_home_svc==0" value="1">{{'HOURLY' |
+                                        translate}}</option>
+                                    <option value="0">{{'FIXED' | translate}}</option>
+                                </select>
+                                <div class="error"
+                                    ng-show="addProductForm.price_type.$invalid && addProductForm.$submitted">
+                                    <small ng-show="addProductForm.price_type.$error.required">Please
+                                        select price type.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="add_sku_product == 1">
+                            <div class="form-group">
+                                <label>{{'SKU Number' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="sku" integers ng-model="product.sku"
+                                    placeholder="{{'SKU Number' | translate}}" ng-disabled="is_out_network">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="(([5,6,7].includes(app_type) && rental_plan == 0) || ([8,9,10].includes(app_type)) || (app_type > 10 || [8,9,10].includes(flow_type))) && price_type == 1">
+                            <div class="form-group">
+                                <label>{{'SERVICE DURATION' | translate}}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text cursor" ng-click="changeDuration('-')">-</span>
+                                    </div>
+                                    <input type="text"
+                                        style="width: 78%; border-radius: 0px; border-left: none; border-right: none;"
+                                        value="{{getTimeFromMins(selected_duration)}}" disabled>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text cursor" ng-click="changeDuration('+')">+</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{localisation.product_name | capitalLetters | translate}}<span
+                                        class="star">*</span></label>
+                                <input type="text" name="name" ng-model="outputs.inputs[0]"
+                                    placeholder="{{localisation.product_name | capitalLetters | translate}}" required>
+                                <div class="error" ng-show="addProductForm.name.$invalid && addProductForm.$submitted">
+                                    <small ng-show="addProductForm.name.$error.required">{{'Please enter name' |
+                                        translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6" ng-if="enable_product_special_instruction == 1">
+                            <div class="form-group">
+                                <label>{{'IS SPECIAL INSTRUCTION' | translate }}</label>
+                                <select class="app" name="is_special_instruction"
+                                    ng-change="changeSpecialInstruction(is_special_instruction)"
+                                    ng-model="is_special_instruction" convert-to-number>
+                                    <option value="0">{{'NO' | translate }}</option>
+                                    <option value="1">{{'YES' | translate }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="is_secondary_language == 1">
+                            <div class="form-group">
+                                <label>{{localisation.product_name | capitalLetters | translate}}
+                                    ({{languages[1].name}})<span class="star">*</span></label>
+                                <input type="text" name="name_other" ng-model="outputs.inputs[1]"
+                                    placeholder="{{localisation.product_name | capitalLetters | translate}}" required>
+                                <div class="error"
+                                    ng-show="addProductForm.name_other.$invalid && addProductForm.$submitted">
+                                    <small ng-show="addProductForm.name_other.$error.required">{{'Please enter name' |
+                                        translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class=" col-md-6" ng-if="show_gender_category_dropdown == 1">
+                            <div class="form-group select-category">
+                                <label>{{'Gender Type' | translate}}<span class="star">*</span></label>
+                                <select class="app" name="gender_category" ng-model="product.gender_category"
+                                    convert-to-number>
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                    <option value="0">{{'BOTH' | translate}}</option>
+                                    <option value="1">
+                                        {{'FEMALE' | translate}}</option>
+                                    <option value="2">
+                                        {{'MALE' | translate}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="([1,2,3,4,5,6,7].includes(app_type) || (app_type > 10 && [1,2,3,4,5,6,7].includes(flow_type))) && no_product_quantity == 0 && no_inventory == 0">
+                            <div class="form-group">
+                                <label>{{localisation.inventory | translate}}<span ng-if="inventory_optional == 0"
+                                        class="star">*</span></label>
+                                <input type="number" name="quantity" production-qty ng-model="product.quantity"
+                                    placeholder="{{'Enter' | translate }} {{localisation.inventory | translate}}"
+                                    ng-required="inventory_optional == 0">
+                                <div class="error"
+                                    ng-show="addProductForm.quantity.$invalid && addProductForm.$submitted">
+                                    <small ng-show="addProductForm.quantity.$error.required">{{'Please enter' |
+                                        translate}} {{localisation.inventory | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="is_consider_qty_enable ==1 && ([1,2,3,4,5,6,7].includes(app_type) || (app_type > 10 && [1,2,3,4,5,6,7].includes(flow_type))) && no_product_quantity == 0">
+                            <div class="form-group">
+                                <label>{{localisation.consider_product_qty | capitalLetters | translate}}</label>
+                                <select class="app" name="no_inventory" convert-to-number ng-model="no_inventory"
+                                    ng-change="onConsiderQty(no_inventory)">
+                                    <option value="1">{{'NO' | translate}}</option>
+                                    <option value="0">{{'YES' | translate}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="([1,2,3,4,5,6,7].includes(app_type) || (app_type > 10 && [1,2,3,4,5,6,7].includes(flow_type))) && is_product_weight == 1">
+                            <div class="form-group">
+                                <label>{{localisation.product | translate}} Weight(grams)</label>
+                                <input type="text" name="weight" integers ng-model="product.weight"
+                                    placeholder="{{localisation.product | translate}} Weight">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="product_prescription == 1">
+                            <div class="form-group">
+                                <label>{{localisation.prescription_value | translate}} Upload<span
+                                        class="star">*</span></label>
+                                <select class="app" name="cart_image_upload" ng-model="product.cart_image_upload"
+                                    convert-to-number ng-change="prescriptionUploadChanges(product.cart_image_upload)"
+                                    required>
+                                    <option value="0">{{'NO' | translate}}</option>
+                                    <option value="1">{{'YES' | translate}}</option>
+                                </select>
+                                <div class="error"
+                                    ng-show="addProductForm.cart_image_upload.$invalid && addProductForm.$submitted">
+                                    <small ng-show="addProductForm.cart_image_upload.$error.required">Please select
+                                        {{localisation.prescription_value | translate}} value.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="order_request == 1">
+                            <div class="form-group">
+                                <label>{{'Order Screen Payment Process' | translate}}<span class="star">*</span></label>
+                                <select class="app" name="payment_after_confirmation"
+                                    ng-model="product.payment_after_confirmation" convert-to-number
+                                    ng-change="productPayLater(product.payment_after_confirmation)" required>
+                                    <option value="1" translate>{{'Payment after confirmation' | translate}}</option>
+                                    <option value="0" translate>{{'Payment before confirmation' | translate}}</option>
+                                </select>
+                                <div class="error"
+                                    ng-show="addProductForm.payment_after_confirmation.$invalid && addProductForm.$submitted">
+                                    <small ng-show="addProductForm.payment_after_confirmation.$error.required">Please
+                                        select
+                                        {{localisation.payment | translate}} value.</small>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+                        <div class="col-md-6" ng-if="enable_item_purchase_limit == 1">
+                            <div class="form-group">
+                                <label>{{'PURCHASE LIMIT'}}</label>
+                                <input type="number" name="purchase_limit" integers ng-model="product.purchase_limit"
+                                    placeholder="PURCHASE LIMIT">
+                            </div>
+                        </div>
+                        <div class="col-md-6" ng-if="is_enable_subscription_required == 1">
+                            <div class="form-group">
+                                <label>{{'SUBSCRIPTION REQUIRED'}}</label>
+                                <select class="app" name="is_subscription_required"
+                                    ng-model="product.is_subscription_required" convert-to-number>
+                                    <option value="0">NO</option>
+                                    <option value="1">YES</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6" ng-if="enable_non_veg_filter == 1">
+                            <div class="form-group">
+                                <label>{{'ITEM TYPE'}}</label>
+                                <select class="app" name="is_non_veg" ng-change="changeProductType(product.is_non_veg)"
+                                    ng-model="product.is_non_veg" convert-to-number>
+                                    <option value="1">NON VEG</option>
+                                    <option value="2">VEG</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="enable_product_allergy == 1">
+                            <div class="form-group">
+                                <label>{{'IS PRODUCT ALLERGY'}}</label>
+                                <select class="app" name="is_allergy_product"
+                                    ng-change="changeProductAllergy(product.is_allergy_product)"
+                                    ng-model="product.is_allergy_product" convert-to-number>
+                                    <option value="0">NO</option>
+                                    <option value="1">YES</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6" ng-if="enable_product_appointment == 1">
+                            <div class="form-group">
+                                <label>{{localisation.product | translate}} {{'TYPE'}}</label>
+                                <select class="app" name="is_appointment" ng-model="product.is_appointment"
+                                    convert-to-number>
+                                    <option value="0">NORMAL FLOW</option>
+                                    <option value="1">APPOINTMENT FLOW</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+
+                    </div>
+
+                    <div class="form-group "
+                        ng-if="([2].includes(app_type) || (app_type > 10 && [2].includes(flow_type))) && is_multiple_images == 0">
+                        <div class="row">
+                            <div class="col-md-6 file">
+                                <label>{{'IMAGE 1' | translate}}<p ng-show="!food_item_image_optional" class="star">*
+                                    </p></label>
+                                <p class="aspect-ratio">{{'ASPECT RATIO' | translate}} - 4 : 3 </p>
+                                <span>
+                                    <img ng-if="!product_img1" src="img/v1_images/ic_dummy.png">
+                                    <img ng-if="product_img1" style="height: 100%; width: 100%" src="{{product_img1}}">
+                                    <!-- src="{{compressImage(product_img1, '290x180')}}" -->
+                                </span>
+                                <input filestyle="" type="file" accept="image/*" name="image2" ng-model="product_img1"
+                                    class="form-control cursor"
+                                    onchange="angular.element(this).scope().file_to_upload_for_image(this.files, 1)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader"
+                                    ng-required="!food_item_image_optional" />
+                                <div class="error"
+                                    ng-show="addProductForm.image2.$invalid && addProductForm.$submitted">
+                                    <small ng-show="addProductForm.image2.$error.required">{{'Please select image' |
+                                        translate}}.</small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 file">
+                                <label>{{'IMAGE 2' | translate}}<p ng-show="!food_item_image_optional" class="star">*
+                                    </p></label>
+                                <p class="aspect-ratio">{{'ASPECT RATIO' | translate}} - 4 : 3 </p>
+                                <span>
+                                    <img ng-if="!product_img2" src="img/v1_images/ic_dummy.png">
+                                    <img ng-if="product_img2" style="height: 100%; width: 100%" src="{{product_img2}}">
+                                    <!-- {{compressImage(product_img2, '290x180')}} -->
+                                </span>
+                                <input filestyle="" type="file" accept="image/*" name="image3" ng-model="product_img2"
+                                    class="form-control cursor"
+                                    onchange="angular.element(this).scope().file_to_upload_for_image(this.files, 2)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader"
+                                    ng-required="!food_item_image_optional" />
+                                <div class="error"
+                                    ng-show="addProductForm.image3.$invalid && addProductForm.$submitted">
+                                    <small ng-show="addProductForm.image3.$error.required">{{'Please select image' |
+                                        translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row">
+
+
+                            <div class="col-md-12" ng-if="product.is_allergy_product==1">
+                                <label>{{'PRODUCT ALLERGIES' | translate}}<span ng-show="product.is_allergy_product"
+                                        class="star">*</span></label>
+                                <summernote config="summernote_config" ng-model="product.allergy_description">
+                                </summernote>
+
+                                <div class="error" ng-show="addSupplierProductForm.$submitted">
+                                    <small
+                                        ng-show="!product.allergy_description && product.is_allergy_product==1">Please
+                                        enter
+                                        allergies.</small>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-12">
+                                <label>{{'DESCRIPTION' | translate}}<span ng-show="!food_item_desc_optional"
+                                        class="star">*</span></label>
+                                <summernote config="summernote_config" ng-model="description.english"></summernote>
+                                <div class="error" ng-show="addProductForm.$submitted">
+                                    <small ng-show="!description.english && !food_item_desc_optional">
+                                        {{'Please Enter Description' | translate}}
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-md-12" style="margin-top: 22px;" ng-if="is_secondary_language == 1">
+                                <label>{{'DESCRIPTION' | translate}} ({{languages[1].name}})<span
+                                        ng-show="!food_item_desc_optional" class="star">*</span></label>
+                                <summernote config="summernote_config" ng-model="description.arabic"></summernote>
+                                <div class="error" ng-show="addProductForm.$submitted">
+                                    <small ng-show="!description.arabic && !food_item_desc_optional">
+                                        {{'Please Enter Description' | translate}}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button">
+                        <button type="submit" class="bold nxt">{{'SUBMIT' | translate}}</button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <!-- Import Csv -->
+    <div class="modal fade" id="csvModel" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" style="margin-top: 10%" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="csvModelLabel">Import Csv</h5>
+                    <a class="download" ng-click="downloadSampleFile()"> <span>Download Sample File</span> </a>
+                </div>
+                <div class="csv-body modal-body">
+                    <div ng-show="!isCsv" class="area">
+                        <input type="file" id="upload" />
+                        <label for="upload"><strong>Choose a file</strong><span class="box__dragndrop"> or drag it
+                                here</span>.</label>
+                    </div>
+                    <div ng-show="isCsv" class="area" style="opacity: 1;">
+                        <label>{{selectedCsv.name}}</label><br>
+                        <a ng-click="removeCsv()" class="remove-csv">remove</a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="close-csv-btn" type="button" ng-click="removeCsv()" class="btn btn-secondary"
+                        data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" ng-class="{'disabled': !isCsv}"
+                        ng-click="uploadCsv()">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<success-modal message="message"></success-modal>
+<read-more text="read_more_text"></read-more>
+
+<style>
+    .remove-variant {
+        float: right;
+        background: #ff2020;
+        color: #ffffff !important;
+        padding: 0px 9px 2px 8px;
+        font-weight: 700;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .toptabs .nav-tabs .nav-link.active:after {
+        background: none;
+    }
+
+    .commission {
+        float: right;
+        height: 25px !important;
+        font-size: 12px !important;
+        width: 117px !important;
+    }
+
+    .Delete button {
+        border: none;
+        float: right;
+        background: transparent;
+        margin-top: -5px;
+    }
+
+    .Delete button img {
+        height: 20px;
+    }
+
+    .remove-image {
+        position: absolute;
+        right: -12px;
+        top: -12px;
+    }
+
+    .csv-body {
+        background-color: #e9eaeb;
+        padding: 20px !important;
+    }
+
+    .area {
+        width: 100%;
+        height: 200px;
+        position: relative;
+        border: 2px dashed #000;
+        background-image: url("../../img/import.png");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 64px 64px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        filter: alpha(opacity=50);
+        -khtml-opacity: 0.5;
+        -moz-opacity: 0.5;
+        opacity: 0.5;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .area:hover,
+    .area.dragging,
+    .area.uploading {
+        filter: alpha(opacity=100);
+        -khtml-opacity: 1;
+        -moz-opacity: 1;
+        opacity: 1;
+    }
+
+    .area input {
+        width: 400%;
+        height: 100%;
+        margin-left: -380%;
+        border: none;
+        cursor: pointer;
+    }
+
+    .area input:focus {
+        outline: none;
+    }
+
+    .download {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--primary-color) !important;
+    }
+
+    .download:hover {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .csv-body.modal-body label {
+        position: absolute;
+        bottom: 20px;
+        left: 0px;
+        width: 100%;
+    }
+
+    .remove-csv {
+        color: #ff2020 !important;
+        font-size: 12px;
+        position: absolute;
+        left: 0px;
+        bottom: 5px;
+        width: 100%;
+    }
+
+    .Option button {
+        border: none;
+        float: right;
+        background: transparent;
+    }
+
+    .Option button img {
+        height: 25px;
+    }
+
+    .import_pos {
+        color: #4a4a4a;
+        height: 32px;
+        width: auto;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        font-size: 13px;
+        background-color: transparent;
+    }
+</style>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_edit_popup</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M0,6.35416667 L0,7.91666667 L1.5625,7.91666667 L6.17083333,3.30833333 L4.60833333,1.74583333 L0,6.35416667 Z M7.37916667,2.1 C7.54166667,1.9375 7.54166667,1.675 7.37916667,1.5125 L6.40416667,0.5375 C6.24166667,0.375 5.97916667,0.375 5.81666667,0.5375 L5.05416667,1.3 L6.61666667,2.8625 L7.37916667,2.1 Z" id="path-1"></path>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-12" transform="translate(4.000000, 4.000000)">
+            <circle id="Oval" stroke="#F7F7F7" fill="#9B8B5F" cx="8" cy="8" r="8"></circle>
+            <g id="ic_edit_24px" transform="translate(4.250000, 3.833333)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="Shape" fill="#FCFCFC" fill-rule="nonzero" xlink:href="#path-1"></use>
+            </g>
+        </g>
+    </g>
+</svg>

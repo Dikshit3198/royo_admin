@@ -1,0 +1,489 @@
+<div class="wrapper">
+
+	<div class="category" ng-if="!addCategory">
+
+		<div class="toptabs">
+			<ul class="nav nav-tabs">
+				<li class="nav-item"> <a class="nav-link active">{{'SUB-CATEGORIES' | translate}}</a>
+				</li>
+			</ul>
+		</div>
+		<div class="secnav">
+			<div class="row select-category">
+				<div class="col-md-6 col-sm-6">
+					<input type="text" placeholder="{{'SEARCH' | translate}}" ng-model="search"
+						ng-keypress="searchCategoy($event)" style="width: 252px">
+				</div>
+
+				<div class="col-md-6 col-sm-6">
+					<div class="topfil">
+						<ul>
+							<li>
+								<button type="button" class="simple" ng-click="refresh()"><img
+										src="img/v1_images/ic_rotate.svg">{{'REFRESH' | translate}}</button>
+							</li>
+							<li>
+								<button
+									ng-if="(enable_supplier_add_edit_delete_restriction==0 || profile=='ADMIN') && permissions('catalogue', 'create') == 1 && (profile == 'ADMIN' || (profile == 'SUPPLIER' && (allow_supplier_category_edit == 1 || disable_supplier_main_category_add_edit == 1)))"
+									type="button" class="bold create" style="width: 190px"
+									ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+									ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+									ng-click="changeview(true, false)">{{'ADD SUB-CATEGORY' | translate}}</button>
+							</li>
+							<li ng-class="is_grid ? 'active' : ''">
+								<a ng-click="is_grid = true"><img src="img/v1_images/ic_grid_selected.svg"></a>
+							</li>
+							<li ng-class="!is_grid ? 'active' : ''">
+								<a ng-click="is_grid = false"><img src="img/v1_images/ic_list_selected.svg"></a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div class="row select-category" style="margin-top: 20px">
+				<div class="col-md-3" ng-if="categories.length" style="margin-bottom: 10px;">
+					<label class="cat-label">{{'SELECT' | translate}} {{localisation.category | translate}}</label>
+					<select data-placeholder="Choose {{localisation.category | translate}}" class="app" tabindex="4"
+						ng-model="selected_cat" ng-options="category.name for category in categories"
+						ng-change="onSelectCategory(selected_cat.category_id, true, selected_cat)">
+						<option value="" selected disabled>{{'SELECT' | translate}}</option>
+					</select>
+				</div>
+
+				<div class="col-md-3" style="margin-bottom: 10px;" ng-repeat="cat in dynamicSubCategories"
+					ng-init="parentIndex = $index">
+					<label class="cat-label" ng-if="parentIndex == 0">{{selected_cat.name}}</label>
+					<label class="cat-label" ng-if="parentIndex > 0">{{selectedCategory[childIndex-1].name}}</label>
+					<select data-placeholder="Choose Category" tabindex="4" class="app"
+						ng-model="selectedCategory[childIndex]" ng-init="childIndex = $index"
+						ng-options="subCat.name for subCat in cat"
+						ng-change="changeSubCatId(selectedCategory[childIndex], parentIndex + 1, true)">
+						<option value="" selected disabled>{{'SELECT' | translate}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF;">
+
+			<div class="catbox" ng-if="is_grid">
+				<div class="row">
+					<div class="col-md-3" ng-repeat="category in categoryData">
+						<div class="box">
+							<figure
+								ng-click="permissions('catalogue', 'update') == 1 && (profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) && (profile == 'ADMIN' || (profile == 'SUPPLIER' && (allow_supplier_category_edit == 1 || disable_supplier_main_category_add_edit == 1))) ? edit(category) : ''"
+								style="margin-bottom: 0; position: relative; cursor: pointer;">
+								<img src="{{compressImage(category.image, '300x190')}}">
+								<div class="overlay">
+									<a class="to-question"
+										ng-if="(app_type == 8 || (app_type > 10 && flow_type == 8)) && category.is_sub_category == 0"
+										ui-sref="{{(profile === 'SUPPLIER' ? (restriction_view_only_for_restaurant === 0): true) ? 'production.questions({cat_id: category.category_id})' : ''}}">Questions</a>
+									<div class="overlay-btns">
+										<button ng-if="category.is_sub_category == 0" class="cat-btn"
+											ng-click="viewProducts(category)">{{'VIEW' | translate}}
+											{{localisation.products | translate}}</button>
+										<button
+											ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+											ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+											ng-if="(category.is_product == 0 || (category.is_product == 1 && category.is_sub_category == 1)) && category.is_question == 0"
+											class="cat-btn" ng-click="viewDetailedSubCategory(category)">{{'VIEW SUB-CATEGORY' | translate}}
+										</button>
+									</div>
+								</div>
+							</figure>
+							<div class="text">
+								<div class="Delete"
+									ng-if="(enable_supplier_add_edit_delete_restriction==0 || profile=='ADMIN') && permissions('catalogue', 'delete') == 1 && enable_sub_category_block==0 && (disable_supplier_category_block_delete == 0 || profile == 'ADMIN') && profile == 'ADMIN'">
+									<button type="button"
+										ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+										ng-if="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true)"
+										ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+										ng-click="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) ? deleteSubCategory(category) : ''"><img
+											src="/img/v1_images/delete.png">
+									</button>
+								</div>
+								<label
+									ng-if="disable_supplier_category_block_delete == 0 && enable_sub_category_block==1 && enable_supplier_add_edit_delete_restriction==1 && profile == 'ADMIN'">
+									<div class="switch togglebtn btn-fix">
+										<input type="checkbox" id="togBtn" ng-checked="category.is_live"
+											ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+											ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+											ng-click="blockCategory(category)">
+										<div class="slider round"
+											ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''">
+											<span class="on"></span>
+											<span class="off"></span>
+										</div>
+									</div>
+								</label>
+								<strong class="bold ellipsis" data-toggle="tooltip"
+									title="{{category.name}}">{{category.name}}</strong>
+								<p ng-click="viewDescription(category.description)"
+									ng-if="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true)"
+									ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+									ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+									class="ellipsis cursor">
+									{{category.description}}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<table ng-if="!is_grid">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>{{'NAME' | translate}}</th>
+						<th>{{'DESCRIPTION' | translate}}</th>
+						<th>{{'WEBSITE IMAGE' | translate}}</th>
+						<th>{{'APP IMAGE' | translate}}</th>
+						<th>{{'ACTION' | translate}}</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr ng-repeat="category in categoryData">
+						<td>{{category.subcategory_id}}</td>
+						<td>{{category.name}}</td>
+						<td>{{category.description | limitHtml: 40 | toTrusted}}
+							<a ng-if="category.description.length > 40"><small
+									ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+									ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+									ng-click="viewDescription(category.description)">...{{'READ MORE' |
+									translate}}</small></a>
+						</td>
+						<td><img src="{{compressImage(category.image. '80x80')}}"></td>
+						<td><img src="{{compressImage(category.icon, '80x80')}}"></td>
+						<td>
+							<button ng-if="permissions('catalogue', 'update') == 1" type="button" class="bg-success"
+								ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+								ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+								ng-click="edit(category)">{{'EDIT' | translate}}</button>
+							<div class="dropdown">
+								<button type="button" class="edit dropdown-toggle" data-toggle="dropdown"> <img
+										src="img/v1_images/ic_more.svg"> </button>
+								<div class="dropdown-menu">
+									<a ng-if="permissions('catalogue', 'delete') == 1 && disable_supplier_category_block_delete == 0 || profile == 'ADMIN'"
+										class="dropdown-item" ng-click="deleteSubCategory(category)">{{'DELETE' |
+										translate}}
+										{{'SUB-CATEGORY' | translate}}</a>
+									<a class="dropdown-item" ng-if="category.is_sub_category == 0"
+										ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+										ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+										ng-click="viewProducts(category)">{{'VIEW' | translate}}
+										{{localisation.products | translate}}</a>
+									<a class="dropdown-item"
+										ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+										ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+										ng-if="(category.is_product == 0 || (category.is_product == 1 && category.is_sub_category == 1)) && category.is_question == 0"
+										ng-click="viewDetailedSubCategory(category)">{{'VIEW DETAILED SUB-CATEGORY' |
+										translate}}</a>
+									<a class="dropdown-item"
+										ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+										ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+										ng-if="(app_type == 8 || (app_type > 10 && flow_type == 8)) && category.is_sub_category == 0"
+										ui-sref="{{(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant === 0 : true) ? 'production.questions({cat_id: category.category_id})' : ''}}">Questions</a>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="no-data-found" ng-if="categoryData.length == 0 && dataLoaded">
+				{{'NO DATA FOUND' | translate}}
+			</div>
+
+			<div ng-if="categoryData.length > 0 && dataLoaded" class="row pagination">
+				<ul ng-if="pager.pages && pager.pages.length">
+					<li ng-class="{disabled:pager.currentPage === 1}">
+						<a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+					</li>
+					<li ng-class="{disabled:pager.currentPage === 1}">
+						<a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+					</li>
+					<li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+						<a ng-click="setPage(page)">{{page}}</a>
+					</li>
+					<li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+						<a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+					</li>
+					<li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+						<a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="addcat" ng-if="addCategory">
+		<div class="top">
+			<h2 class="bold">{{(is_edit ? 'EDIT SUB-CATEGORY' : 'ADD SUB-CATEGORY') | translate}}
+			</h2>
+
+			<a ng-click="changeview(false, false)" class="back"><img src="img/v1_images/ic_dropdown.svg">
+				{{'SUB-CATEGORY LIST' | translate}}</a>
+		</div>
+		<div class="box m-top-20">
+
+			<div class="formsec">
+
+				<form role="form" id="addSubCategoryForm" name="addSubCategoryForm"
+					ng-submit="submitAdd(addSubCategoryForm)" novalidate>
+
+					<div class="row select-category" style="margin-bottom: 15px;">
+						<div class="col-md-3" ng-if="categories.length" style="margin-bottom: 10px;">
+							<label class="cat-label">{{'SELECT' | translate}}
+								{{localisation.category | translate}}</label>
+							<select data-placeholder="Choose {{localisation.category | translate}}" class="app"
+								tabindex="4" ng-model="selected_cat"
+								ng-options="category.name for category in categories"
+								ng-change="onSelectCategory(selected_cat.category_id, true, selected_cat)">
+								<option value="" selected disabled>{{'SELECT' | translate}}</option>
+							</select>
+						</div>
+
+						<div class="col-md-3" style="margin-bottom: 10px;" ng-repeat="cat in dynamicSubCategories"
+							ng-init="parentIndex = $index">
+							<label class="cat-label" ng-if="parentIndex == 0">{{selected_cat.name}}</label>
+							<label class="cat-label"
+								ng-if="parentIndex > 0">{{selectedCategory[childIndex-1].name}}</label>
+							<select data-placeholder="Choose Category" tabindex="4" class="app"
+								ng-model="selectedCategory[childIndex]" ng-init="childIndex = $index"
+								ng-options="subCat.name for subCat in cat"
+								ng-change="changeSubCatId(selectedCategory[childIndex], parentIndex + 1, true)">
+								<option value="" selected disabled>{{'SELECT' | translate}}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label>{{'NAME' | translate}}<span class="star">*</span></label>
+								<input type="text" name="name" ng-model="outputs.inputs[0]"
+									placeholder="{{'NAME' | translate}}" required>
+								<div class="error"
+									ng-show="addSubCategoryForm.name.$invalid && addSubCategoryForm.$submitted">
+									<small ng-show="addSubCategoryForm.name.$error.required">{{'PLEASE ENTER NAME' |
+										translate}}</small>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-6" ng-if="is_secondary_language == 1">
+							<div class="form-group">
+								<label>{{'NAME' | translate}} ({{languages[1].name}})<span class="star">*</span></label>
+								<input type="text" name="name_other" ng-model="outputs.inputs[1]"
+									placeholder="{{'NAME' | translate}} ({{languages[1].name}})" required>
+								<div class="error"
+									ng-show="addSubCategoryForm.name_other.$invalid && addSubCategoryForm.$submitted">
+									<small ng-show="addSubCategoryForm.name_other.$error.required">{{'PLEASE ENTER NAME'
+										| translate}}</small>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-6" ng-if="app_type == 1 || (selected_cat.type == 1 && app_type > 10)">
+							<div class="form-group">
+								<label>{{'TYPE' | translate}}<span class="star">*</span></label>
+								<select class="app" name="menu_type" ng-model="menu_type"
+									ng-change="menu_type_change(menu_type)" convert-to-number required>
+									<option value="1">{{localisation.supplier | translate}}</option>
+									<option value="0">{{localisation.products | translate}}</option>
+								</select>
+								<div class="error"
+									ng-show="addCategoriesForm.menu_type.$invalid && addCategoriesForm.$submitted">
+									<small ng-show="addCategoriesForm.menu_type.$error.required">{{'PLEASE SELECT' |
+										translate}}
+										TYPE</small>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-12">
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>{{'DESCRIPTION' | translate}}<span class="star">*</span></label>
+										<textarea type="text" name="description" ng-model="outputs.desc_inputs[0]"
+											placeholder="{{'DESCRIPTION' | translate}}" rows="3" style="height: auto;"
+											required></textarea>
+										<div class="error" style="margin-top: -8px"
+											ng-show="addSubCategoryForm.description.$invalid && addSubCategoryForm.$submitted">
+											<small ng-show="addSubCategoryForm.description.$error.required">
+											{{'PLEASE ENTER DESCRIPTION' | translate}}</small>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-6" ng-if="is_secondary_language == 1">
+									<div class="form-group">
+										<label>{{'DESCRIPTION' | translate}} ({{languages[1].name}})<span
+												class="star">*</span></label>
+										<textarea type="text" name="description_other" ng-model="outputs.desc_inputs[1]"
+											placeholder="{{'DESCRIPTION' | translate}} ({{languages[1].name}})" rows="3"
+											style="height: auto;" required></textarea>
+										<div class="error" style="margin-top: -8px"
+											ng-show="addSubCategoryForm.description_other.$invalid && addSubCategoryForm.$submitted">
+											<small
+												ng-show="addSubCategoryForm.description_other.$error.required">
+												{{'PLEASE ENTER DESCRIPTION' | translate}}</small>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<div class="form-group ">
+						<div class="row">
+							<div class="col-md-6 file">
+								<label>{{'WEBSITE IMAGE' | translate}}<p class="star" ng-show="!enable_subCat_image_upload_optional">*</p></label>
+								<p class="aspect-ratio">{{'ASPECT RATIO'|translate}} - 4 : 3 </p>
+								<span>
+									<img ng-if="!cat_img" src="img/v1_images/ic_dummy.png">
+									<img ng-if="cat_img" style="height: 100%; width: 100%" src="{{cat_img}}">
+								</span>
+								<input filestyle="" name="image_file" type="file" accept="image/*" ng-model="image_file"
+									class="form-control"
+									onchange="angular.element(this).scope().file_to_upload_for_image(this.files)"
+									data-button-text="Single" data-class-button="btn btn-default"
+									data-classinput="form-control inline" nv-file-select="" uploader="uploader"
+									ng-required="!is_edit && !enable_subCat_image_upload_optional"/>
+								<div class="error"
+									ng-show="addSubCategoryForm.image_file.$invalid && addSubCategoryForm.$submitted">
+									<small ng-show="addSubCategoryForm.image_file.$error.required">
+										{{'PLEASE SELECT WEBSITE IMAGE' | translate}}</small>
+								</div>
+							</div>
+
+							<div class="col-md-6 file">
+								<label>{{'APP IMAGE' | translate}}<p class="star" ng-show="!enable_subCat_image_upload_optional">*</p></label>
+								<p class="aspect-ratio">{{'ASPECT RATIO'|translate}} - 4 : 3 </p>
+								<span>
+									<img ng-if="!cat_icon" src="img/v1_images/ic_dummy.png">
+									<img ng-if="cat_icon" style="height: 100%; width: 100%" src="{{cat_icon}}">
+								</span>
+								<input filestyle="" type="file" name="icon_file" accept="image/*" ng-model="icon_file"
+									class="form-control"
+									onchange="angular.element(this).scope().file_to_upload_for_icon(this.files)"
+									data-button-text="Single" data-class-button="btn btn-default"
+									data-classinput="form-control inline" nv-file-select="" uploader="uploader"
+									ng-required="!is_edit && !enable_subCat_image_upload_optional" />
+								<div class="error"
+									ng-show="addSubCategoryForm.icon_file.$invalid && addSubCategoryForm.$submitted">
+									<small ng-show="addSubCategoryForm.icon_file.$error.required">
+										{{'PLEASE SELECT APP IMAGE' | translate}}</small>
+								</div>
+							</div>
+						</div>
+
+						<div class="button">
+							<button type="submit" class="bold nxt"
+								ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+								ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''">{{'SUBMIT'
+								| translate}}</button>
+						</div>
+
+				</form>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<success-modal message="message"></success-modal>
+<read-more text="read_more_text"></read-more>
+
+<style>
+	.remove-variant {
+		float: right;
+		background: #ff2020;
+		color: #ffffff !important;
+		padding: 0px 9px 2px 8px;
+		font-weight: 700;
+		border-radius: 50%;
+		cursor: pointer;
+	}
+
+	.toptabs .nav-tabs .nav-link.active:after {
+		background: none;
+	}
+
+	.Delete button {
+		border: none;
+		float: right;
+		background: transparent;
+	}
+
+	.Delete button img {
+		height: 20px;
+	}
+
+	.cat-btn {
+		display: inline-block;
+		color: #ffffff;
+		font-size: 14px;
+		border: none;
+		padding: 4px 10px;
+		border-radius: 4px;
+		vertical-align: middle;
+		background-color: var(--primary-color) !important;
+		margin-top: 5px;
+	}
+
+	figure {
+		margin-bottom: 0;
+		position: relative;
+		cursor: pointer;
+		transition: 0.5s ease;
+	}
+
+	.overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.4);
+		opacity: 0;
+		transition: 0.5s ease;
+		/* display: none; */
+		border-radius: 8px 8px 0 0;
+	}
+
+	.overlay .overlay-btns {
+		bottom: 10px;
+		position: absolute;
+		left: 8px;
+		opacity: 0;
+		transition: opacity .35s ease;
+	}
+
+	figure:hover .overlay {
+		/* display: block; */
+		opacity: 1;
+	}
+
+	figure:hover .overlay .overlay-btns {
+		opacity: 1;
+	}
+
+	.disabled {
+		opacity: 0.6;
+	}
+
+	.to-question {
+		color: white !important;
+		background-color: var(--primary-color);
+		padding: 2px 10px;
+		position: absolute;
+		right: 0;
+		border-radius: 0px 8px 0px 8px;
+	}
+</style>

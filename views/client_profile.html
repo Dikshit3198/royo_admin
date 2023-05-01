@@ -1,0 +1,704 @@
+<div class="wrapper">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{localisation.users | translate}}</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="secnav m-top-40">
+            <div class="row select-category">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <input style="width: 100%" type="text"
+                                placeholder="{{'SEARCH BY NAME/EMAIL/PHONE' | translate}}" ng-model="search"
+                                ng-keypress="searchUser($event)">
+                        </div>
+
+                        <div class="col-md-3" style="margin-bottom: 10px; margin-top: -30px;"
+                            ng-if="is_user_subscription == 1 && profile == 'ADMIN'">
+                            <label class="cat-label">{{'SELECT' | translate}}
+                                {{'Subscription Plan' | translate}}</label>
+                            <select style="border-radius: 8px; border: 1px solid rgba(0, 0, 0, 0.12); height: 40px;"
+                                data-placeholder="Choose Subscription Plan" class="app" tabindex="4"
+                                ng-model="selected_plan" ng-options="plan.title for plan in planList"
+                                ng-change="onSelectPlan(selected_plan)">
+                                <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3" style="margin-bottom: 10px; margin-top: -30px;"
+                            ng-if="is_user_subscription == 1 && profile == 'ADMIN' && show_user_stripe_account_connectivity == 1">
+                            <label class="cat-label">{{'STRIPE CONNECTION' | translate}}</label>
+                            <select style="border-radius: 8px; border: 1px solid rgba(0, 0, 0, 0.12); height: 40px;"
+                                ng-model="isStripeConnected" name="isStripeConnected"
+                                ng-change="filterByStripe(isStripeConnected)" convert-to-number>
+                                <option value="0">{{'ALL' | translate}}</option>
+                                <option value="2">{{'NO' | translate}}</option>
+                                <option value="1">{{'YES' | translate}}</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-sm-6">
+                    <div class="topfil">
+                        <ul>
+                            <li style="position: relative" ng-if="is_user_subscription == 1">
+                                <label style="position: absolute; top: -22px; left: 3px">{{'DATE' | translate}}</label>
+                                <input style="width: 200px" type="text" id="datepicker_subscription"
+                                    placeholder="{{'DATE' | translate}}" readonly>
+                                <span style="position: absolute; right: 13px; top: 3px" class="inputtag"><img
+                                        src="/img/v1_images/calendar.svg"></span>
+                            </li>
+                            <li>
+                                <button type="button" class="simple" ng-click="refresh()"><img
+                                        src="img/v1_images/ic_rotate.svg">{{'REFRESH' | translate}}</button>
+                            </li>
+                            <li style="filter: grayscale(0);">
+                                <button type="button" class="import" ng-click="downloadCSV()"><img
+                                        src="img/v1_images/ic_import.svg">{{'DOWNLOAD CSV' | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div id="accordion" style="margin-top: 20px; margin-bottom: -10px;"
+            ng-if="profile === 'ADMIN' && enable_agent_email_notification==1">
+            <div class="card">
+                <div class="card-header" id="headingOne" style="background-color: #FDFDFC; padding: 5px 10px;">
+                    <a class="chev-btn" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                        style="padding: 5px 10px" ng-click="notificationOpen()" aria-controls="collapseOne">
+                        <i data-toggle="collapse" data-target="#collapseOne" ng-if="!notification_open"
+                            class="fa fa-chevron-down"></i>
+                        <i data-toggle="collapse" data-target="#collapseOne" ng-if="notification_open"
+                            class="fa fa-chevron-up"></i>
+                    </a>
+                    <h5 class="mb-0 notification">
+                        {{'SEND NOTIFICATION/EMAIL TO' | translate}} {{localisation.users | translate}}
+                    </h5>
+                </div>
+
+                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="persinfo" style="margin-bottom: 20px;">
+                            <div class="labelrad">
+                                <label style="margin-left: 0px">
+                                    <input type="radio" name="type" value="1" required convert-to-number
+                                        ng-model="message_type"
+                                        ng-change="changeMsgType(message_type)"><span></span>{{'SEND AS NOTIFICATION' |
+                                    translate}}
+                                </label>
+                                <label>
+                                    <input type="radio" name="type" value="2" required convert-to-number
+                                        ng-model="message_type"
+                                        ng-change="changeMsgType(message_type)"><span></span>{{'SEND AS EMAIL' |
+                                    translate}}
+                                </label>
+                            </div>
+                        </div>
+
+                        <textarea ng-if="message_type == 1" class="notification-textarea"
+                            placeholder="{{'Enter Notification Content'|translate}}" rows="4"
+                            ng-model="notification.msg"></textarea>
+
+                        <div ng-if="message_type == 2" sty>
+                            <div class="top" style="margin-bottom: 30px">
+                                <div class="row">
+                                    <div class="col-md-2" style="padding-top: 8px">
+                                        <span>{{'Subject'|translate}} : </span>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <input class="form-control" ng-model="email.subject" style="width: 100%"
+                                            placeholder="{{'Subject'|translate}}">
+                                    </div>
+                                </div>
+                            </div>
+                            <summernote config="summernote_config" ng-model="email.body"></summernote>
+                            <!-- <div summernote class="summernote" ng-model="email.email_msg"></div> -->
+                        </div>
+
+                        <div style="text-align: right; margin-top: 20px;">
+                            <button class="button-primary" style="font-size: 16px"
+                                ng-click="sendNotificationOrEmail()">{{'SEND' | translate}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table class="">
+                        <thead>
+                            <tr>
+                                <th ng-if="notification_open && users.length">
+                                    <label class="check"><input type="checkbox" ng-click="checkAll()"><span
+                                            style="margin-top: 5px"></span></label>
+                                </th>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{'IMAGE' | translate}}</th>
+                                <th>{{'NAME' | translate}}</th>
+                                <th>{{'EMAIL' | translate}}</th>
+                                <th ng-if="profile =='ADMIN' || hide_user_info_supplier == 0">{{'PHONE' | translate}}
+                                </th>
+                                <th ng-if="show_saudi_investment_number == 1">{{'SAUDI INVESTMENT CERTIFICATION NUMBER'
+                                    | translate}}</th>
+                                <!-- <th>email verified</th> -->
+                                <th ng-if="bypass_otp == 0">{{'OTP VERIFIED' | translate}}</th>
+                                <th>{{'FLAGGED' | translate}}</th>
+                                <th>{{'JOINED ON' | translate}}</th>
+                                <th ng-if="enable_date_of_birth == 1">{{'DATE OF BIRTH' | translate}}</th>
+                                <th ng-if="is_user_subscription == 1">{{'SUBSCRIPTION PLAN' | translate}}</th>
+                                <th ng-if="is_user_subscription == 1">{{'SUBSCRIPTION START DATE' | translate}}</th>
+                                <th ng-if="is_user_subscription == 1">{{'SUBSCRIPTION END DATE' | translate}}</th>
+                                <th ng-if="is_loyality_enable == 1">{{'LOYALTY LEVEL' | translate}}</th>
+                                <th ng-if="is_loyality_enable == 1">{{'LOYALTY POINTS' | translate}}</th>
+                                <th ng-if="is_loyality_enable == 1">{{'REDEEMED LOYALTY AMOUNT' | translate}}</th>
+                                <th ng-if="is_abn_business=='1'">{{'ABN NUMBER' | translate}}</th>
+                                <th ng-if="show_user_stripe_account_connectivity == 1">
+                                    {{'STRIPE CONNECTION STATUS' | translate}}</th>
+                                <th ng-if="is_abn_business=='1'">{{'BUSINESS NAME' | translate}}</th>
+                                <th>{{'ID FOR INVOICE' | translate}}</th>
+                                <th ng-if="profile == 'ADMIN'">{{'STATUS' | translate}}</th>
+                                <th
+                                    ng-if="profile == 'ADMIN' || user_id_proof == 1 || supplier_to_user_video_call == 1 || supplier_to_user_chat == 1">
+                                    {{'ACTION' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="user in users" ng-class="user.limit_cancel_orders ? 'flagged' : ''">
+                                <td ng-if="notification_open && users.length"><label class="check"><input
+                                            type="checkbox" ng-checked="selected_users.includes(user.id)"
+                                            ng-click="check(user)"><span style="margin-top: 5px"></span></label>
+                                </td>
+                                <td>{{user.id}}</td>
+                                <td>
+                                    <img ng-if="user.user_image" src="{{compressImage(user.user_image, '80x80')}}">
+                                    <img ng-if="!user.user_image" src="/img/default_user.png">
+                                </td>
+                                <td>{{user.firstname ? (user.firstname + ' ' + user.lastname) : 'NA'}}</td>
+                                <td>{{user.email}}</td>
+                                <td ng-if="profile == 'ADMIN' || hide_user_info_supplier == 0">
+                                    {{user.country_code}}{{user.mobile_no}}</td>
+                                <td ng-if="show_saudi_investment_number == 1">{{user.investmentNumber}}</td>
+                                <!-- <td ng-class="user.email_verified ? 'YES' : 'NO'">{{user.email_verified ? 'YES' : 'NO'}}</td> -->
+                                <td ng-if="bypass_otp == 0" ng-class="user.otp_verified ? 'YES' : 'NO'">
+                                    {{user.otp_verified ? ('YES' | translate) : ('NO' | translate)}}
+                                </td>
+                                <td ng-class="user.limit_cancel_orders ? 'NO' : 'YES'">
+                                    {{user.limit_cancel_orders ? ('YES' | translate) : ('NO' | translate)}}
+                                </td>
+                                <td>{{user.created_on | date}}</td>
+                                <td ng-if="enable_date_of_birth == 1">{{(user.dateOfBirth | date) || 'NA'}}
+                                </td>
+                                <td ng-if="is_user_subscription == 1">{{user.subscription_title || 'NA'}}</td>
+                                <td ng-if="is_user_subscription == 1">{{(user.subscription_start_date | date) || 'NA'}}
+                                </td>
+                                <td ng-if="is_user_subscription == 1">{{(user.subscription_end_date | date) || 'NA'}}
+                                </td>
+                                <td ng-if="is_loyality_enable == 1">
+                                    {{user.levelData.length ? user.levelData[0].name : 'NA'}}</td>
+                                <td ng-if="is_loyality_enable == 1">{{user.loyalty_points}}</td>
+                                <td ng-if="is_loyality_enable == 1">{{currency}} {{user.used_loyality_amount}}</td>
+                                <td ng-if="is_abn_business=='1'">{{user.abn_number ? user.abn_number : 'NA'}}</td>
+                                <td ng-if="show_user_stripe_account_connectivity == 1">
+                                    {{user.is_stripe_account === 1 ? ('CONNECTED' | translate) : ('NOT CONNECTED' |
+                                    translate)}}
+                                </td>
+                                <td ng-if="is_abn_business=='1'">{{user.business_name ? user.business_name : 'NA'}}</td>
+                                <td>{{user.id_for_invoice ? user.id_for_invoice : 'NA'}}</td>
+                                <td ng-if="profile == 'ADMIN'">
+                                    <label>
+                                        <div class="switch togglebtn"
+                                            ng-class="permissions('users', 'block') == 0 ? 'toggle-disabled' : ''">
+                                            <input type="checkbox" id="togBtn" ng-checked="{{user.is_active}}"
+                                                ng-disabled="permissions('users', 'block') == 0"
+                                                ng-click="changeUserStatus(user.is_active, user.id)">
+                                            <div class="slider round"> <span class="on"></span> <span
+                                                    class="off"></span> </div>
+                                        </div>
+                                    </label>
+                                </td>
+                                <td
+                                    ng-if="profile == 'ADMIN' || user_id_proof == 1 || supplier_to_user_chat == 1 || supplier_to_user_video_call ==1 ">
+                                    <button ng-if="profile == 'ADMIN'" type="button" class="bg-success"
+                                        ng-click="userEdit(user)">{{'EDIT' | translate}}</button>
+                                    <button ng-if="profile == 'ADMIN' && enable_user_delete == 1" type="button" class="bg-success"
+                                        ng-click="deleteUser(user.id)">{{'DELETE' | translate}}</button>
+                                    <button ng-if="profile == 'ADMIN'" type="button" class="bg-success"
+                                        style="width: 180px;" ng-click="userPassword(user)">{{'RESET PASSWORD' |
+                                        translate}}</button>
+                                    <button ng-if="wallet_module == 1 && profile == 'ADMIN'" type="button"
+                                        class="bg-success" ui-sref="profile.userWallet({user_id: user.id})">{{'VIEW WALLET' | translate}}</button>
+                                    <button ng-if="user_id_proof == 1" type="button" class="bg-success"
+                                        ng-click="viewDocuments(user.documents)">{{'View Documents' |
+                                        translate}}</button>
+
+                                    <button type="button" class="bg-success"
+                                        ng-if="(admin_to_user_chat == 1 && profile == 'ADMIN') || (supplier_to_user_chat == 1 && profile == 'SUPPLIER')"
+                                        ui-sref="orders.orderChat({created_id: user.user_created_id, name: user.firstname, type: 2, message_id: user.message_id, id: user.id , receiver_type: 'user'})">{{'Chat With User' | translate}}</button>
+
+                                    <button type="button" class="bg-success"
+                                        ng-if="supplier_to_user_video_call == 1 && profile == 'SUPPLIER'"
+                                        ui-sref="orders.orderVideo({created_id: user.user_created_id, name: user.firstname, type: 2, message_id: user.message_id, id: user.id , receiver_type: 'user'})">Video
+                                        call With User</button>
+
+                                    <button ng-if="enable_admin_order_creation_for_user == 1"
+                                        ng-click="openProductModal(user)" type="button" class="button-primary"
+                                        style="width: auto; padding: 4px 20px; font-size: 16px; margin-top: 10px;">Book
+                                        {{localisation.product | translate}}</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class=" no-data-found" ng-if="users.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+
+                    <div ng-if="users.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="user_edit_modal">
+    <div class="modal-dialog" style="max-width: 380px;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{'Edit' | translate}} {{localisation.user | translate}} {{'Details' | translate}}</h3>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <form role="form" id="userEditForm" name="userEditForm" ng-submit="updateUser(userEditForm)" novalidate>
+
+                    <div class="modbody" style="border: none;">
+
+                        <div ng-if="is_user_type == 1" class="form-group select-category">
+                            <label>Select {{localisation.user | translate}} Type</label>
+                            <select data-placeholder="Choose User Type" tabindex="4" class="app" name="user_type_id"
+                                ng-model="user_type" ng-options="type.name for type in user_type_prices"
+                                ng-change="changeUserType(user_type)" required>
+                                <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                            </select>
+                            <div class="error" ng-show="userEditForm.user_type_id.$invalid && userEditForm.$submitted">
+                                <small ng-show="userEditForm.user_type_id.$error.required">Please Select
+                                    {{localisation.user | translate}} Type</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group select-category">
+                            <label>{{'OTP VERIFIED' | translate}}</label>
+                            <select class="app" name="self_pickup" ng-model="user.otp_verified" convert-to-number
+                                ng-change="changeOtpVErified(user.otp_verified)" required>
+                                <option value="0">{{'NO' | translate}}</option>
+                                <option value="1">{{'YES' | translate}}</option>
+                            </select>
+                            <div class="error" ng-show="userEditForm.self_pickup.$invalid && userEditForm.$submitted">
+                                <small ng-show="userEditForm.self_pickup.$error.required">{{'PLEASE SELECT OTP
+                                    VERIFICATION' | translate}}</small>
+                            </div>
+                        </div>
+
+                        <!-- <div class="form-group">
+                            <label>{{'EMAIL' | translate}}</label>
+                            <input type="email" ng-model="user.email" name="email" placeholder="{{'EMAIL' | translate}}"
+                                autocomplete="off" id="input_email" required>
+                            <div class="error" ng-show="userEditForm.email.$invalid && userEditForm.$submitted">
+                                <small ng-show="userEditForm.email.$error.required">{{'PLEASE ENTER EMAIL' | translate}}</small>
+                                <small ng-show="userEditForm.email.$error.email">{{'PLEASE ENTER A VALID EMAIL' | translate}}</small>
+                            </div>
+                        </div> -->
+                        <div class="form-group">
+                            <label>{{'NAME' | translate}}</label>
+                            <input type="text" ng-model="user.name" name="name" placeholder="{{'NAME' | translate}}"
+                                id="namee" required>
+                            <div class="error" ng-show="userEditForm.name.$invalid && userEditForm.$submitted">
+                                <small ng-show="userEditForm.name.$error.required">{{'PLEASE ENTER NAME' |
+                                    translate}}</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{localisation.user | translate}} {{'Phone Number' | translate}}</label>
+                            <input id="user_phone" type="text" name="phone" production-qty ng-model="user.phone_number"
+                                ng-maxlength="15" ng-minlength="6" placeholder="{{'Phone No.' | translate}}" required>
+                            <div class="error" ng-show="userEditForm.phone.$invalid && userEditForm.$submitted">
+                                <small ng-show="userEditForm.phone.$error.required">{{'PLEASE ENTER ADMIN PHONE NO.' |
+                                    translate}}</small>
+                                <small ng-show="userEditForm.phone.$error.minlength">{{'PHONE NO. MUST BE MORE THAN 6 DIGITS' 
+                                    | translate}}</small>
+                                <small ng-show="userEditForm.phone.$error.maxlength">{{'PHONE NO. MUST BE LESS THAN 15 DIGITS' 
+                                    | translate}}</small>
+                            </div>
+                            <div class="error"
+                                ng-show="!userEditForm.phone.$invalid && userEditForm.$submitted && invalid_phone_no">
+                                <small>{{'INVALID PHONE NUMBER' | translate}}</small>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group select-category" ng-if="enable_manual_user_loyality_update == 1">
+                            <label>{{'LOYALTY POINTS' | translate}}</label>
+                            <!-- <select class="app" name="loyalty_points" ng-model="user.loyalty"
+                                ng-change="changeLoyaltyPoints(user.loyalty)" required>
+                                <option value="">Select loyalty</option>
+                                <option value="{{data.name +'#'+ data.total_loyality_points}}" ng-repeat="data in loyalties">{{data.name}}</option>
+                            </select> -->
+                            <input type="number" name="loyalty_points" integers ng-model="user.loyalty_points" min="0"
+                                placeholder="{{'LOYALTY POINTS' | translate}}" required>
+                            <div class="error"
+                                ng-show="userEditForm.loyalty_points.$invalid && userEditForm.$submitted">
+                                <small ng-show="userEditForm.loyalty_points.$error.required">{{'PLEASE SELECT LOYALTY
+                                    POINTS' | translate}}</small>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="modfooter" style="padding: 15px 15px">
+                        <div class="submit-admin">
+                            <button type="submit">{{'SUBMIT' | translate}}</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="reset_password_user">
+    <div class="modal-dialog" style="max-width: 400px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead" style="padding: 15px 20px">
+                    <h2 class="bold" style="display: inline-block;">{{'RESET PASSWORD' | translate}}</h2>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <form role="form" id="passwordResetForm" name="passwordResetForm"
+                    ng-submit="passwordReset(passwordResetForm)" novalidate>
+                    <div class="modbody" style="padding: 15px 20px">
+                        <div class="form-group" style="position: relative">
+                            <label>{{'NEW PASSWORD' | translate}}<p class="star">*</p></label>
+                            <input autocomplete="off" type="password" ng-minlength="6" ng-maxlength="20" name="new_pass"
+                                ng-model="new_user_pass.password" placeholder="{{'NEW PASSWORD' | translate}}" required>
+                            <div class="error"
+                                ng-show="passwordResetForm.new_pass.$invalid && passwordResetForm.$submitted">
+                                <small ng-show="passwordResetForm.new_pass.$error.required">
+                                    {{'PLEASE ENTER A NEW PASSWORD.' | translate}}
+                                </small>
+                                <small ng-show="passwordResetForm.new_pass.$error.minlength">{{'PASSWORD LENGTH MUST BE MORE THAN 6 CHARACTERS' 
+                                    | translate}}</small>
+                                <small ng-show="passwordResetForm.new_pass.$error.maxlength">{{'PASSWORD LENGTH MUST BE LESS THAN 20 CHARACTERS'
+                                    | translate}}</small>
+                            </div>
+                        </div>
+                        <div class="form-group" style="position: relative">
+                            <label>{{'CONFIRM NEW PASSWORD' | translate}}<p class="star">*</p></label>
+                            <input autocomplete="off" type="password" name="confirm_new_pass"
+                                ng-model="new_user_pass.confirm_password"
+                                placeholder="{{'CONFIRM NEW PASSWORD' | translate}}" equal="new_user_pass.password"
+                                required>
+                            <div class="error"
+                                ng-show="passwordResetForm.confirm_new_pass.$invalid && passwordResetForm.$submitted">
+                                <small ng-show="passwordResetForm.confirm_new_pass.$error.required">
+                                    {{'PLEASE CONFIRM NEW PASSWORD' | translate}}
+                                </small>
+                                <small
+                                    ng-show="!passwordResetForm.confirm_new_pass.$error.required && passwordResetForm.confirm_new_pass.$error.equal">{{"PASSWORDS DON'T MATCH" 
+                                 | translate}}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modfooter" style="padding: 15px 20px">
+                        <button type="submit" class="bg-success bold">{{'SUBMIT' | translate}}</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="document_view">
+    <div class="modal-dialog" style="max-width: 560px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>{{'DOCUMENTS' | translate}}</h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="row">
+                        <div class="col-md-6 m-bottom-15" ng-repeat="data in documents">
+                            <img src={{data}} height="250px" width="100%">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal" id="add_products">
+    <div class="modal-dialog" style="max-width: 72%; width: 80%;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>Choose {{localisation.products | translate}} to add</h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <div class="wrapper" style="margin-bottom: 30px;">
+
+                        <div class="category">
+
+                            <div class="secnav">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row select-category">
+                                            <!-- </div> style="margin-top: -30px"> -->
+                                            <div class="col-md-4" ng-if="suppliers.length">
+                                                <label class="cat-label">{{'SELECT' | translate}}
+                                                    {{localisation.supplier | translate}}</label>
+                                                <!-- style="width: 260px" -->
+                                                <select class="app" ng-model="selected_supplier"
+                                                    ng-options="supplier.supplier_name for supplier in suppliers"
+                                                    ng-change="changeSupplier(selected_supplier)">
+                                                    <option value="0" selected disabled>{{'SELECT' | translate}}
+                                                    </option>
+                                                    <!-- supplier_name selected_supplier_filter -->
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-3" ng-if="categories.length"
+                                                style="margin-bottom: 10px;">
+                                                <label class="cat-label">{{'SELECT' | translate}}
+                                                    {{localisation.category | translate}}</label>
+                                                <select data-placeholder="Choose {{localisation.category | translate}}"
+                                                    class="app" tabindex="4" ng-model="selected_cat"
+                                                    ng-options="category.name for category in categories"
+                                                    ng-change="onSelectCategory(selected_cat, true)">
+                                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-3" style="margin-bottom: 10px;"
+                                                ng-repeat="cat in dynamicSubCategories track by $index"
+                                                ng-init="parentIndex = $index">
+                                                <label class="cat-label"
+                                                    ng-if="parentIndex == 0">{{selected_cat.name}}</label>
+                                                <label class="cat-label"
+                                                    ng-if="parentIndex > 0">{{selectedCategory[childIndex-1].name}}</label>
+                                                <select data-placeholder="Choose Category" tabindex="4" class="app"
+                                                    ng-model="selectedCategory[childIndex]"
+                                                    ng-init="childIndex = $index"
+                                                    ng-options="subCat.name for subCat in cat"
+                                                    ng-change="changeSubCatId(selectedCategory[childIndex], parentIndex + 1, true)">
+                                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="col-md-3">
+                                        <input style="width: 100%" type="text" placeholder="{{'SEARCH' | translate}}"
+                                            ng-keypress="searchProduct($event)" ng-model="search_product">
+                                    </div> -->
+                                </div>
+                            </div>
+
+                            <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF;">
+                                <div class="catbox">
+                                    <div class="addcatbr">
+                                        <div class="row">
+                                            <div class="col-md-2" ng-repeat="product in product_list track by $index">
+                                                <div class="product-assign">
+                                                    <label style="margin-bottom: 0px">
+                                                        <input ng-if="product.price && product.left_quantity"
+                                                            type="checkbox" ng-checked="product.isChecked"
+                                                            ng-click="selectProduct(product)">
+                                                        <span ng-if="product.price && product.left_quantity"></span>
+                                                        <img ng-style="product.price ? {'cursor': 'pointer'} : {'cursor': 'default'}"
+                                                            src="{{compressImage(product.images[0].image_path, '290x180')}}"
+                                                            style="height: 110px;">
+                                                        <div class="out-stock" ng-if="!product.left_quantity">Out Of
+                                                            Stock</div>
+                                                    </label>
+                                                    <div class="text">
+                                                        <strong class="bold ellipsis"
+                                                            style="width: 100%; font-size: 14px;" data-toggle="tooltip"
+                                                            title="{{product.name}}">{{product.name}}</strong>
+                                                        <!-- .toFixed(price_decimal_length) -->
+                                                        <p class="price" style="cursor: default; font-size: 14px">
+                                                            {{product.fixed_price ? (currency +
+                                                            (product.fixed_price)) : 'Price Not
+                                                            Added'}}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="no-data-found" ng-if="product_list.length == 0 && dataLoaded">
+                                    {{'NO DATA FOUND' | translate}}
+                                </div>
+
+                                <div class="no-data-found" ng-if="!dataLoaded">
+                                    {{'PLEASE SELECT CATEGORY' | translate}}
+                                </div>
+
+                                <div ng-if="product_list.length > 0 && dataLoaded" class="row pagination">
+                                    <ul ng-if="pager.pages && pager.pages.length">
+                                        <li ng-class="{disabled:pager.currentPage === 1}">
+                                            <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                                        </li>
+                                        <li ng-class="{disabled:pager.currentPage === 1}">
+                                            <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                                        </li>
+                                        <li ng-repeat="page in pager.pages"
+                                            ng-class="{active:pager.currentPage === page}">
+                                            <a ng-click="setPage(page)">{{page}}</a>
+                                        </li>
+                                        <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                            <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                                        </li>
+                                        <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                            <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button type="button" class="bg-success" data-dismiss="modal"
+                        style="width: auto; padding: 2px 20px;" ng-click="addProducts()">Proceed</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<success-modal message="message"></success-modal>
+
+
+<style>
+    .YES {
+        color: rgb(3, 116, 3);
+    }
+
+    .NO {
+        color: rgb(255, 23, 23);
+    }
+
+    table td img {
+        border-radius: 50%;
+        height: 45px;
+        width: 45px;
+    }
+
+    .flagged {
+        background-color: #ffe277ab !important;
+    }
+
+    .submit-admin button {
+        display: inline-block;
+        color: #ffffff;
+        font-size: 14px;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 4px;
+        vertical-align: middle;
+        background-color: var(--primary-color);
+    }
+
+    .chev-btn {
+        background-color: transparent;
+        float: right;
+        outline: none;
+    }
+
+    .chev-btn:active {
+        outline: none;
+    }
+
+    .notification {
+        color: #4a4a4a;
+        width: 50%;
+        margin-top: 7px;
+        font-weight: 500;
+        margin-left: 10px;
+    }
+
+    .notification-textarea {
+        padding: 10px 15px;
+        width: 100%;
+        border-radius: 4px;
+    }
+</style>

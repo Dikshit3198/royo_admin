@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="99px" height="28px" viewBox="0 0 99 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>royo_logo</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-31" transform="translate(-2.000000, -6.000000)">
+            <text id="R" font-family="ArialRoundedMTBold, Arial Rounded MT Bold" font-size="33.1656977" font-weight="normal" fill="#FFFFFF">
+                <tspan x="0" y="31">R</tspan>
+            </text>
+            <text id="YO" font-family="ArialRoundedMTBold, Arial Rounded MT Bold" font-size="33.1656977" font-weight="normal" fill="#FFFFFF">
+                <tspan x="54.8875024" y="31">YO</tspan>
+            </text>
+            <g id="Group-4" transform="translate(25.435672, 7.384550)">
+                <g id="Group-3" transform="translate(4.102528, 0.000000)">
+                    <circle id="Combined-Shape" fill="#FFFFFF" cx="10.6665721" cy="10.6665721" r="10.6665721"></circle>
+                    <ellipse id="Oval" stroke="#9B8B5F" stroke-width="1.18517467" cx="10.6665721" cy="10.6665721" rx="4.74069869" ry="11.2591594"></ellipse>
+                    <ellipse id="Oval-Copy" stroke="#9B8B5F" stroke-width="1.18517467" transform="translate(10.666572, 10.666572) rotate(-270.000000) translate(-10.666572, -10.666572) " cx="10.6665721" cy="10.6665721" rx="4.74069869" ry="11.2591594"></ellipse>
+                </g>
+                <path d="M4.10252772,14.6857672 L15.2511387,14.6857672 C15.7042914,14.6857672 16.0716443,15.05312 16.0716443,15.5062727 C16.0716443,15.5864384 16.059896,15.6661713 16.0367739,15.74293 L13.6113476,23.7946608 L5.06425797,18.7947051 L4.10252772,14.6857672 Z" id="Path-7" fill="#9B8B5F"></path>
+                <g id="ic_cart" transform="translate(0.000000, 11.487078)">
+                    <g id="Group" transform="translate(0.259827, 0.512816)">
+                        <g id="Group-2" transform="translate(0.000000, 0.549446)">
+                            <ellipse id="Oval-Copy" fill="#FFFFFF" cx="11.5753507" cy="12.3075831" rx="1.7761702" ry="1.75822616"></ellipse>
+                            <ellipse id="Oval-Copy-2" fill="#FFFFFF" cx="5.33950856" cy="12.3075831" rx="1.7761702" ry="1.75822616"></ellipse>
+                            <polyline id="Rectangle-2" stroke="#FFFFFF" stroke-width="0.820505543" stroke-linecap="round" stroke-linejoin="round" points="5.33950856 3.16847007 14.5502983 3.16847007 12.8576418 8.79113082 3.85032566 8.79113082 2.23983723 0.880890584 0 0"></polyline>
+                        </g>
+                    </g>
+                    <path d="M5.45750368,8.06803742 L9.42810148,8.06803742" id="Line" stroke="#FFFFFF" stroke-width="0.820505543" stroke-linecap="round" stroke-linejoin="round" fill-rule="nonzero"></path>
+                    <path d="M5.45750368,6.42702633 L7.34074018,6.42702633" id="Line-Copy" stroke="#FFFFFF" stroke-width="0.820505543" stroke-linecap="round" stroke-linejoin="round" fill-rule="nonzero"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

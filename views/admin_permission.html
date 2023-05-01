@@ -1,0 +1,65 @@
+<div class="wrapper">
+  <div class="category">
+    <div class="secnav">
+      <div class="row">
+        <div class="col-md-6 col-sm-6">
+          <h1 class="bold">{{'ADMIN PERMISSIONS' | translate}}</h1>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 col-sm-6">
+          <div class="user">
+            <h1>{{'ADMIN' | translate}} : {{user}}</h1>
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-6">
+          <div class="topfil">
+            <ul>
+              <li style="filter: grayscale(0)">
+                <button type="button" class="bold create" ng-click="savePermissions()">{{'SAVE' | translate}}</button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="persinfo" style="margin: 20px 0px 10px;">
+      <div class="row suppro">
+        <div class="col-lg-4 col-md-6 col-sm-6" style="margin: 12px 0px" ng-repeat="section in sections track by $index">
+          <div class="box checkbox">
+            <div class="top">
+              <h2 ng-if="['catalogue', 'suppliers', 'brands', 'agents', 'orders'].includes((section.section_category_name).toLowerCase())" class="bold">{{localisation[(section.section_category_name).toLowerCase()] | translate}}</h2>
+              <h2 ng-if="!['catalogue', 'suppliers', 'brands', 'agents', 'orders'].includes((section.section_category_name).toLowerCase())" class="bold">{{section.section_category_name | translate}}</h2>
+              <label style="margin-right: 13px">{{'SELECT ALL' | translate}}
+                <input type="checkbox" name="mark_all{{$index}}" ng-checked="section.checked" ng-click="selectSection(section)">
+                <span style="margin-left: 8px; top: 2px;"></span></label>
+            </div>
+            <ul class="items" style="height: 220px; margin-top: 10px;"> 
+              <li style="padding: 9px 27px 9px 15px;" ng-repeat="sub_section in section.admin_section track by $index">
+                {{sub_section.section_name|translate}}
+                <label><input type="checkbox" name="{{sub_section.section_name}}"
+                    ng-click="selectSubSection(sub_section)" ng-checked="sub_section.is_assign">
+                  <span></span></label>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+  .user {
+    margin: 12px 0px;
+  }
+
+  .user h1 {
+    font-size: 16px;
+  }
+</style>

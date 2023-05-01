@@ -1,0 +1,247 @@
+<div class="wrapper">
+
+    <div class="category" ng-if="!addCategory">
+
+        <div class="toptabs">
+            <ul class="nav nav-tabs ">
+                <li class="nav-item"> <a class="nav-link active">Sub-Categories</a> </li>
+            </ul>
+        </div>
+        <div class="secnav">
+            <div class="row select-category">
+                <div class="col-md-3 col-sm-3">
+                    <input type="text" placeholder="Search" ng-model="search">
+                </div>
+                <div class="col-md-3 col-sm-3">
+                    <select class="app" data-placeholder="Choose Category" tabindex="4" ng-model="selected_category"
+                        ng-options="category.name for category in categories"
+                        ng-change="onCategoryChange(selected_category)">
+                    </select>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <div class="topfil">
+                        <ul>
+                            <li>
+                                <button type="button" class="simple"><img
+                                        src="img/v1_images/ic_import.svg">Import</button>
+                            </li>
+                            <li>
+                                <button type="button" class="simple" ng-click="refresh()"><img
+                                        src="img/v1_images/ic_rotate.svg">Refresh</button>
+                            </li>
+                            <li>
+                                <button type="button" class="simple"><img src="img/v1_images/ic_sortby.svg">Sort
+                                    By</button>
+                            </li>
+                            <li>
+                                <button type="button" class="bold create" ng-click="changeview(true)">Add
+                                    Sub-Category</button>
+                            </li>
+                            <li ng-class="!is_grid ? 'active' : ''">
+                                <a ng-click="is_grid = false"><img src="img/v1_images/ic_list_selected.svg"></a>
+                            </li>
+                            <li ng-class="is_grid ? 'active' : ''">
+                                <a ng-click="is_grid = true"><img src="img/v1_images/ic_grid_selected.svg"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF;">
+            <div class="catbox" ng-if="is_grid">
+                <div class="row">
+                    <div class="col-md-3" ng-repeat="category in categoryData | filter : {name: search}">
+                        <div class="box">
+                            <figure style="margin-bottom: 0; position: relative;">
+                                <img src="{{category.subcategory_image}}">
+                            </figure>
+                            <div class="text">
+                                <strong class="bold">{{category.name}}</strong>
+                                <label>
+                                    <div class="switch togglebtn">
+                                        <input type="checkbox" id="togBtn">
+                                        <div class="slider round">
+                                            <span class="on"></span>
+                                            <span class="off"></span>
+                                        </div>
+                                    </div>
+                                </label>
+                                <p>{{category.description}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table ng-if="!is_grid">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sub-Category Name</th>
+                        <th>Sub-Category Info</th>
+                        <th>Image</th>
+                        <th>Icon</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr ng-repeat="category in categoryData | filter : {name: search}">
+                        <td>{{category.subcategory_id}}</td>
+                        <td>{{category.name}}</td>
+                        <td>{{category.description | limitHtml: 40 | toTrusted}}
+                            <a ng-if="category.description.length > 40"><small
+                                    ng-click="viewDescription(category.description)">...Read
+                                    More</small></a>
+                        </td>
+                        <td><img src="{{category.subcategory_image}}"></td>
+                        <td><img src="{{category.subcategory_icon}}"></td>
+                        <td>
+                            <button type="button" class="bg-success" ng-click="edit(category)">Edit</button>
+                            <div class="dropdown">
+                                <button type="button" class="edit dropdown-toggle" data-toggle="dropdown"> <img
+                                        src="img/v1_images/ic_more.svg"> </button>
+                                <div class="dropdown-menu"> <a class="dropdown-item" href="#">Link 1</a> <a
+                                        class="dropdown-item" href="#">Link 2</a> <a class="dropdown-item" href="#">Link
+                                        3</a> </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="addcat" ng-if="addCategory">
+        <div class="top">
+            <h2 class="bold">{{is_edit ? 'Edit Detailed Sub-Category' : 'Add Detailed Sub-Category'}}</h2>
+
+            <a ng-click="changeview(false)" class="back"><img src="img/v1_images/ic_dropdown.svg">Sub Category List</a>
+        </div>
+        <div class="box m-top-20">
+            <div class="formsec">
+
+                <form role="form" validate-form="" novalidate="" name="addCategoriesForm" enctype="multipart/form-data"
+                    ng-submit="submitAdd()">
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <label>Category</label>
+                                <select class="app" data-placeholder="Choose Category" tabindex="4"
+                                    ng-model="selected_category" ng-options="category.name for category in categories"
+                                    ng-change="onCategoryChange(selected_category)">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6" ng-repeat="input in inputs">
+                                <label>{{input.placeholder}}</label>
+                                <input type="text" ng-model="outputs.inputs[$index]"
+                                    placeholder="Enter {{input.placeholder}}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6" ng-repeat="desc_input in desc_inputs">
+                                <label>{{desc_input.placeholder}}</label>
+                                <textarea type="text" ng-model="outputs.desc_inputs[$index]"
+                                    placeholder="Enter {{desc_input.placeholder}}" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group ">
+                        <div class="row">
+                            <div class="col-md-6 file">
+                                <label>Add Category Image</label>
+								<p class="aspect-ratio">Aspect Ratio - 4 : 3 </p>
+                                <span>
+                                    <img ng-if="!cat_img" src="img/v1_images/ic_dummy.png">
+                                    <img ng-if="cat_img" style="height: 100%; width: 100%" src="{{cat_img}}">
+                                </span>
+                                <input filestyle="" type="file" accept="image/*" ng-model="image_file"
+                                    class="form-control"
+                                    onchange="angular.element(this).scope().file_to_upload_for_image(this.files)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader"
+                                    ng-required="!is_edit" />
+                            </div>
+
+                            <div class="col-md-6 file">
+                                <label>Add Category Icon</label>
+								<p class="aspect-ratio">Aspect Ratio - 4 : 3 </p>
+                                <span>
+                                    <img ng-if="!cat_icon" src="img/v1_images/ic_dummy.png">
+                                    <img ng-if="cat_icon" style="height: 100%; width: 100%" src="{{cat_icon}}">
+                                </span>
+                                <input filestyle="" type="file" accept="image/*" ng-model="icon_file"
+                                    class="form-control"
+                                    onchange="angular.element(this).scope().file_to_upload_for_icon(this.files)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader"
+                                    ng-required="!is_edit" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button">
+                        <button type="submit" class="bold nxt">Submit</button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="catSuccess">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="success">
+                        <img src="img/v1_images/illustration.svg">
+                        <h2 class="bold">Successfull</h2>
+                        <p ng-if="!is_edit">Sub-Category has been added to the list of sub-categories</p>
+                        <p ng-if="is_edit">Sub-Category has been updated</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<style>
+    .remove-variant {
+        float: right;
+        background: #ff2020;
+        color: #ffffff !important;
+        padding: 0px 9px 2px 8px;
+        font-weight: 700;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .toptabs .nav-tabs .nav-link.active:after {
+        background: none;
+    }
+</style>

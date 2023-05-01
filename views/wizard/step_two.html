@@ -1,0 +1,283 @@
+<div class="suppro">
+
+    <div class="row"
+        ng-if="profile == 'ADMIN' && no_catalogue == 0 && permissions('suppliers', 'update') == 1 && (branch_flow == 0 || (branch_flow == 1 && is_multi_branch == 0))">
+        <div class="col-md-6">
+            <button ng-if="!is_assigned" ng-click="changeView(true)"
+                class="asgn-btn">{{'ASSIGN CATEGORIES' | translate}}</button>
+            <button ng-if="is_assigned" ng-click="changeView(false)"
+                class="asgn-btn">{{'VIEW ASSIGNED CATEGORIES' | translate}}</button>
+        </div>
+        <!-- <div class="col-md-6" style="text-align: right;">
+            <button ng-if="!is_assigned && generic_category.length && generic_category[0].is_assign" style="width: 260px; margin-top: 8px;" ng-click="genericProducts()" class="button-primary">Add {{localisation.products | translate}} without category</button>
+        </div> -->
+    </div>
+
+    <div class="row" ng-if="!is_assigned" style="margin-top: 20px; padding-bottom: 10px;">
+        <div style="margin-bottom: 20px;" class="col-md-4" ng-repeat="data in categoryData"
+            ng-init="parentIndex = $index">
+            <div class="box">
+                <div class="top">
+                    <h2 class="bold">{{data.name | translate}}</h2>
+                    <ul>
+                        <li ng-if="category_sequence == 1 || supplier_branch_category_sequence_admin == 1"><a href="" data-toggle="modal" ng-click="setCatOrder(data)"
+                                data-target="#orderCatModal"><i class="fa fa-sort" aria-hidden="true"
+                                    style="color: var(--primary-color);"></i></a></li>
+                    </ul>
+                </div>
+                <ul class="items">
+                    <span ng-repeat="category in data.arr" ng-init="childIndex = $index">
+                        <li class="cursor"
+                            ng-class="parentIndex == selected_parentIndex && childIndex == selected_childIndex ? 'active' : ''"
+                            ng-if="category.is_assign" ng-click="selectCat(parentIndex, childIndex, category)">
+                            {{category.name}}
+                        </li>
+                    </span>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-4" ng-if="is_product">
+            <div class="box">
+                <div class="top">
+                    <h2 class="bold">{{localisation.products | translate}}</h2>
+                    <ul>
+                        <li ng-if="category_sequence == 1"><a href="" ng-click="setProductOrder(products)"><i
+                                    class="fa fa-sort" aria-hidden="true" style="color: var(--primary-color);"></i></a></li>
+                        &nbsp;&nbsp;
+                        <li ng-if="permissions('catalogue', 'create') == 1 && !is_out_network"
+                            ng-click="toProduct('ADD')"><a href=""><img src="img/v1_images/ic_add.svg"></a></li>
+                        <li ng-if="permissions('catalogue', 'create') == 1 && is_out_network && products.length == 0 && !has_any_product"
+                            ng-click="toProduct('ADD')"><a href=""><img src="img/v1_images/ic_add.svg"></a></li>
+                        <li ng-click="toProduct('LIST')"><a href=""><img src="img/v1_images/ic_table.svg"></a></li>
+                    </ul>
+                    <button type="button" id="OpenProductOrder" style="display: none;" data-toggle="modal"
+                        data-target="#orderProductModal"><img src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <ul class="items">
+                    <li ng-repeat="product in products">{{product.names[0].name}}<a href=""
+                            ng-if="permissions('catalogue', 'update') == 1"
+                            ng-click="toProduct('EDIT', product.id)"><img src="img/v1_images/ic_edit_cart.svg"></a></li>
+                </ul>
+
+                <div class="no-items-found" ng-if="products.length == 0 && dataLoaded">
+                    <img src="img/v1_images/shopping-cart.svg">
+                    <br>
+                    <p>{{'NO DATA FOUND' | translate}}</p>
+                </div>
+            </div>
+            <button class="asgn-btn"
+                ng-if="permissions('suppliers', 'update') == 1 && no_food_item_admin == 0 && !is_out_network"
+                style="text-align: center; width: 100%; margin-top: 10px; height: 45px;"
+                ng-click="assignProducts()">{{'ASSIGN' | translate}} {{localisation.products | translate}}</button>
+        </div>
+    </div>
+
+
+    <div class="persinfo" ng-if="is_assigned">
+        <div class="row suppro" style="margin-bottom: 15px">
+
+            <div class="catalogue-transition col-md-4" ng-repeat="data in categoryData" ng-init="parentIndex = $index">
+                <div class="form-group" ng-class="data.no_subcat_present ? 'last' : ''">
+                    <div class="box">
+                        <div class="top">
+                            <h2 class="bold">{{data.name | translate}}</h2>
+                            <ul>
+                                <!-- parentIndex == 0 &&  -->
+                                <li ng-if="is_multi_branch == 1 && supplier_branch_category_sequence_admin == 1"><a href="" data-toggle="modal" ng-click="setCatOrder(data)"
+                                        data-target="#orderCatModal"><i class="fa fa-sort" aria-hidden="true"
+                                            style="color: var(--primary-color);"></i></a></li>
+                            </ul>
+                        </div>
+                        <div class="scroll">
+                            <!-- <ul class="items" ng-if="!data.is_subcat_present || parentIndex > 0">
+                                <li>
+                                    <input type="text" id="query" placeholder="Search Category.." ng-model="query" />
+                                </li>
+                                <li class="cursor" ng-repeat="category in data.arr | filter:query | orderBy: orderList"
+                                    ng-init="childIndex = $index">
+                                    <p style="width: 80%">{{category.name}}</p>
+                                    <label ng-if="!category.is_assign" style="margin-top: -18px"><input type="checkbox"
+                                            ng-click="selectedCategoriesForAssignment(category, data.arr, parentIndex)"
+                                            ng-checked="category.checked">
+                                        <span></span></label>
+                                    <span ng-if="category.is_assign && category.sub_category.length == 0" class="remove"
+                                        ng-click="removeCategory(category)">{{'REMOVE' | translate}}</span>
+                                </li>
+                            </ul> -->
+
+                            <ul class="items">
+                                <li>
+                                    <input type="text" id="query" placeholder="{{'Search Category..' | translate}}" ng-model="query" />
+                                </li>
+                                <li class="cursor"
+                                    ng-class="parentIndex == selected_parentIndex && childIndex == selected_childIndex ? 'active' : ''"
+                                    ng-repeat="category in data.arr | filter:query | orderBy: orderList"
+                                    ng-click="category.sub_category.length ? selectAssignCategory(parentIndex, childIndex, category) : ''"
+                                    ng-init="childIndex = $index">
+                                    <p style="width: 80%">{{category.name}}</p>
+                                    <label
+                                        ng-if="!category.is_assign && (category.sub_category.length == 0 || !category.sub_category)"
+                                        style="margin-top: -18px"><input type="checkbox"
+                                            ng-click="selectedCategoriesForAssignment(category, data.arr, parentIndex)"
+                                            ng-checked="category.checked">
+                                        <span></span></label>
+                                    <span
+                                        ng-if="category.is_assign && (category.sub_category.length == 0 || !category.sub_category)"
+                                        class="remove"
+                                        ng-click="removeCategory(category,parentIndex)">{{'REMOVE' | translate}}</span>
+
+                                    <span ng-if="category.sub_category.length" class="cat-arrow"
+                                        ng-click="selectAssignCategory(parentIndex, childIndex, category)">></span>
+
+                                    <!-- <span
+                                        ng-if="!category.is_assign && (category.sub_category.length == 0 || !category.sub_category) && parentIndex == 0"
+                                        class="remove"
+                                        ng-click="assignSelectedCategories(true, category.id)">{{'ASSIGN' | translate}}</span> -->
+                                </li>
+                            </ul>
+
+                            <button ng-disabled="data.selected_cat_for_assign.length == 0" 
+                                ng-class="data.selected_cat_for_assign.length == 0 ? 'disabled' : ''"
+                                class="asgn-btn assign" ng-if="(data.no_subcat_present || $last) && selected_parentIndex > -1"
+                                ng-click="assignSelectedCategories(false, null, data)"
+                                style="text-align: center">{{'ASSIGN SELECTED' | translate}}
+                                {{localisation.categories | translate}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<success-modal message="message"></success-modal>
+
+<div class="modal" id="orderCatModal" ng-if="items.length">
+    <div class="modal-dialog" style="max-width: 560px">
+        <div class="modal-content">
+
+            <div class="modal-body cat-order">
+                <div ng-app="Royo" ng-controller="SupplierProfileSetupTwoCtrl">
+                    <h2 class="text-center" style="margin: 15px 0px;">{{'DRAG N DROP TO SET ORDER' | translate}}</h2>
+                    <table class="table table-bordered" ng-if="!isProductOrder && items.length">
+                        <tr>
+                            <th>{{localisation.categories | translate}}</th>
+                        </tr>
+                        <tbody ui-sortable="{ 'ui-floating': true , 'axis': 'y'}" ng-model="items">
+                            <tr ng-repeat="item in items">
+                                <td>{{ item }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- <ul ui-sortable="{ 'ui-floating': true , 'axis': 'y'}" ng-model="items">
+                        <li ng-repeat="item in items">{{ item }}</li>
+                      </ul> -->
+                    <table class="table table-bordered" ng-if="isProductOrder">
+                        <tr>
+                            <th>{{localisation.product}}</th>
+                        </tr>
+                        <tbody ui-sortable="{ 'ui-floating': true , 'axis': 'y'}" ng-model="items">
+                            <tr ng-repeat="item in items">
+                                <td>{{ item }}hf</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button type="button" id="closeCatOrder" class="close" data-dismiss="modal"><img
+                        src="img/v1_images/ic_cross.svg"></button>
+                <div class="submit-seq">
+                    <!-- parentIndex == 0 &&  -->
+                    <button ng-click="SubmitCatSequence()" 
+                    ng-if="!is_assigned || (is_multi_branch == 1 && supplier_branch_category_sequence_admin)"
+                        class="asgn-btn">{{'Submit' | translate}}</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="orderProductModal" ng-if="items.length">
+    <div class="modal-dialog" style="max-width: 560px">
+        <div class="modal-content">
+
+            <div class="modal-body product-order">
+                <div ng-app="Royo" ng-controller="SupplierProfileSetupTwoCtrl">
+                    <h2 class="text-center" style="margin: 15px 0px;">{{'DRAG N DROP TO SET ORDER' | translate}}</h2>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>{{localisation.product}}</th>
+                        </tr>
+                        <tbody ui-sortable="{ 'ui-floating': true , 'axis': 'y'}" ng-model="items">
+                            <tr ng-repeat="item in items">
+                                <td>{{ item.split('.')[0] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button type="button" id="closeProductOrder" class="close" data-dismiss="modal"><img
+                        src="img/v1_images/ic_cross.svg"></button>
+                <div class="submit-seq">
+                    <button ng-if="!is_assigned" ng-click="SubmitProductSequence()"
+                        class="asgn-btn">{{'SUBMIT' | translate}}</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<style>
+    .asgn-btn {
+        width: auto;
+        border: 1px solid var(--primary-color);
+        border-radius: 4px;
+        display: block;
+        text-align: center;
+        padding: 10px 20px;
+        font-size: 14px;
+        background-color: var(--primary-color);
+        color: #fff;
+    }
+
+    .assign {
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+        right: 0;
+        margin: 0 auto !important;
+    }
+
+    .disabled {
+        opacity: 0.9 !important;
+        filter: grayscale(100%);
+    }
+
+    .remove {
+        border-radius: 4px;
+        color: #ffffff;
+        background-color: var(--primary-color);
+        font-size: 12px;
+        padding: 3px 10px;
+        width: 65px;
+        position: absolute;
+        right: 10px;
+        top: 12px;
+    }
+
+    .catalogue-transition {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .cat-arrow {
+        font-size: 20px;
+        position: absolute;
+        right: 28px;
+        top: 9px;
+        font-weight: 500;
+        color: var(--primary-color);
+    }
+</style>

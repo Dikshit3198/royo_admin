@@ -1,0 +1,324 @@
+<div class="wrapper order_page">
+    <div class="category">
+        <div class="toptabs">
+            <ul class="nav nav-tabs ">
+                <li class="nav-item"> <a class="nav-link" ng-class="status == 0 ? 'active' : ''"
+                        ng-click="changeTab(0)">{{0 | status | translate}}</a> </li>
+                <li class="nav-item"> <a class="nav-link" ng-class="status == 1? 'active' : ''"
+                        ng-click="changeTab(1)">{{'CONFIRMED' | translate}}</a> </li>
+                <li class="nav-item"> <a class="nav-link" ng-class="status == 2? 'active' : ''"
+                        ng-click="changeTab(2)">{{'REJECTED' | translate}}</a></li>
+
+            </ul>
+        </div>
+
+        <div class="wrapper">
+            <div class="category">
+                <div class="secnav">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <h1 class="bold">{{'WALLET' | translate}} {{'WITHDRAW' | translate}}</h1>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="topfil">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Wallet request listing table Start  -->
+                <div class="tab-content m-top-30">
+                    <div class="tab-pane active">
+                        <div class="tableouter">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>{{'REQUEST ID' | translate}}</th>
+                                        <th>{{'USER NAME' | translate}}</th>
+                                        <th>{{'EMAIL' | translate}}</th>
+                                        <th>{{'WITHDRAW' | translate}} {{'AMOUNT' | translate}}</th>
+                                        <th>{{'DETAILS' | translate}}</th>
+                                        <th ng-if="status == 0 ">{{' REQUEST' | translate}} {{'ACTION' | translate}}
+                                        </th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <tr ng-repeat="wallet in walletList">
+
+                                        <td>{{wallet.id}}</td>
+                                        <td>{{wallet.userDetails[0].firstname}} {{wallet.userDetails[0].lastname}} </td>
+                                        <td>{{wallet.userDetails[0].email}}</td>
+                                        <td>{{wallet.amount}}</td>
+                                        <td>
+                                            <!-- View Button -->
+                                            <button type="button" class="bg-success" ng-click="result=wallet"
+                                                data-toggle="modal" data-target="#a{{wallet.id}}">{{
+                                                'VIEW' | translate}} </button>
+
+                                            <!-- View Modal-->
+
+                                            <div class="modal fade" id="a{{wallet.id}}" tabindex="-1" role="dialog"
+                                                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 style="font-size: 15px;font-weight: 700;"><img
+                                                                    ng-src="{{!new_knockknock_icons ? 'img/v1_images/ic_accounts_active.svg' : 'img/web-pannel-assets/Accounting.svg'}}"
+                                                                    style="width: 30px; height: 100%; margin-right:15px">
+                                                                {{'TRANSCATION' | translate}} {{'DETAILS' | translate}}
+                                                            </h5>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="row" style="border-radius:10px ;">
+                                                                <div class="col-md-12">
+
+                                                                    <table class="table">
+                                                                        <tr>
+                                                                            <th>{{'REQUEST ID' | translate}}</th>
+                                                                            <td>{{wallet.id}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{'USER ID' | translate}}</th>
+                                                                            <td>{{wallet.user_id}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{'USER NAME' | translate}}</th>
+                                                                            <td> {{wallet.userDetails[0].firstname}}
+                                                                                {{wallet.userDetails[0].lastname}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{'MOBILE' | translate}}
+                                                                                {{'NUMBER' | translate}}
+                                                                            </th>
+                                                                            <td>{{wallet.userDetails[0].mobile_no}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{'BANK' | translate}}
+                                                                                {{'NAME' | translate}}
+                                                                            </th>
+                                                                            <td>{{wallet.userDetails[0].bank_name}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{'ACCOUNT' | translate}}
+                                                                                {{'NUMBER' | translate}}
+                                                                            </th>
+                                                                            <td>{{wallet.userDetails[0].account_number}}
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{'IBAN' | translate}}
+                                                                                {{'NUMBER' | translate}}
+                                                                            </th>
+                                                                            <td>{{wallet.userDetails[0].iban_number}}
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{'SWIFT' | translate}}
+                                                                                {{'NUMBER' | translate}}
+                                                                            </th>
+                                                                            <td>{{wallet.userDetails[0].swift_code}}
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{'AMOUNT' | translate}}</th>
+                                                                            <td>{{wallet.amount}}</td>
+                                                                        </tr>
+                                                                        <tr ng-if="!status == 0 ">
+                                                                            <th>{{'MESSAGE' | translate}}</th>
+                                                                            <td>{{wallet.message}}
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style="padding: 0px 10px 10px 0px ;" class="d-flex justify-content-end" >
+                                                            <button  type="button" class="btn-secondary" data-dismiss="modal">Close</button>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- View Modal end  -->
+                                        </td>
+                                        <td ng-if="status == 0 ">
+
+                                            <!-- Approved Reject Button  -->
+                                            <span>
+                                                <button type="button" class="bg-secondary" data-toggle="modal"
+                                                    ng-click="changeView(true)"
+                                                    data-target="#rejectionAddMessage{{wallet.id}}">{{'REJECT'
+                                                    | translate}}</button>
+                                                <button type="submit" class="bg-success" data-toggle="modal"
+                                                    data-target="#ApproveAddMessage{{wallet.id}}">{{'APPROVED'
+                                                    | translate}}</button>
+                                            </span>
+
+                                            <!-- Reject Message Popup Modal Start -->
+                                            <div class="modal" id="rejectionAddMessage{{wallet.id}}">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-body">
+
+                                                            <div class="modhead" style="border: none;">
+                                                                <h3>{{'REASON OF REJECTION' | translate}} </h3>
+
+                                                            </div>
+
+                                                            <div class="modbody" style="border: none;">
+
+                                                                <form role="form" id="addMessageForm"
+                                                                    name="addMessageForm"
+                                                                    ng-submit="addMessage(addMessageForm,wallet.id ,wallet.user_id,wallet.amount)"
+                                                                    novalidate>
+                                                                    <div class="form-group">
+
+                                                                        <textarea type="text" limit-to="60"
+                                                                            name="message"
+                                                                            ng-model="rejectMessage.message"
+                                                                            placeholder="Please enter rejection reason"
+                                                                            required style="height: 125px;"></textarea>
+
+                                                                        <div class="error"
+                                                                            ng-show="addMessageForm.message.$invalid && addMessageForm.$submitted">
+                                                                            <small
+                                                                                ng-show="addMessageForm.message.$error.required">
+                                                                                {{'REASON OF REJECTION' |
+                                                                                translate}}</small>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="submit-plan">
+                                                                        <button type="submit" class="bg-secondary"
+                                                                            ng-click="ConfirmUpdate()">{{'SUBMIT'
+                                                                            | translate}}</button>
+                                                                    </div>
+                                                                </form>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Reject Message Popup Modal End -->
+
+
+                                            <!-- Approve Accept Popup Modal Start -->
+
+
+                                            <div class="modal fade" id="ApproveAddMessage{{wallet.id}}" tabindex="-1"
+                                                role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLabel"
+                                                                style="font-weight: 700;">
+
+                                                                {{'ARE YOU SURE TO APPROVE THIS WITHDRAWAL REQUEST' |
+                                                                translate }}
+                                                            </h5>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="row" style="border-radius:10px ;">
+                                                                <div class="col-md-12">
+                                                                    <!-- {{result}} -->
+                                                                    <table class="table">
+                                                                        <tr>
+                                                                            <th>{{'REQUEST ID' | translate}}</th>
+                                                                            <td>{{wallet.id}}</td>
+                                                                        </tr>
+
+                                                                        <tr>
+                                                                            <th>{{'NAME' | translate}}</th>
+                                                                            <td> {{wallet.userDetails[0].firstname}}
+                                                                                {{wallet.userDetails[0].lastname}}</td>
+                                                                        </tr>
+
+                                                                        <tr>
+                                                                            <th>{{'BANK' | translate}}
+                                                                                {{'NAME' | translate}}
+                                                                            </th>
+                                                                            <td>{{wallet.userDetails[0].bank_name}}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>{{'ACCOUNT' | translate}}
+                                                                                {{'NUMBER' | translate}}
+                                                                            </th>
+                                                                            <td>{{wallet.userDetails[0].account_number}}
+                                                                            </td>
+                                                                        </tr>
+
+
+                                                                        <tr>
+                                                                            <th>{{'AMOUNT' | translate}}</th>
+                                                                            <td>{{wallet.amount}}</td>
+                                                                        </tr>
+
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style="padding: 0px 10px 10px 0px ;" class="d-flex justify-content-end" >
+                                                            <button  type="button" class="btn-secondary mr-2" data-dismiss="modal">Close</button>
+
+                                                            <button type="button" class="bg-success"
+                                                                ng-click="approveTransaction(wallet.id ,wallet.user_id,wallet.amount)"
+                                                              >{{'ACCEPT' |
+                                                                translate}}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Approve Accept Popup Modal End-->
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="no-data-found" ng-if="walletList.length == 0 && dataLoaded">
+                                {{'NO DATA FOUND' | translate}}
+                            </div>
+
+                            <div ng-if="walletList.length > 0 && dataLoaded" class="row pagination">
+                                <ul ng-if="pager.pages && pager.pages.length">
+                                    <li ng-class="{disabled:pager.currentPage === 1}">
+                                        <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                                    </li>
+                                    <li ng-class="{disabled:pager.currentPage === 1}">
+                                        <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                                    </li>
+                                    <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                        <a ng-click="setPage(page)">{{page}}</a>
+                                    </li>
+                                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                        <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                                    </li>
+                                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                        <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <success-modal message="message"></success-modal>
+    </div>
+</div>
+
+<style>
+    .noAction {
+        cursor: pointer;
+        text-decoration: underline;
+        font-weight: 600;
+    }
+
+    .actionTaken {
+        text-decoration: underline;
+        font-weight: 600;
+        color: green;
+    }
+</style>

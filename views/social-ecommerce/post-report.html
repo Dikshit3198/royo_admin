@@ -1,0 +1,135 @@
+<div class="container-fluid back">
+    <button class="btn text-right m-top-10 mt-4" ui-sref="profile.users()">
+        <i class="fa fa-arrow-left mr-2" aria-hidden="true"></i>{{'Back' | translate}}</button>
+</div>
+
+
+<div class="container">
+    <div class="row profile">
+        <div class="col-4">
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'Post Reports' | translate}}</h1>
+                </div>
+                <!-- <div class="col-md-6 col-sm-6">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)">
+                                <button type="button" class="bold create" data-toggle="modal"
+                                    data-target="">{{'View' | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>POST ID</th>
+                                <th>{{'REPORT BY EMAIL' | translate}}</th>
+                                <th>{{'REPORT BY ID' | translate}}</th>
+                                <th>{{'REPORT BY NAME' | translate}}</th>
+                                <th>{{'REPORT TO EMAIL' | translate}}</th>
+                                <th>{{'REPORT TO ID' | translate}}</th>
+                                <th>{{'REPORT TO NAME' | translate}}</th>
+                                <th>{{'HEADING' | translate}}</th>
+                                <th>{{'DESCRIPTION' | translate}}</th>
+                                <th>{{'STATUS' | translate}}</th>
+                                <!-- <th>{{'ACTION'}}</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="report in reports">
+                                <td>{{report.post_id}}</td>
+                                <td>{{report.reported_by_user_email}}</td>
+                                <td>{{report.reported_by_user_id}}</td>
+                                <td>{{report.reported_by_user_name}}</td>
+                                <td>{{report.reported_to_user_email}}</td>
+                                <td>{{report.reported_to_user_id}}</td>
+                                <td>{{report.reported_to_user_name}}</td>
+                                <td>{{report.heading}}</td>
+                                <td>{{report.description}}</td>
+                                <td>
+                                    <span class="deleted" ng-if="report.is_deleted==1">
+                                        {{'Deleted'}}
+                                    </span>
+                                    <span class="delete" ng-if="report.is_deleted==0"
+                                        ng-click="deletePost(report.post_id)">
+                                        {{'Delete Post'}}
+                                    </span>
+                                </td>
+                                <!-- <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="edit dropdown-toggle" data-toggle="dropdown"> <img
+                                                src="img/v1_images/ic_more.svg">
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item"
+                                                ng-if="report.is_deleted==1">{{'POST DELETED' | translate}}</a>
+                                            <a class="dropdown-item" ng-if="report.is_deleted!=1"
+                                                ng-click="deletePost(report.post_id)">{{'DELETE POST' | translate}}</a>
+                                        </div>
+                                    </div>
+                                </td> -->
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="reports.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+
+                    <div ng-if="reports.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<success-modal message="message"></success-modal>
+
+
+
+<style>
+    .delete {
+        cursor: pointer;
+    }
+
+    .deleted {
+        color: red;
+    }
+
+    .delete:hover {
+        text-decoration: underline;
+        font-weight: 600;
+    }
+</style>

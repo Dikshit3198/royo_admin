@@ -1,0 +1,287 @@
+<div class="wrapper">
+    <div class="category">
+
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'QUESTIONS' | translate}}</h1>
+                </div>
+                <div class="col-md-6 col-sm-6" ng-if="permissions('catalogue', 'update') == 1">
+                    <button class="button-primary" type="button" ng-click="addQuestion()"
+                        style="width: 200px">{{'ADD QUESTION' | translate}}</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="suppro m-top-30">
+            <div class="row">
+                <div class="col-md-10">
+
+                    <div class="formsec" ng-if="questions.length">
+
+                        <form role="form" id="questionsForm" name="questionsForm"
+                            ng-submit="submitQuestions(questionsForm)" autocomplete="off" novalidate>
+
+                            <div id="accordion">
+                                <div class="card" style="margin-bottom: 20px;"
+                                    ng-repeat="question_data in questions track by $index"
+                                    ng-init="parentIndex = $index">
+                                    <div class="card-header" id="heading{{parentIndex}}">
+                                        <div class="delete-question" ng-click="removeQuestion($index)">
+                                            <i class="fa fa-trash-o"></i>
+                                        </div>
+                                        <h5 class="mb-0">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse"
+                                                data-target="#{{parentIndex}}" aria-expanded="true"
+                                                aria-controls="collapseOne">
+                                                {{'QUESTION' | translate}} {{parentIndex + 1}}
+                                            </button>
+                                        </h5>
+                                    </div>
+
+                                    <div id="{{parentIndex}}" class="collapse"
+                                        ng-class="parentIndex == active_index ? 'show' : ''"
+                                        aria-labelledby="heading{{parentIndex}}" data-parent="#accordion">
+                                        <div class="card-body">
+
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group select-category">
+                                                        <label>{{'QUESTION TYPE' | translate}}<span
+                                                                class="star">*</span></label>
+                                                        <select name="question_type{{parentIndex}}" class="app"
+                                                            convert-to-number
+                                                            ng-model="question_data.questionTypeSelection" required>
+                                                            <option value="" selected disabled>{{'SELECT' | translate}}
+                                                            </option>
+                                                            <option value="1">{{'SINGLE SELECTION' | translate}}
+                                                            </option>
+                                                            <option value="2">{{'MULTIPLE SELECTION' | translate}}
+                                                            </option>
+                                                        </select>
+                                                        <div class="error"
+                                                            ng-show="questionsForm.question_type{{parentIndex}}.$invalid && questionsForm.$submitted">
+                                                            <small
+                                                                ng-show="questionsForm.question_type{{parentIndex}}.$error.required">{{'PLEASE SELECT' | translate}}
+                                                                Question Type.</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>{{'QUESTION' | translate}}<span
+                                                                class="star">*</span></label>
+                                                        <textarea rows="4" name="question{{parentIndex}}"
+                                                            ng-model="question_data.question" required></textarea>
+                                                        <div class="error"
+                                                            ng-show="questionsForm.question{{parentIndex}}.$invalid && questionsForm.$submitted">
+                                                            <small
+                                                                ng-show="questionsForm.question{{parentIndex}}.$error.required">Please
+                                                                enter question.</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h5 class="options">{{'OPTIONS' | translate}} :</h5>
+                                                </div>
+                                                <div class="col-md-6" style="text-align: right;"
+                                                    ng-if="permissions('catalogue', 'update') == 1">
+                                                    <button class="button-primary" type="button"
+                                                        ng-click="addOption(parentIndex)">+
+                                                        {{'ADD OPTION' | translate}}</button>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6" ng-repeat="option in question_data.optionsList track by $index"
+                                                    ng-init="childIndex = $index">
+
+                                                    <div class="enclose">
+
+                                                        <span class="option-index">{{'OPTION' | translate}}
+                                                            {{$index + 1}}</span>
+                                                        <div class="delete-option"
+                                                            ng-if="(question_data.optionsList).length > 1 && permissions('catalogue', 'delete') == 1"
+                                                            ng-click="deleteOption(parentIndex, childIndex)">
+                                                            <img src="/img/v1_images/ic_cross_delete.svg">
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group persinfo">
+                                                                    <label
+                                                                        style="display: inline-block;">{{'PRICE' | translate}}<span
+                                                                            class="star">*</span></label>
+                                                                    <div class="labelrad" style="float: right;">
+                                                                        <label class="charge-type">
+                                                                            <input type="radio" id="charge{{parentIndex}}{{childIndex}}1"
+                                                                                name="charge{{parentIndex}}{{childIndex}}"
+                                                                                value="1" convert-to-number
+                                                                                data-ng-model="option.valueChargeType"><span></span>{{localisation.flat | translate}}
+                                                                        </label>
+                                                                        <label class="charge-type">
+                                                                            <input type="radio" id="charge{{parentIndex}}{{childIndex}}2"
+                                                                                name="charge{{parentIndex}}{{childIndex}}"
+                                                                                value="2" convert-to-number
+                                                                                data-ng-model="option.valueChargeType"><span></span>%
+                                                                        </label>
+                                                                    </div>
+                                                                    <input name="price{{childIndex}}"
+                                                                        ng-if="option.valueChargeType == 1"
+                                                                        type="number" integers
+                                                                        ng-model="option.flatValue" placeholder="Price"
+                                                                        min="0" required>
+                                                                    <input name="price{{childIndex}}"
+                                                                        ng-if="option.valueChargeType == 2"
+                                                                        type="number" integers
+                                                                        ng-model="option.percentageValue"
+                                                                        placeholder="Price" min="0" required>
+                                                                    <div class="error"
+                                                                        ng-show="questionsForm.price{{childIndex}}.$invalid && questionsForm.$submitted">
+                                                                        <small
+                                                                            ng-show="questionsForm.price{{childIndex}}.$error.required">Please
+                                                                            enter price.</small>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label>{{'OPTION' | translate}}<span
+                                                                            class="star">*</span></label>
+                                                                    <textarea rows="2" name="option{{childIndex}}"
+                                                                        ng-model="option.optionLabel"
+                                                                        required></textarea>
+                                                                    <div class="error"
+                                                                        ng-show="questionsForm.option{{childIndex}}.$invalid && questionsForm.$submitted">
+                                                                        <small
+                                                                            ng-show="questionsForm.option{{childIndex}}.$error.required">Please
+                                                                            enter option.</small>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" ng-if="permissions('catalogue', 'update') == 1 && questions.length"
+                                style="font-size: 18px; height: 45px !important;" class="button-primary">Submit</button>
+
+                        </form>
+
+                    </div>
+
+                    <div class="no-questions" ng-if="!questions.length">
+                        <p>No Questions Found</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .btn-link {
+        font-weight: 500;
+        color: var(--primary-color);
+        font-size: 18px;
+    }
+
+    .btn-link:hover {
+        font-weight: 500 !important;
+        color: #137881 !important;
+    }
+
+    textarea {
+        height: auto !important;
+    }
+
+    .options {
+        font-size: 18px;
+        font-weight: 500;
+        overflow: hidden;
+        color: #000000a1;
+        margin-top: 6px;
+    }
+
+    .charge-type {
+        font-size: 13px !important;
+        color: #000000bd !important;
+        text-transform: capitalize !important;
+    }
+
+    .enclose {
+        border: 1px solid #0000002e;
+        border-radius: 8px;
+        padding: 20px 20px 0px;
+        margin-top: 40px;
+        position: relative;
+    }
+
+    .option-index {
+        color: var(--primary-color);
+        position: absolute;
+        right: 26px;
+        margin-top: -5px;
+        font-weight: 500;
+    }
+
+    .suppro .row {
+        overflow: unset;
+        flex-wrap: wrap;
+    }
+
+    .delete-option {
+        position: absolute;
+        right: -14px;
+        top: -16px;
+        background: #d12424;
+        border-radius: 50%;
+        padding: 1px;
+        border: 1px solid #d12424;
+        cursor: pointer;
+    }
+
+    .delete-question {
+        position: absolute;
+        right: 30px;
+        top: 14px;
+        font-size: 25px;
+        color: #d12424;
+        cursor: pointer;
+    }
+
+    .no-questions {
+        text-align: center;
+        border: 1px solid #00000026;
+        border-radius: 4px;
+        margin: 20px 200px;
+        padding: 40px;
+    }
+
+    .no-questions p {
+        font-size: 18px;
+        color: #0000009e;
+        font-weight: 500;
+    }
+</style>

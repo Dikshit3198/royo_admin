@@ -1,0 +1,140 @@
+<div class="container-fluid back">
+
+</div>
+
+
+<div class="container">
+    <div class="row profile">
+        <div class="col-4">
+
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'Vehicle Categories' | translate}}</h1>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)" ng-if="permissions('promotions', 'create') == 1">
+                                <button type="button" class="bold create" data-toggle="modal"
+                                    ng-click="changeView(true)"
+                                    data-target="#addVehicleCat">{{'ADD VEHICLE CATEGORY' | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{'NAME' | translate}}</th>
+                                <th>{{'TYPE' | translate}}</th>
+                                <th>{{'ACTION' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="vehicle in vehicleCatList">
+                                <td>{{vehicle.id}}</td>
+                                <td>{{vehicle.name || 'N/A'}}</td>
+                                <td>
+                                    <span ng-if="vehicle.type==0">{{'SMALL' || 'N/A'}}</span>
+                                    <span ng-if="vehicle.type==1">{{'MEDIUM' || 'N/A'}}</span>
+                                    <span ng-if="vehicle.type==2">{{'LARGE' || 'N/A'}}</span>
+                                </td>
+                                <td>
+                                    <span class="delete" ng-click="deleteVehicleCategory(vehicle)">
+                                        {{'Delete'}}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="vehicleCatList.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="addVehicleCat">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{'ADD VEHICLE CATEGORY' | translate}}</h3>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <form role="form" id="addVehicleCatForm" name="addVehicleCatForm"
+                        ng-submit="addVehicleCategory(addVehicleCatForm)" novalidate>
+                        <div class="form-group">
+                            <label>{{'NAME' | translate}}<span class="star">*</span></label>
+                            <input type="text" limit-to="60" name="vehicle_name" ng-model="vehicle.name"
+                                placeholder="{{'NAME' | translate}}" required>
+                            <div class="error"
+                                ng-show="addVehicleCatForm.vehicle_name.$invalid && addVehicleCatForm.$submitted">
+                                <small ng-show="addVehicleCatForm.vehicle_name.$error.required">Please enter
+                                    name.</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>{{'TYPE' | translate}}<span class="star">*</span></label>
+                            <select class="app" ng-model="vehicle.type" placeholder="{{'TYPE' | translate}}" name="type"
+                                required>
+                                <option selected disabled value="">{{'SELECT TYPE' | translate}}</option>
+                                <option value="0">{{'SMALL' | translate}}</option>
+                                <option value="1">{{'MEDIUM' | translate}}</option>
+                                <option value="2">{{'LARGE' | translate}}</option>
+                            </select class="app">
+                            <div class="error"
+                                ng-show="addVehicleCatForm.type.$invalid && addVehicleCatForm.$submitted">
+                                <small ng-show="addVehicleCatForm.type.$error.required">Please Select Vehicle
+                                    Type.</small>
+                            </div>
+                        </div>
+                        <div class="submit-plan">
+                            <button type="submit">{{'SUBMIT' | translate}}</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+
+
+
+<style>
+    .delete {
+        cursor: pointer;
+    }
+
+    .delete:hover {
+        text-decoration: underline;
+        font-weight: 600;
+    }
+</style>

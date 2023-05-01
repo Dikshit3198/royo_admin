@@ -1,0 +1,17 @@
+<div class="wrapper">
+  <div class="category">
+    <div class="toptabs">
+      <ul class="nav nav-tabs ">
+        <li class="nav-item"> <a class="nav-link" ng-class="active_profile_tab == 1 ? 'active' : ''"
+            ng-click="active_profile_tab = 1" ui-sref="profile.profileSetup.users">{{'USER PROFILE' | translate}}</a> </li>
+        <li class="nav-item"> <a class="nav-link" ng-class="active_profile_tab == 2 ? 'active' : ''"
+            ng-click="active_profile_tab = 2" ui-sref="profile.profileSetup.admin">{{'ADMIN PROFILE' | translate}}</a> </li>
+        <!-- <li class="nav-item"> <a class="nav-link" ng-class="active_profile_tab == 3 ? 'active' : ''"
+            ng-click="active_profile_tab = 3" ui-sref="profile.profileSetup.users">Admin Profile</a> </li> -->
+      </ul>
+    </div>
+
+    <div ui-view></div>
+
+  </div>
+</div>

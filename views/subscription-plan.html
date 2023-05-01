@@ -1,0 +1,335 @@
+<div class="wrapper promotion_page">
+    <div class="category" ng-if="!is_edit">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{localisation.subscription_plans | translate}}</h1>
+                </div>
+                <div style="text-align: right; " class="col-md-6 col-sm-6">
+                    <a style="color: var(--primary-color); text-transform: capitalize; font-size: 14px; text-decoration: underline;"
+                        href="/#!/subscription/suppliers-purchased-plan">{{localisation.suppliers}} PURCHASED PLANS</a>
+                </div>
+            </div>
+        </div>
+        <div class="secnav m-top-20">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <input type="text" placeholder="{{'Search By Name' | translate}}" name="search" ng-model="search"
+                        style="width: 235px" ng-keypress="searchPlan($event)">
+                </div>
+                <div class="col-lg-8 col-md-12 col-sm-12">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)" ng-if="permissions('promotions', 'create') == 1">
+                                <button type="button" class="bold create" data-toggle="modal"
+                                    ng-click="changeView(true)" data-target="#addPlan">{{'ADD PLAN' |
+                                    translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mainbanner promocod m-top-30">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-6" ng-repeat="plan in planList">
+                    <div class="bx">
+                        <div class="top back text-center"
+                            style="background-image: url(img/v1_images/promo_back.png); color: #fff; border-radius: 4px 4px 0px 0px; cursor: default;">
+                            <i ng-if="permissions('promotions', 'update') == 1" class="fa fa-edit edit-promo"
+                                ng-click="editPlan(plan)"></i>
+                            <i ng-if="permissions('promotions', 'delete') == 1" class="fa fa-trash delete-promo"
+                                ng-click="deletePlan(plan.plan_id)"></i>
+                            <h2 class="bold">{{plan.name}}</h2>
+                            <h5 class="bold">{{'PRICE' | translate}}: {{currency}} {{plan.price}}/{{plan.type}}</h5>
+                            <small style="color: #ffffff">{{'COMMISSION' | translate}} :
+                                {{plan.admin_commission}}%</small>
+                        </div>
+                        <div class="btm">
+                            <div class="description"> {{plan.description}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="no-data-found" ng-if="planList.length == 0 && dataLoaded">
+                {{'NO DATA FOUND' | translate}}
+            </div>
+
+            <div ng-if="planList.length > 0 && dataLoaded" class="row pagination">
+                <ul ng-if="pager.pages && pager.pages.length">
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                    </li>
+                    <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                        <a ng-click="setPage(page)">{{page}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="category" ng-if="is_edit">
+
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'EDIT' | translate}} {{'PLAN' | translate}}: {{plan.name}} </h1>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <a href="" class="backbtn" ng-click="changeView(false)" style="float: right"><img
+                            src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="addban">
+            <div class="persinfo">
+                <form role="form" id="addPlanForm" name="addPlanForm" enctype="multipart/form-data"
+                    ng-submit="addPlan(addPlanForm)" novalidate>
+                    <div class="select-category">
+                        <div style="margin-top: 20px;">
+                            <h1>{{ 'SELECT PERMISSIONS' | translate }}</h1>
+                        </div>
+                        <div style="position: relative;">
+                            <label class="switch">
+                                <span>Block</span>
+                                <div class="togglebtn">
+                                    <input type="checkbox" id="togBtn" ng-checked="{{plan.is_block}}"
+                                        ng-click="changePlanStatus(plan.is_block)">
+                                    <div class="slider round"> <span class="on"></span> <span class="off"></span> </div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="persinfo" style="margin: 20px 0px 10px;">
+                            <div class="row suppro">
+                                <div class="col-lg-4 col-md-6 col-sm-6" style="margin: 12px 0px"
+                                    ng-repeat="permission in permissionList track by $index">
+                                    <div class="box checkbox">
+                                        <div class="top">
+                                            <h2 ng-if="['catalogue', 'product'].includes((permission.permission_name).toLowerCase())"
+                                                class="bold">
+                                                {{localisation[(permission.permission_name).toLowerCase()]}}</h2>
+                                            <h2 ng-if="!['catalogue', 'product'].includes((permission.permission_name).toLowerCase())"
+                                                class="bold">{{permission.permission_name}}</h2>
+                                            <label style="margin-right: 13px">Select All
+                                                <input type="checkbox" name="mark_all{{$index}}"
+                                                    ng-checked="permission.checked"
+                                                    ng-click="selectAllPermission(permission)">
+                                                <span style="margin-left: 8px; top: 2px;"></span></label>
+                                        </div>
+                                        <ul class="items" style="height: 220px; margin-top: 10px;">
+                                            <li style="padding: 9px 27px 9px 15px;"
+                                                ng-repeat="permissionType in permission.permissionTypes track by $index">
+                                                {{permissionType.name || permissionType.permission_type_name}}
+                                                <label><input type="checkbox"
+                                                        name="{{permissionType.name || permissionType.permission_type_name}}"
+                                                        ng-click="selectPermissionType(permissionType)"
+                                                        ng-checked="permissionType.is_active">
+                                                    <span></span></label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="button m-top-20">
+                            <button type="button" data-toggle="modal" ng-click="openEditPlan()" data-target="#addPlan"
+                                class="bold nxt">{{'EDIT DETAILS' | translate}}</button>
+                            <button type="submit" class="bold nxt">{{'DONE' | translate}}</button>
+                        </div>
+                </form>
+                <div class="button m-top-20">
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="addPlan">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{is_edit_details?'EDIT PLAN':'ADD PLAN' | translate}}</h3>
+                    <button ng-click= "onClose()" type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <form role="form" id="addPlanForm" name="addPlanForm" ng-submit="addPlan(addPlanForm)" novalidate>
+
+                        <div class="form-group">
+                            <label>{{'PLAN' | translate}} Name<span class="star">*</span></label>
+                            <input type="text" limit-to="60" name="plan_name" ng-model="plan.name"
+                                placeholder="{{'PLAN' | translate}} Name" required>
+                            <div class="error" ng-show="addPlanForm.plan_name.$invalid && addPlanForm.$submitted">
+                                <small ng-show="addPlanForm.plan_name.$error.required">Please enter name.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{'PLAN TYPE' | translate}}<span class="star">*</span></label>
+                            <select class="app" ng-model="plan.type" placeholder="{{'PLAN TYPE' | translate}}"
+                                name="type" required>
+                                <option selected disabled value="">{{'SELECT PLAN TYPE' | translate}}</option>
+                                <option value="WEEK">{{'WEEKLY' | translate}}</option>
+                                <option value="MONTH">{{'MONTHLY' | translate}}</option>
+                                <option value="YEAR">{{'YEARLY' | translate}}</option>
+                            </select class="app">
+                            <div class="error" ng-show="addPlanForm.type.$invalid && addPlanForm.$submitted">
+                                <small ng-show="addPlanForm.type.$error.required">Please Select Plan.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-if="!is_edit_details">
+                            <label>{{'PRICE' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="price" production-qty limit-to="4" ng-model="plan.price"
+                                placeholder="{{'PRICE' | translate}}" required>
+                            <div class="error" ng-show="addPlanForm.price.$invalid && addPlanForm.$submitted">
+                                <small ng-show="addPlanForm.price.$error.required">Please enter
+                                    price.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{'ADMIN COMMISSION' | translate}}(%)<span class="star"></span></label>
+                            <input type="text" name="commission " production-qty limit-to="4"
+                                ng-model="plan.commission " placeholder="{{'ADMIN COMMISSION' | translate}}">
+                            <div class="error" ng-show="addPlanForm.commission.$invalid && addPlanForm.$submitted">
+                                <small ng-show="addPlanForm.commission.$error.required">Please enter commission.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{'IS ON PRIORITY' | translate}}<span class="star">*</span></label>
+                            <select class="app" ng-model="plan.is_on_top_priority"
+                                placeholder="{{'PLAN PRIORITY' | translate}}" name="is_on_top_priority" required>
+                                <option selected disabled value="">{{'PLAN PRIORITY' | translate}}</option>
+                                <option value="0">{{'NO' | translate}}</option>
+                                <option value="1">{{'YES' | translate}}</option>
+                            </select class="app">
+                            <div class="error"
+                                ng-show="addPlanForm.is_on_top_priority.$invalid && addPlanForm.$submitted">
+                                <small ng-show="addPlanForm.is_on_top_priority.$error.required">Please Select Plan
+                                    Priority.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{'BANNER LIMIT' | translate}}</label>
+                            <input type="number" name="banner_limit" ng-model="plan.banner_limit"
+                                placeholder="{{'BANNER LIMIT' | translate}}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{'PLAN' | translate}} Description<span class="star">*</span></label>
+                            <textarea type="text" limit-to="60" name="plan_description" ng-model="plan.description"
+                                placeholder="{{'PLAN' | translate}} Description" required></textarea>
+                            <div class="error"
+                                ng-show="addPlanForm.plan_description.$invalid && addPlanForm.$submitted">
+                                <small ng-show="addPlanForm.plan_description.$error.required">Please enter
+                                    description.</small>
+                            </div>
+                        </div>
+                        <div class="submit-plan">
+                            <button type="submit">{{'SUBMIT' | translate}}</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .delete-promo {
+        position: absolute;
+        right: 12px;
+        top: 10px;
+        font-size: 21px;
+        z-index: 9;
+        cursor: pointer;
+    }
+
+    .edit-promo {
+        position: absolute;
+        left: 12px;
+        top: 10px;
+        font-size: 22px;
+        z-index: 9;
+        cursor: pointer;
+    }
+
+    .calender {
+        bottom: 10px;
+        position: absolute;
+        left: 10px;
+    }
+
+    .promo {
+        margin-bottom: 20px;
+    }
+
+    .promo h1 {
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: #00000099;
+        font-size: 16px;
+    }
+
+    .promo .box p {
+        border: 1px solid #0000001f;
+        border-radius: 4px;
+        padding: 4px 8px;
+        color: #494949;
+    }
+
+    .switch {
+        position: absolute;
+        right: 45px;
+        width: 28px;
+        height: 16px;
+        top: -15px;
+    }
+
+    label.switch span {
+        position: absolute;
+        right: 50px;
+        font-weight: 600;
+    }
+
+    .star {
+        position: relative;
+    }
+
+    .bx {
+        transition: 0.7s;
+        box-shadow: 3px 4px 3px 1px #c4c4c4 !important;
+    }
+
+    .bx:hover {
+        box-shadow: 3px 4px 3px 1px var(--primary-color) !important;
+    }
+</style>

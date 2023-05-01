@@ -1,0 +1,88 @@
+<div class="container-fluid back">
+
+</div>
+
+
+<div class="container">
+    <div class="row profile">
+        <div class="col-4">
+
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{localisation.agents | translate}}&nbsp;{{'In Outs'}}</h1>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="topfil" ng-if="agents.length">
+                        <ul style="float: left;margin-top: 2em;">
+                            <li>
+                                <label style="position: absolute; top: -22px"><b
+                                        style="color: #000 !important">{{localisation.agents | translate}}</b></label>
+                                <select style="width: 150px" ng-model="agentId" ng-change="onSelectAgent(agentId)"
+                                    name="agentId" class="app" convert-to-number>
+                                    <option ng-repeat="agent in agents track by $index" value="{{agent.id}}">
+                                        {{agent.name}}
+                                    </option>
+                                </select>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{'DATE' | translate}}</th>
+                                <th>{{'TIME' | translate}}</th>
+                                <th>{{'IN/OUT' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="time in timingList">
+                                <td>{{time.id}}</td>
+                                <td>{{time.created_at | date: 'dd-MM-yyyy' : 'UTC'}}</td>
+                                <td>{{time.created_at | date: 'hh:mm a' : 'UTC'}}</td>
+                                <td>{{time.is_in?'IN':'OUT'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="timingList.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+                    <div ng-if="timingList.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

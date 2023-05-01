@@ -1,0 +1,182 @@
+<div class="wrapper order_page">
+    <div class="category">
+
+        <div class="secnav">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <button type="button" class="btn add-table" ng-click="addModal()">+ {{'Add Table' | translate}}</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF; padding-bottom: 20px;">
+            <div class="tab-content">
+                <div class="tab-pane  active" id="menu1">
+                    <div class="dashpenord ">
+
+                        <div class="tableouter">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>{{'ID' | translate}}</th>
+                                        <th>{{'TABLE NO.' | translate}}</th>
+                                        <th>{{'TABLE NAME' | translate}}</th>
+                                        <th>{{'SEATING CAPACITY' | translate}}</th>
+                                        <th style="width: 210px;">{{'ACTION' | translate}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="table in tables">
+                                        <td>{{table.id}}</td>
+                                        <td>{{table.table_number}}</td>
+                                        <td>{{table.table_name}}</td>
+                                        <td>{{table.seating_capacity}}</td>
+                                        <td>
+                                            <button type="button" class="bg-success"
+                                                ng-click="deleteTable(table)">{{'DELETE' | translate}}</button>
+                                            <button type="button" class="bg-success"
+                                                ng-click="editTable(table)">{{'EDIT' | translate}}</button>
+                                            <button type="button" class="bg-success" ng-if="!table.qr_code"
+                                                ng-click="generateQRCode(table)">{{'Generate QR Code' | translate}}</button>
+                                            <button type="button" class="bg-success" ng-if="table.qr_code"
+                                                ng-click="openQR(table)">{{'View QR Code' | translate}}</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="no-data-found" ng-if="tables.length == 0 && dataLoaded">
+                            {{'NO DATA FOUND' | translate}}
+                        </div>
+
+                        <div ng-if="tables.length > 0 && dataLoaded" class="row pagination">
+                            <ul ng-if="pager.pages && pager.pages.length">
+                                <li ng-class="{disabled:pager.currentPage === 1}">
+                                    <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                                </li>
+                                <li ng-class="{disabled:pager.currentPage === 1}">
+                                    <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                                </li>
+                                <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                    <a ng-click="setPage(page)">{{page}}</a>
+                                </li>
+                                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                    <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                                </li>
+                                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                    <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="modal" id="addTable">
+    <div class="modal-dialog" style="max-width: 420px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead" style="padding: 24px 30px">
+                    <h2 class="bold" style="display: inline-block;">{{(is_edit ? 'EDIT' : 'ADD NEW') | translate}}
+                        {{'TABLE' | translate}}</h2>
+                    <button type="button" class="close" id="closeBrandModal" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <form role="form" id="addTableForm" name="addTableForm" ng-submit="submitAdd(addTableForm)" novalidate>
+
+                    <div class="modbody" style="padding: 20px 30px">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="bold">{{'TABLE NAME' | translate}}<p class="star">*</p></label>
+                                    <input type="text" ng-model="table.table_name" name="name"
+                                        placeholder="{{'TABLE NAME' | translate}}" required>
+                                    <div class="error" ng-show="addTableForm.name.$invalid && addTableForm.$submitted">
+                                        <small ng-show="addTableForm.name.$error.required">{{'Please Enter Name' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="bold">{{'TABLE NUMBER' | translate}}<p class="star">*</p></label>
+                                    <input type="text" ng-model="table.table_number" name="table_number" production-qty limit-to="4"
+                                        placeholder="{{'TABLE NUMBER' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addTableForm.table_number.$invalid && addTableForm.$submitted">
+                                        <small ng-show="addTableForm.table_number.$error.required">{{'Please Enter Number' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="bold">{{'SEATING CAPACITY' | translate}}<p class="star">*</p></label>
+                                    <input type="text" ng-model="table.seating_capacity" name="seating_capacity" production-qty limit-to="4"
+                                        placeholder="{{'SEATING CAPACITY' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addTableForm.seating_capacity.$invalid && addTableForm.$submitted">
+                                        <small ng-show="addTableForm.seating_capacity.$error.required">{{'Please Enter Seating Capacity' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modfooter">
+                        <button type="submit" class="bg-success bold">{{'SAVE' | translate}}</button>
+                    </div>
+            </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="qrCode">
+    <div class="modal-dialog" style="max-width: 300px;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>{{'QR Code' | translate}}</h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="receipt" style="text-align: center;">
+                        <img src="{{selectedQRCode}}">
+                    </div>
+                </div>
+
+                <div class="modfooter">
+                    <button type="button" class="bg-success bold" ng-click="downloadQRCode()">{{'DOWNLOAD' | translate}}</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .add-table {
+        float: none !important;
+        color: #ffffff;
+        background-color: var(--primary-color);
+    }
+
+    a:not([href]):not([tabindex]) {
+        color: inherit !important;
+        text-decoration: none;
+    }
+</style>

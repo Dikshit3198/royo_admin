@@ -1,0 +1,1394 @@
+<div class="wrapper order_page">
+    <div class="category">
+        <div class="toptabs">
+            <ul class="nav nav-tabs ">
+                <li class="nav-item" ng-if="is_auto_confirmation == 0"> <a class="nav-link"
+                        ng-class="tabStatus == 0 ? 'active' : ''" ng-click="changeTab(0)">{{0 | status | translate}}</a>
+                </li>
+                <li class="nav-item" ng-if="enable_service_gift_card_by_user == 1"> <a
+                        class="nav-link" ng-class="tabStatus == 0 ? 'active' : ''" ng-click="changeTab(0)">{{ 'Pending Gift Cards' | translate}}</a> </li>
+                <li class="nav-item"> <a class="nav-link" ng-class="tabStatus == 1 ? 'active' : ''"
+                        ng-click="changeTab(1)">{{'ACTIVE' | translate}}</a></li>
+                <li class="nav-item"> <a class="nav-link" ng-class="tabStatus == 2 ? 'active' : ''"
+                        ng-click="changeTab(2)">{{'HISTORY' | translate}}</a> </li>
+                <li ng-if="(prescription == 1 || product_prescription == 1) && profile!='SHIPPING'" class="nav-item"> <a
+                        class="nav-link" ng-class="tabStatus == 3 ? 'active' : ''"
+                        ng-click="changeTab(3)">{{localisation.order |
+                        translate}} {{'REQUEST' | translate}}</a> </li>
+                <li ng-if="is_return_request == 1 && profile!='SHIPPING'" class="nav-item"> <a class="nav-link"
+                        ng-class="tabStatus == 4 ? 'active' : ''" ng-click="changeTab(4)">{{'RETURN REQUESTS' |
+                        translate}}</a> </li>
+                <li ng-if="is_table_booking == 1 && profile!='SHIPPING'" class="nav-item"> <a class="nav-link"
+                        ng-class="tabStatus == 5 ? 'active' : ''" ng-click="changeTab(5)">{{'TABLE BOOKING REQUESTS' |
+                        translate}}</a> </li>
+            </ul>
+        </div>
+
+        <div class="secnav">
+            <div class="row" ng-if="[0,1,2].includes(tabStatus)">
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <input type="text" class="search-order" placeholder="{{'SEARCH' | translate}}" ng-model="search"
+                        ng-keypress="searchOrder($event, search)">
+                </div>
+
+                <div class="col-lg-9 col-md-12 col-sm-12">
+                    <div class="topfil">
+                        <ul>
+                            <li style="position: relative">
+                                <label style="position: absolute; top: -22px; left: 3px">{{'DATE' | translate}}</label>
+                                <input style="width: 220px" type="text" id="datepicker_order"
+                                    placeholder="{{'DATE' | translate}}" readonly>
+                                <span style="position: absolute; right: 13px; top: 3px" class="inputtag"><img
+                                        src="/img/v1_images/calendar.svg"></span>
+                            </li>
+                            <li style="position: relative">
+                                <label style="position: absolute; top: -22px">{{localisation.payment_type |
+                                    translate}}</label>
+                                <select style="width: 150px" ng-model="payment_method" name="payment_method"
+                                    ng-change="changePaymentMethod(payment_method)" convert-to-number>
+                                    <!-- <option value="" selected disabled>{{'SELECT' | translate}}</option> -->
+                                    <option value="2">{{'ALL' | translate}}</option>
+                                    <option value="0">{{localisation.cash | translate}} {{'ON DELIVERY' | translate}}
+                                    </option>
+                                    <option value="1">{{'ONLINE' | translate}}</option>
+                                </select>
+                            </li>
+
+
+                            <li style="position: relative" ng-if="tabStatus==2">
+                                <label style="position: absolute; top: -22px">{{localisation.rate_title |
+                                    translate}}</label>
+                                <select style="width: 150px" ng-model="filter_by" name="filter_by"
+                                    ng-change="filterRatingWise(filter_by)" convert-to-number>
+                                    <!-- <option value="" selected disabled>{{'SELECT' | translate}}</option> -->
+                                    <option value="0">{{localisation.rating_filter_no | translate}}</option>
+                                    <option value="1">{{localisation.rating_filter_yes | translate}}</option>
+                                </select>
+                            </li>
+
+                            <li style="position: relative" ng-if="tabStatus==1">
+                                <label style="position: absolute; top: -22px">{{localisation.assign_by |
+                                    translate}}</label>
+                                <select style="width: 150px" ng-model="filter_by" name="filter_by"
+                                    ng-change="filterByAssign(filter_by)" convert-to-number>
+                                    <!-- <option value="" selected disabled>{{'SELECT' | translate}}</option> -->
+                                    <option value="0">{{'ALL' | translate}}</option>
+                                    <option value="1">{{'YES' | translate}}</option>
+                                    <option value="3">{{'NO' | translate}}</option>
+                                </select>
+                            </li>
+
+                            <li style="position: relative" ng-if="[1,2].includes(tabStatus)">
+                                <label style="position: absolute; top: -22px">{{'STATUS' | translate}}</label>
+                                <select style="width: 145px" ng-if="tabStatus == 1" ng-model="orderStatus"
+                                    ng-change="changeOrderStatus(orderStatus)" convert-to-number>
+                                    <option value="0" selected>{{'ALL' | translate}}</option>
+                                    <option value="1">{{1 | status | translate}}</option>
+                                    <option value="11" ng-if="hide_processing_step == 0">{{11 | status | translate}}
+                                    </option>
+                                    <option
+                                        ng-if="((app_type == 1 && is_pickup != 0) || [2,8].includes(app_type)) && hide_process_complete_status ==0"
+                                        value="10">{{10 | status | translate}}</option>
+                                    <option ng-if="app_type != 1 || (app_type == 1 && is_pickup != 1)" value="3">
+                                        {{3 | status | translate}}</option>
+                                </select>
+
+                                <select ng-if="tabStatus == 2" ng-model="orderStatus"
+                                    ng-change="changeOrderStatus(orderStatus)" convert-to-number>
+                                    <option value="0" selected>{{'ALL' | translate}}</option>
+                                    <option value="5">{{5 | status | translate}}</option>
+                                    <option value="2">{{2 | status | translate}}</option>
+                                    <option value="8">{{8 | status : false : -1 : null : 0 : 0 :
+                                        (enable_cancel_order_after_confirm ? 3 : 0) | translate}}</option>
+                                </select>
+                            </li>
+                            <!-- <li>
+                                <button type="button" class="simple"><img
+                                        src="img/v1_images/ic_import.svg">Import</button>
+                            </li> -->
+                            <li>
+                                <button type="button" class="simple" ng-click="getOrderData()"><img
+                                        src="img/v1_images/ic_rotate.svg">{{'REFRESH' | translate}}</button>
+                            </li>
+                            <!-- <li>
+                                <button type="button" class="simple"><img src="img/v1_images/ic_sortby.svg">Sort
+                                    By</button>
+                            </li> -->
+                            <li ng-class="is_grid ? 'active' : ''">
+                                <a ng-click="changeView(true)"><img src="img/v1_images/ic_grid_selected.svg"></a>
+                            </li>
+                            <li ng-class="!is_grid ? 'active' : ''">
+                                <a ng-click="changeView(false)"><img src="img/v1_images/ic_list_selected.svg"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-if="[4].includes(tabStatus)">
+                <div class="offset-lg-3 col-lg-9 col-md-12 col-sm-12">
+                    <div class="topfil">
+                        <ul>
+                            <li style="position: relative">
+                                <label style="position: absolute; top: -22px; left: 3px">{{'DATE' | translate}}</label>
+                                <input style="width: 220px" type="text" id="datepicker_order"
+                                    placeholder="{{'DATE' | translate}}" readonly>
+                                <span style="position: absolute; right: 13px; top: 3px" class="inputtag"><img
+                                        src="/img/v1_images/calendar.svg"></span>
+                            </li>
+                            <li>
+                                <button type="button" class="simple" ng-click="returnRequests()"><img
+                                        src="img/v1_images/ic_rotate.svg">{{'REFRESH' | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF; padding-bottom: 20px;">
+            <div class="tab-content">
+                <div class="tab-pane  active" id="menu1">
+                    <div class="dashpenord ">
+
+                        <div ng-if="[0,1,2].includes(tabStatus)">
+
+                            <div class="grid" ng-if="is_grid">
+                                <div class="row">
+                                    <div class="col-md-6 order-page-item" ng-repeat="order in orders">
+                                        <div class="box m-top-15">
+                                            <div class="top" style="padding: 0;">
+                                                <h6><span style="text-transform: uppercase">
+                                                        <!-- {{localisation.order_id |translate}} -->
+                                                        {{'BOOKING ID'|translate}}
+                                                    </span>
+                                                    - <small style="color: var(--primary-color)"
+                                                        class="bold">{{enable_custom_orderId == 1 ?
+                                                        ((!!order.custom_order_id) ? order.custom_order_id : order.id) :
+                                                        order.id}}</small>
+                                                    <a class="order-det"
+                                                        ui-sref="orders.ordersDescription({order_id:order.id, tab: tabStatus})">
+                                                        {{'VIEW DETAILS' | translate}}</a>
+                                                </h6>
+                                                <h6><span style="text-transform: uppercase">
+                                                        <!-- {{localisation.order_date | translate}} -->
+                                                        {{'BOOKING PLACED ON'|translate}}
+                                                        - <small class="bold">{{order.created_on | date: 'dd/MM/yyyy
+                                                            hh:mm a' : 'UTC'}}</small>
+                                                        <!-- - <small class="bold">{{order.created_on | date: 'MMM d, y .
+                                                            hh:mm a' : 'UTC'}}</small> -->
+                                                </h6>
+                                            </div>
+                                            <div class="mid payment-statement" style="margin: 18px 0px 8px">
+                                                <p>
+                                                    <img ng-if="hide_product_description_image==0"
+                                                        ng-repeat="product in order.product"
+                                                        src="{{compressImage(product.product_image, '80x80')}}">
+                                                    <span style="width: 280px; margin-bottom: -6px" class="ellipsis"
+                                                        data-toggle="tooltip"
+                                                        title="{{order.product[0].product_name}} x {{order.product[0].product_quantity}}">{{order.product[0].product_name}}
+                                                        x
+                                                        {{order.product[0].product_quantity}}<b
+                                                            style="margin-left: 0px; cursor: pointer;"
+                                                            ng-click="selectProduct(order)" data-toggle="modal"
+                                                            data-target="#prodcuts"
+                                                            ng-if="order.product.length > 1">&nbsp;
+                                                            {{'MORE' | translate}}</b></span>
+                                                </p>
+                                                <!-- order.status -->
+                                                <p ng-if="[0,1].includes(tabStatus) && profile === 'ADMIN'">
+                                                    {{showTimer(order.created_on, order.id)}}</p>
+
+                                                <p ng-if="[2].includes(tabStatus) && [5,6].includes(order.status)">
+                                                    {{'Total spent time' | translate}} :
+                                                    {{totalDeliveyTime(order)}}</p>
+                                                <p style="margin-top: 30px;">{{localisation.payment | translate}} -
+                                                    <b ng-if="order.payment_type == 1">{{'Online' | translate}}
+                                                        {{order.payment_source ? '(' + order.payment_source + ')' :
+                                                        ''}}</b>
+                                                    <b ng-if="order.payment_type == 0">{{order.self_pickup == 1 ?
+                                                        (localisation.cash_on_pickup | translate) : (localisation.cash |
+                                                        translate)}}</b>
+                                                    <b ng-if="order.payment_type == 2">Free</b>
+                                                    <b ng-if="order.payment_type == 3">Pending</b>
+                                                    <b ng-if="order.payment_type == 4">{{'Wallet' | translate}}</b>
+                                                    <b ng-if="order.payment_type == 5">OutSide the Platform</b>
+
+                                                    <!-- <b>, status: {{order.payment_status == 1 ? 'Paid' : 'Pending'}}</b> -->
+                                                </p>
+
+                                            </div>
+                                            <p style="font-size: 12px;"
+                                                ng-if="enable_service_pickup == 0 && hide_delivery_options == 0">
+                                                {{'Delivery Mode' | translate}} -
+                                                <b ng-if="order.self_pickup == 1">{{'SELF PICKUP' | translate}}</b>
+                                                <b ng-if="order.self_pickup == 0">{{'DELIVERY' | translate}}</b>
+                                                <b ng-if="order.self_pickup == 3">{{'DINE IN' | translate}}</b>
+                                            </p>
+
+                                            <p style="font-size: 12px;"
+                                                ng-if="enable_service_pickup == 1 && hide_delivery_options == 0">
+                                                {{'Delivery Mode' | translate}} -
+                                                <b ng-if="order.service_pickup == 0">{{'HOME' | translate}}</b>
+                                                <b ng-if="order.service_pickup == 1">{{'SALOON' | translate}}</b>
+                                            </p>
+
+                                            <div class="address ellipsis"
+                                                ng-if="enable_service_gift_card_by_user == 1 && order.is_gift">
+                                                <p style="font-size: 12px;color: var(--primary-color) !important;"> <b>{{'GIFT CARD' | translate}} </b></p>
+                                            </div>
+
+                                            <div class="address ellipsis"
+                                                ng-if="profile === 'ADMIN' && is_single_vendor == 0">
+                                                <p data-toggle="tooltip"
+                                                    title="{{order.branch_name + ', ' + order.branch_address}}"
+                                                    style="font-size: 12px">{{order.branch_name}},
+                                                    {{order.branch_address}}
+                                                </p>
+                                            </div>
+                                            <div class="btm order-status">
+                                                <p>{{localisation.order_price | translate}} -
+                                                    {{currency}} {{(order.net_amount).toFixed(price_decimal_length) |
+                                                    number : addon_decimal_value}}
+                                                </p>
+                                                <br>
+                                                <p style="text-transform: capitalize;"
+                                                    ng-if="client_code == 'grooming_0398'">
+                                                    {{localisation.order_date | translate}} -
+                                                    {{order.created_on | date: 'medium' : 'UTC'}}</p>
+                                                <br ng-if="client_code == 'grooming_0398'">
+                                                <p style="text-transform: capitalize;"
+                                                    ng-if="![5,6].includes(order.status) && client_code == 'grooming_0398'">
+                                                    {{localisation.order_expected_date | translate}} -
+                                                    {{order.schedule_date | date: 'medium' : 'UTC'}}</p>
+                                                <!-- <p style="text-transform: capitalize;" ng-if="[5,6].includes(order.status)">{{localisation.delivery_date | translate}} - {{order.delivered_on |  date: 'medium' : 'UTC'}}</p> -->
+                                                <br
+                                                    ng-if="![5,6].includes(order.status) && client_code == 'grooming_0398'">
+                                                <p ng-if="profile == 'ADMIN' || hide_user_info_supplier == 0"
+                                                    style="font-weight: 500; font-size: 12px">
+                                                    {{('CONTACT ' + localisation.user) | translate}}
+                                                    -
+                                                    {{order.mobile_no}}</p><br>
+
+                                                <br>
+                                                <p style="cursor: pointer;" ng-if="order.is_payment_confirmed === 0 &&
+                                                 (order.payment_source === 'PipolPay' || order.payment_source === 'zelle') && [0].includes(order.status)
+                                                  && (order.is_payment_confirmed === 0 ? profile == 'ADMIN' : '')"
+                                                    ng-click="openDialogForConfirmation(order)">
+                                                    {{ 'PENDING PAYMENT CONFIRMATION' | translate}} </p><br>
+                                                <div class="btns"
+                                                    ng-if="profile == 'ADMIN' || profile == 'SUPPLIER' || (profile == 'BRANCH' && is_head_branch == 1)">
+                                                    <div ng-if="tabStatus == 1 && is_pickup != 1" class="agent">
+                                                        <span
+                                                            ng-if="order.agent_id && order.self_pickup == 0 && hide_agent_module == 0">
+                                                            <p style="font-size: 12px" data-toggle="tooltip"
+                                                                title="{{order.agent_name}}">
+                                                                {{(order.agent_name).slice(0,15)}}</p><small
+                                                                ng-if="order.agent_name.length > 15">...</small>
+                                                        </span>
+                                                        <div class="dropdown"
+                                                            ng-if="hide_agent_module == 0 && ((is_own_delivery && !order_desc.is_own_delivery) || !is_own_delivery) &&  (app_type != 2 || (app_type == 2 && ecom_agent_module == 1) || (app_type == 8 && hideAgentList == 1)) && disable_agent_manual_assignment == 0 && 
+                                                            (profile == 'ADMIN' || (['SUPPLIER', 'BRANCH'].includes(profile) && disable_agent_manual_assignment_supplier == 0 && hide_agent_supplier == 0)) && order.self_pickup == 0">
+                                                            <button class="bg-success" data-toggle="modal"
+                                                                style="margin-left: 0px;"
+                                                                ng-disabled="permissions('orders', 'update') == 0"
+                                                                ng-class="permissions('orders', 'update') == 0 ? 'disabled' : ''"
+                                                                data-target="#assign_agent_to_order"
+                                                                ng-click="openDriverAssign(order)">{{order.agent_id ?
+                                                                ('REASSIGN' | translate) : ('ASSIGN' |
+                                                                translate)}}</button>
+                                                        </div>
+                                                        <span ng-if="order.self_pickup == 1">
+                                                            {{(order.type == 8 ? 'Appointment' : 'SELF PICKUP') |
+                                                            translate}}
+                                                        </span>
+                                                    </div>
+
+                                                    <span
+                                                        ng-if="tabStatus == 0 && permissions('orders', 'update') == 1 && !['zelle','cashapp'].includes(order.payment_source) && (profile == 'ADMIN' ||  disable_supplier_order_accept == 0) && (disable_admin_order_status == 0 || profile == 'SUPPLIER')">
+                                                        <button type="button" class="bg-secondary"
+                                                            ng-click="ConfirmUpdate(2, order)">{{'REJECT' |
+                                                            translate}}</button>
+
+                                                        <button type="button" class="bg-success"
+                                                            ng-click="ConfirmUpdate(1, order)">{{(app_type == 2 ?
+                                                            'APPROVE' : 'CONFIRM') | translate}}</button>
+                                                    </span>
+
+                                                    <span
+                                                        ng-if="tabStatus == 0 && permissions('orders', 'update') == 1 && ['zelle','cashapp'].includes(order.payment_source) && profile == 'ADMIN'">
+                                                        <button type="button" class="bg-success"
+                                                            ng-click="viewPaymentreceipt(order)">View
+                                                            {{localisation.payment | translate}}
+                                                            Receipt</button>
+                                                    </span>
+
+                                                    <span
+                                                        ng-if="tabStatus == 1 && table_book_mac_theme && !!order.is_dine_in">
+                                                        <button type="button" class="bg-success"
+                                                            ng-click="tableSelection(order)">{{order.table_id ?
+                                                            ('REASSIGN' | translate) : ('ASSIGN' | translate)}}
+                                                            Table</button>
+                                                    </span>
+
+                                                    <span
+                                                        ng-if="tabStatus == 1 && permissions('orders', 'update') == 1 && (disable_admin_order_status == 0 || profile == 'SUPPLIER')">
+                                                        <select
+                                                            ng-change="updateOrderStatus(order.status, order.id, order.self_pickup)"
+                                                            ng-model="order.status" convert-to-number>
+                                                            <option value="1" ng-selected="order.status == 1"
+                                                                ng-disabled="[10,3,5,11].includes(order.status)">
+                                                                {{1 | status : false : order.type :
+                                                                order.category[0].terminology : order.is_dine_in |
+                                                                translate}}
+                                                            </option>
+                                                            <option value="11" ng-selected="order.status == 11"
+                                                                ng-if="!(((enable_product_appointment && order.self_pickup == 1) || order.service_pickup == 1) && order.type == 8) && !(table_book_mac_theme && order.is_dine_in == 1) && hide_processing_step == 0"
+                                                                ng-disabled="[10,3,5].includes(order.status) && !(order.self_pickup == 1 && [3,4].includes(order.status))">
+                                                                {{11 | status : false : order.type :
+                                                                order.category[0].terminology : order.is_dine_in |
+                                                                translate}}
+                                                            </option>
+                                                            <option value="10" ng-selected="order.status == 10"
+                                                                ng-if="!(((enable_product_appointment && order.self_pickup == 1) || order.service_pickup == 1) && order.type == 8) && !(table_book_mac_theme && order.is_dine_in == 1) && !(hide_process_complete_status && order.is_dine_in == 0)"
+                                                                ng-disabled="[3,5].includes(order.status) && !(order.self_pickup == 1 && [3,4].includes(order.status))">
+                                                                {{10 | status : false : order.type :
+                                                                order.category[0].terminology : order.is_dine_in |
+                                                                translate}}
+                                                            </option>
+
+                                                            <!-- <option value="10" ng-selected="order.status == 10"
+                                                                ng-if="(enable_product_appointment && order.type == 8 && order.self_pickup == 1)"
+                                                                ng-disabled="[3,5].includes(order.status) && !(order.self_pickup == 1 && [3,4].includes(order.status))">
+                                                                Provider Available
+                                                            </option> -->
+                                                            <option
+                                                                ng-if="order.self_pickup == 0 && (profile == 'ADMIN' || hide_ontheway_delivered_supplier == 0) && client_code != 'peeparound_0104'"
+                                                                value="3" ng-selected="order.status == 3"
+                                                                ng-disabled="order.status == 5 || (profile == 'SUPPLIER' && disable_supplier_delivery_status == 1) || (profile == 'ADMIN' && disable_ontheway_delivered_admin == 1)">
+                                                                {{3 | status : false : order.type :
+                                                                order.category[0].terminology : order.is_dine_in |
+                                                                translate}}
+                                                            </option>
+
+
+                                                            <option style="color: var(--gray);  pointer-events: none;"
+                                                                ng-if="order.self_pickup == 1" value="3"
+                                                                ng-selected="order.status == 3">
+                                                                {{('USER ' + (3 | status : false : order.type :
+                                                                order.category[0].terminology : order.is_dine_in)) |
+                                                                translate}}
+                                                            </option>
+                                                            <option style="color: var(--gray); pointer-events: none;"
+                                                                ng-click="void"
+                                                                ng-if="order.self_pickup == 1 && !(enable_product_appointment && order.type == 8 && order.self_pickup == 1)"
+                                                                value="4" ng-selected="order.status == 4">
+                                                                {{('USER ' + (4 | status : false : order.type :
+                                                                order.category[0].terminology : order.is_dine_in)) |
+                                                                translate}}
+                                                            </option>
+                                                            <option
+                                                                ng-if="profile == 'ADMIN' || (disable_supplier_delivery_status == 0 && hide_ontheway_delivered_supplier == 0)"
+                                                                value="5" ng-selected="order.status == 5"
+                                                                ng-style="order.is_dine_in && order.dine_in_deliver_disable ? {'color': 'var(--gray)', 'pointer-events': 'none'} : ''"
+                                                                ng-disabled="(order.is_dine_in && order.dine_in_deliver_disable) || (profile == 'ADMIN' && disable_ontheway_delivered_admin == 1) || (order.self_pickup && disable_pickup_status_set_by_admin == 1)">
+                                                                {{(order.self_pickup == 1 ? (order.type == 8 ? 'Ended' :
+                                                                'Picked') : (5 | status : false : order.type :
+                                                                order.category[0].terminology : order.is_dine_in)) |
+                                                                translate}}
+                                                            </option>
+
+                                                            <!-- && order.dine_in_deliver_disable == 0 -->
+                                                            <option
+                                                                ng-if="enable_cancel_order_after_confirm == 1 || (enable_cancel_reservation_after_confirm == 1 && order.is_dine_in)"
+                                                                value="8" ng-selected="order.status == 8"
+                                                                ng-style="order.is_dine_in && order.dine_in_deliver_disable ? {'color': 'var(--gray)', 'pointer-events': 'none'} : ''"
+                                                                ng-disabled="[10,3,5].includes(order.status) || (enable_cancel_reservation_after_confirm == 0 && order.is_dine_in && order.dine_in_deliver_disable)">
+                                                                {{8 | status : false : order.type :
+                                                                order.category[0].terminology : order.is_dine_in : 0 : 3
+                                                                | translate}}
+                                                            </option>
+                                                        </select>
+                                                    </span>
+
+                                                    <span
+                                                        ng-if="tabStatus == 1 && disable_admin_order_status == 1 && profile == 'ADMIN'">
+                                                        <p>
+                                                            {{order.status | status : false : order.type :
+                                                            order.category[0].terminology : order.is_dine_in |
+                                                            translate}}
+                                                        </p>
+                                                    </span>
+
+                                                    <span ng-if="tabStatus == 2">
+                                                        <p ng-if="order.status == 5">
+                                                            {{(order.self_pickup == 1 ? (order.type == 8 ? 'Ended' :
+                                                            'Picked') :
+                                                            (5 | status : false : order.type :
+                                                            order.category[0].terminology : order.is_dine_in)) |
+                                                            translate}}
+                                                        </p>
+                                                        <p ng-if="order.status == 2">
+                                                            {{2 | status : false : order.type :
+                                                            order.category[0].terminology : order.is_dine_in |
+                                                            translate}}
+                                                        </p>
+                                                        <p ng-if="order.status == 8">
+                                                            {{8 | status : false : order.type :
+                                                            order.category[0].terminology : order.is_dine_in : 0 :
+                                                            order.order_cancel_by | translate}}
+                                                        </p>
+                                                        <p ng-if="order.status == 6">
+                                                            {{6 | status : false : order.type :
+                                                            order.category[0].terminology : order.is_dine_in |
+                                                            translate}}
+                                                        </p>
+                                                    </span>
+
+                                                    <span ng-if="tabStatus == 2 && order.status == 2">
+                                                        <br>
+                                                        <small style="cursor: pointer; color: var(--primary-color);"
+                                                            data-toggle="modal" data-target="#rejection_reason"
+                                                            ng-click="viewRejectionReason(order, order.order_cancel_by)">{{'Rejection
+                                                            Reason' | translate}}</small>
+                                                    </span>
+
+                                                    <span
+                                                        ng-if="tabStatus == 2 && (order.status == 8 && !!order.order_cancel_by)">
+                                                        <br>
+                                                        <small style="cursor: pointer; color: var(--primary-color);"
+                                                            data-toggle="modal" data-target="#rejection_reason"
+                                                            ng-click="viewRejectionReason(order, order.order_cancel_by)">{{'Cancellation
+                                                            Reason' | translate}}</small>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tableouter" ng-if="!is_grid">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>{{localisation.order | translate}} {{'ID'|translate}}</th>
+                                            <th>{{localisation.products | translate}}</th>
+                                            <th>{{'CONTACT' | translate}} {{localisation.user | translate}}</th>
+                                            <th>{{localisation.user | translate}} {{'ADDRESS' | translate}}</th>
+                                            <th ng-if="profile === 'ADMIN' && is_single_vendor == 0">
+                                                {{localisation.supplier | translate}}</th>
+                                            <th ng-if="is_multiple_branch == 1">{{'BRANCH' | translate}}</th>
+                                            <th>{{localisation.order | translate}} {{'DATE' | translate}}</th>
+                                            <th>{{(tabStatus == 2 ? ((5 | status) + ' ON') : 'EXPECTED ON') |
+                                                translate}}
+                                            </th>
+                                            <th>{{'DELIVERY MODE' | translate}}</th>
+                                            <th>{{localisation.order_price | translate}}</th>
+                                            <th>{{'SUBTOTAL' | translate}}</th>
+                                            <th ng-if="is_dine_in == 0">{{'DELIVERY CHARGES' | translate}}</th>
+                                            <th ng-if="no_tax_in_category == 0">{{localisation.tax | translate}}</th>
+                                            <th ng-if="user_service_fee == 1">{{localisation.supplier_service_fee |
+                                                translate}}</th>
+                                            <th>{{localisation.payment | translate}}</th>
+                                            <th>{{'DETAIL' | translate}}</th>
+                                            <th ng-if="permissions('orders', 'update') == 1">{{'STATUS' | translate}}
+                                            </th>
+                                            <th ng-if="hide_agent_module == 0 && (app_type != 2 || (app_type == 2 && ecom_agent_module == 1)) && disable_agent_manual_assignment == 0 && 
+                                            (profile == 'ADMIN' || (profile == 'SUPPLIER' && disable_agent_manual_assignment_supplier == 0 && hide_agent_supplier == 0)) && tabStatus == 1 && is_pickup != 1"
+                                                style="width: 110px">
+                                                {{localisation.agent | translate}}</th>
+                                            <th ng-if="tabStatus == 1 && table_book_mac_theme && !!order.is_dine_in">
+                                                {{'Table' | translate}}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="order in orders">
+                                            <td>
+                                                <span class="order-id"
+                                                    ui-sref="orders.ordersDescription({order_id:order.id, tab: tabStatus})">{{order.id}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <li ng-repeat="product in order.product"
+                                                    style="border: 1px solid #00000024; margin: 5px 0px; border-radius: 8px;">
+                                                    {{product.product_name}} x
+                                                    {{product.product_quantity}}</li>
+                                            </td>
+                                            <td>{{order.mobile_no}}</td>
+                                            <td>{{order.customer_address ? order.customer_address : NA}}</td>
+                                            <td ng-if="profile === 'ADMIN' && is_single_vendor == 0">{{order.supplier}}
+                                            </td>
+                                            <td ng-if="is_multiple_branch == 1">{{order.branch_name}},
+                                                {{order.branch_address}}</td>
+                                            <td>
+                                                <span>
+                                                    {{order.created_on | date: 'MMM d, y' : 'UTC'}}
+                                                </span>
+                                                <span>
+                                                    {{order.created_on | date: 'hh:mm a' : 'UTC'}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {{order.schedule_date | date: 'MMM d, y' : 'UTC'}}
+                                                </span>
+                                                <span>
+                                                    {{order.schedule_date | date: 'hh:mm a' : 'UTC'}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span ng-if="enable_service_pickup == 0">
+                                                    <span ng-if="order.self_pickup == 1">
+                                                        {{(order.type == 8 ? 'Appointment' : 'SELF PICKUP') |
+                                                        translate}}
+                                                    </span>
+                                                    <span ng-if="order.self_pickup == 0" translate>Delivery</span>
+                                                    <span ng-if="order.self_pickup == 3" translate>Dine In</span>
+
+                                                </span>
+                                                <span ng-if="enable_service_pickup == 1">
+                                                    <span ng-if="order.service_pickup == 0">{{'HOME' |
+                                                        translate}}</span>
+                                                    <span ng-if="order.service_pickup == 1">{{'SALOON' |
+                                                        translate}}</span>
+                                                </span>
+                                            </td>
+                                            <td>{{currency}}{{(order.net_amount).toFixed(price_decimal_length)}}
+                                            </td>
+                                            <td>{{currency}}{{(order.total_order_price).toFixed(price_decimal_length)}}
+                                            </td>
+                                            <td ng-if="is_dine_in == 0">
+                                                {{currency}}{{(order.delivery_charges).toFixed(price_decimal_length)}}
+                                            </td>
+                                            <td ng-if="no_tax_in_category == 0">
+                                                {{currency}}{{(order.handling_admin).toFixed(price_decimal_length)}}
+                                            </td>
+                                            <td ng-if="user_service_fee == 1">
+                                                {{currency}}{{(order.user_service_charge).toFixed(price_decimal_length)}}
+                                            </td>
+                                            <td>
+                                                <span ng-if="order.payment_type == 1">{{'Online' | translate}}
+                                                    ({{order.payment_source}})</span>
+                                                <span ng-if="order.payment_type == 0">{{order.self_pickup == 1 ?
+                                                    (localisation.cash_on_pickup | translate) : (localisation.cash |
+                                                    translate)}}</span>
+                                                <span ng-if="order.payment_type == 2" translate>Free</span>
+                                                <span ng-if="order.payment_type == 3" translate>Pending</span>
+                                                <span ng-if="order.payment_type == 5" translate>OutSide the
+                                                    Platform</span>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="bg-success"
+                                                    ui-sref="orders.ordersDescription({order_id:order.id, tab: tabStatus})">{{'VIEW'
+                                                    | translate}}</button>
+                                            </td>
+                                            <td ng-if="permissions('orders', 'update') == 1">
+                                                <span
+                                                    ng-if="tabStatus == 0 && !['zelle','cashapp'].includes(order.payment_source) && (profile == 'ADMIN' ||  disable_supplier_order_accept == 0) && (disable_admin_order_status == 0 || profile == 'SUPPLIER')">
+                                                    <button type="button" class="bg-secondary"
+                                                        ng-click="ConfirmUpdate(2, order)">{{'REJECT' |
+                                                        translate}}</button>
+                                                    <button type="button" class="bg-success"
+                                                        ng-click="ConfirmUpdate(1, order)">{{(app_type == 2 ? 'APPROVE'
+                                                        : 'CONFIRM') | translate}}</button>
+                                                </span>
+
+                                                <span
+                                                    ng-if="tabStatus == 0 && ['zelle','cashapp'].includes(order.payment_source) && profile == 'ADMIN'">
+                                                    <button type="button" class="bg-success"
+                                                        ng-click="viewPaymentreceipt(order)">View Receipt</button>
+                                                </span>
+                                                <span
+                                                    ng-if="tabStatus == 1 && permissions('orders', 'update') == 1 && (disable_admin_order_status == 0 || profile == 'SUPPLIER')">
+                                                    <select
+                                                        ng-change="updateOrderStatus(order.status, order.id, order.self_pickup)"
+                                                        ng-model="order.status" convert-to-number>
+                                                        <option value="1" ng-selected="order.status == 1"
+                                                            ng-disabled="[10,3,5,11].includes(order.status)">
+                                                            {{1 | status : false : order.type :
+                                                            order.category[0].terminology : order.is_dine_in |
+                                                            translate}}
+                                                        </option>
+                                                        <option value="11"
+                                                            ng-if="!(((enable_product_appointment && order.self_pickup == 1) || order.service_pickup == 1) && order.type == 8) && !(table_book_mac_theme && order.is_dine_in == 1) && hide_processing_step == 0"
+                                                            ng-selected="order.status == 11"
+                                                            ng-disabled="[10,3,5].includes(order.status) && !(order.self_pickup == 1 && [3,4].includes(order.status))">
+                                                            {{11 | status : false : order.type :
+                                                            order.category[0].terminology : order.is_dine_in |
+                                                            translate}}
+                                                        </option>
+
+                                                        <option value="10" ng-selected="order.status == 10"
+                                                            ng-if="!(((enable_product_appointment && order.self_pickup == 1) || order.service_pickup == 1) && order.type == 8) && !(table_book_mac_theme && order.is_dine_in == 1) && !(hide_process_complete_status && order.is_dine_in == 0)"
+                                                            ng-disabled="[3,5].includes(order.status) && !(order.self_pickup == 1 && [3,4].includes(order.status))">
+                                                            {{10 | status : false : order.type :
+                                                            order.category[0].terminology : order.is_dine_in |
+                                                            translate}}
+                                                        </option>
+                                                        <option value="10" ng-selected="order.status == 10"
+                                                            ng-if="(enable_product_appointment && order.type == 8 && order.self_pickup == 1)"
+                                                            ng-disabled="[3,5].includes(order.status) && !(order.self_pickup == 1 && [3,4].includes(order.status))">
+                                                            Provider Available
+                                                        </option>
+
+                                                        <option
+                                                            ng-if="order.self_pickup == 0 && (profile == 'ADMIN' || hide_ontheway_delivered_supplier == 0) && client_code != 'peeparound_0104'"
+                                                            value="3" ng-selected="order.status == 3"
+                                                            ng-disabled="order.status == 5 || (profile == 'SUPPLIER' && disable_supplier_delivery_status == 1) || (profile == 'ADMIN' && disable_ontheway_delivered_admin == 1)">
+                                                            {{3 | status : false : order.type :
+                                                            order.category[0].terminology : order.is_dine_in |
+                                                            translate}}
+                                                        </option>
+                                                        <option style="color: var(--gray);  pointer-events: none;"
+                                                            ng-if="order.self_pickup == 1" value="3"
+                                                            ng-selected="order.status == 3">
+                                                            {{('USER' + (3 | status : false : order.type :
+                                                            order.category[0].terminology : order.is_dine_in)) |
+                                                            translate}}
+                                                        </option>
+                                                        <option style="color: var(--gray); pointer-events: none;"
+                                                            ng-click="void"
+                                                            ng-if="order.self_pickup == 1 && !(enable_product_appointment && order.type == 8 && order.self_pickup == 1)"
+                                                            value="4" ng-selected="order.status == 4">{{}}
+                                                            {{('USER' + (4 | status : false : order.type :
+                                                            order.category[0].terminology : order.is_dine_in)) |
+                                                            translate}}
+                                                        </option>
+                                                        <option
+                                                            ng-if="profile == 'ADMIN' || (disable_supplier_delivery_status == 0 && hide_ontheway_delivered_supplier == 0)"
+                                                            value="5" ng-selected="order.status == 5"
+                                                            ng-style="order.is_dine_in && order.dine_in_deliver_disable ? {'color': 'var(--gray)', 'pointer-events': 'none'} : ''"
+                                                            ng-disabled="(order.is_dine_in && order.dine_in_deliver_disable) || (profile == 'ADMIN' && disable_ontheway_delivered_admin == 1) || (order.self_pickup && disable_pickup_status_set_by_admin == 1)">
+                                                            {{(order.self_pickup == 1 ? (order.type == 8 ? 'Ended' :
+                                                            'Picked') :
+                                                            (5 | status : false : order.type :
+                                                            order.category[0].terminology : order.is_dine_in)) |
+                                                            translate}}
+                                                        </option>
+                                                        <option ng-if="enable_cancel_order_after_confirm == 1" value="8"
+                                                            ng-selected="order.status == 8"
+                                                            ng-style="order.is_dine_in && order.dine_in_deliver_disable ? {'color': 'var(--gray)', 'pointer-events': 'none'} : ''"
+                                                            ng-disabled="(order.is_dine_in && order.dine_in_deliver_disable)">
+                                                            {{8 | status : false : order.type :
+                                                            order.category[0].terminology : order.is_dine_in : 0 : 3 |
+                                                            translate}}
+                                                        </option>
+                                                    </select>
+                                                </span>
+
+                                                <span
+                                                    ng-if="tabStatus == 1 && disable_admin_order_status == 1 && profile == 'ADMIN'">
+                                                    <p>
+                                                        {{order.status | status : false : order.type :
+                                                        order.category[0].terminology : order.is_dine_in | translate}}
+                                                    </p>
+                                                </span>
+
+                                                <span ng-if="tabStatus == 2">
+                                                    <p ng-if="order.status == 5">
+                                                        {{(order.self_pickup == 1 ? (order.type == 8 ? 'Ended' :
+                                                        'Picked') :
+                                                        (5 | status : false : order.type :
+                                                        order.category[0].terminology : order.is_dine_in)) | translate}}
+                                                    </p>
+                                                    <p ng-if="order.status == 2">
+                                                        {{2 | status : false : order.type :
+                                                        order.category[0].terminology : order.is_dine_in | translate}}
+                                                    </p>
+                                                    <p ng-if="order.status == 8">
+                                                        {{8 | status : false : order.type :
+                                                        order.category[0].terminology : order.is_dine_in : 0 :
+                                                        order.order_cancel_by | translate}}
+                                                    </p>
+                                                    <p ng-if="order.status == 6">
+                                                        {{6 | status : false : order.type :
+                                                        order.category[0].terminology : order.is_dine_in | translate}}
+                                                    </p>
+                                                </span>
+
+                                                <span ng-if="tabStatus == 2 && order.status == 2">
+                                                    <br>
+                                                    <small style="cursor: pointer; color: var(--primary-color);"
+                                                        data-toggle="modal" data-target="#rejection_reason"
+                                                        ng-click="viewRejectionReason(order, 0)">{{'Rejection Reason' |
+                                                        translate}}</small>
+                                                </span>
+
+                                                <span
+                                                    ng-if="tabStatus == 2 && (order.status == 8 && !!order.order_cancel_by)">
+                                                    <br>
+                                                    <small style="cursor: pointer; color: var(--primary-color);"
+                                                        data-toggle="modal" data-target="#rejection_reason"
+                                                        ng-click="viewRejectionReason(order, order.order_cancel_by)">{{'Cancellation
+                                                        Reason' | translate}}</small>
+                                                </span>
+
+                                            </td>
+                                            <td style="width: 110px"
+                                                ng-if="hide_agent_module == 0 && (app_type != 2 || (app_type == 2 && ecom_agent_module == 1)) && disable_agent_manual_assignment == 0 && 
+                                                (profile == 'ADMIN' || (profile == 'SUPPLIER' && disable_agent_manual_assignment_supplier == 0 && hide_agent_supplier == 0)) && tabStatus == 1 && is_pickup != 1">
+                                                <div ng-if="order.self_pickup == 0">
+                                                    <span ng-if="order.agent_id">{{order.agent_name}}</span>
+                                                    <div class="dropdown"
+                                                        ng-if="(app_type == 8 && hideAgentList == 1) || app_type != 8">
+                                                        <button class="bg-success" data-toggle="modal"
+                                                            ng-disabled="permissions('orders', 'update') == 0"
+                                                            ng-class="permissions('orders', 'update') == 0 ? 'disabled' : ''"
+                                                            data-target="#assign_agent_to_order"
+                                                            ng-click="openDriverAssign(order)">{{order.agent_id ?
+                                                            ('REASSIGN' | translate) : ('ASSIGN' | translate)}}</button>
+                                                    </div>
+                                                </div>
+                                                <span ng-if="order.self_pickup == 1">
+                                                    {{(order.type == 8 ? 'Appointment' : 'SELF PICKUP') | translate}}
+                                                </span>
+                                            </td>
+
+                                            <td ng-if="tabStatus == 1 && table_book_mac_theme && !!order.is_dine_in">
+                                                <button type="button" class="bg-success"
+                                                    ng-click="tableSelection(order)"
+                                                    ng-disabled="permissions('orders', 'update') == 0"
+                                                    ng-class="permissions('orders', 'update') == 0 ? 'disabled' : ''">Assign
+                                                    Table</button>
+
+                                                <!-- ng-click="openDriverAssign(order)">{{order.agent_id ? ('REASSIGN' | translate) : ('ASSIGN' | translate)}}</button> -->
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                        <div ng-if="tabStatus == 3">
+                            <div class="tableouter">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>{{'REQUEST ID' | translate}}</th>
+                                            <th>{{'PRESCRIPTION' | translate}}</th>
+                                            <th>{{'PRESCRIPTION IMAGE' | translate}}</th>
+                                            <th>{{'STATUS' | translate}}</th>
+                                            <th>{{'ACTION' | translate}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="order in orderRequests">
+                                            <td>
+                                                {{order.id}}
+                                            </td>
+                                            <td>{{order.prescription ? order.prescription : 'NA'}}</td>
+                                            <td>
+                                                <img style="cursor: pointer;"
+                                                    ng-click="openPrescription(order.prescription_image)"
+                                                    src="{{compressImage(order.prescription_image, '80x80')}}">
+                                            </td>
+                                            <td>{{orderRequestStatus[order.status]}}</td>
+                                            <td>
+                                                <span ng-if="order.created_by == 0 && order.status == 0">
+                                                    <button ng-click="orderCreation(order)" type="button"
+                                                        class="bg-success">Create
+                                                        {{localisation.order | translate}}</button>
+                                                    <button type="button" class="bg-secondary"
+                                                        ng-click="rejectOrder(order)">Reject request</button>
+                                                </span>
+                                                <span
+                                                    ng-if="order.created_by != 0 && order.status == 1">{{localisation.order
+                                                    | translate}}
+                                                    Created</span>
+                                                <span ng-if="[2,3].includes(order.status)">NA</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div ng-if="tabStatus == 4">
+                            <div class="tableouter">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>{{localisation.order | translate}} {{'ID' | translate}}</th>
+                                            <th>{{localisation.product | translate}} {{'IMAGE' | translate}}</th>
+                                            <th>{{localisation.product | translate}} {{'NAME' | translate}}</th>
+                                            <th>{{'QUANTITY' | translate}}</th>
+                                            <th>{{'PRICE' | translate}}</th>
+                                            <th ng-if="enable_refund_request_category">{{'RETURN CATEGORY' | translate}}
+                                            </th>
+                                            <th>{{'RETURN REASON' | translate}}</th>
+                                            <th>{{'STATUS' | translate}}</th>
+                                            <th ng-if="profile === 'ADMIN' && enable_return_claim_request == 1">{{'CLAIM
+                                                STATUS' | translate}}</th>
+                                            <th
+                                                ng-if="((is_own_delivery && !order_desc.is_own_delivery) || !is_own_delivery) && (profile === 'ADMIN' || (hide_agent_supplier == 0 && profile === 'SUPPLIER'))">
+                                                {{localisation.agent | translate}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="product in orderRequests">
+                                            <td>
+                                                <span class="order-id"
+                                                    ui-sref="orders.ordersDescription({order_id:product.order_id})">{{product.order_id}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <img src="{{compressImage(product.image_path, '80x80')}}">
+                                            </td>
+                                            <td>{{product.product_name}}</td>
+                                            <td>{{product.quantity}}</td>
+                                            <td>{{currency}}{{product.price}}</td>
+                                            <td ng-if="enable_refund_request_category">{{product.return_category}}</td>
+                                            <td>{{product.reasons ? product.reasons : 'NA'}}</td>
+                                            <td>
+                                                <select ng-change="returnStatusUpdate(product)"
+                                                    ng-model="product.status" convert-to-number>
+                                                    <option value="0" ng-selected="product.status == 0"
+                                                        ng-disabled="[1,2,3].includes(product.status)">
+                                                        {{0 | return_status | translate}}
+                                                    </option>
+                                                    <option value="1" ng-selected="product.status == 1"
+                                                        ng-disabled="[2,3].includes(product.status)">
+                                                        {{1 | return_status | translate}}
+                                                    </option>
+                                                    <option value="2" ng-selected="product.status == 2"
+                                                        ng-disabled="[3].includes(product.status)">
+                                                        {{2 | return_status | translate}}
+                                                    </option>
+                                                    <option value="3" ng-selected="product.status == 3">
+                                                        {{3 | return_status | translate}}
+                                                    </option>
+                                                </select>
+                                            </td>
+                                            <td ng-if="profile === 'ADMIN' && enable_return_claim_request == 1">
+                                                <select ng-change="returnClaimStatusUpdate(product)"
+                                                    ng-model="product.is_claimed" convert-to-number
+                                                    ng-disabled="product.is_claimed == 1">
+                                                    <option value="0">
+                                                        Not Claimed
+                                                    </option>
+                                                    <option value="1">
+                                                        Claimed
+                                                    </option>
+                                                </select>
+                                            </td>
+                                            <td
+                                                ng-if="((is_own_delivery && !order_desc.is_own_delivery) || !is_own_delivery) && (profile === 'ADMIN' || (hide_agent_supplier == 0 && profile === 'SUPPLIER'))">
+                                                <span ng-if="product.agent.length">{{product.agent[0].name}}</span>
+                                                <div class="dropdown" ng-if="!product.agent.length">
+                                                    <button class="bg-success" data-toggle="modal"
+                                                        data-target="#assign_agent_to_order"
+                                                        ng-click="openDriverAssign(product)">{{'ASSIGN' |
+                                                        translate}}</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div ng-if="tabStatus == 5">
+                            <div class="tableouter">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>{{'BOOKING ID' | translate}}</th>
+                                            <th>{{'TABLE NAME' | translate}}</th>
+                                            <th>{{'TABLE NUMBER' | translate}}</th>
+                                            <th>{{'SEATING CAPACITY' | translate}}</th>
+                                            <th ng-if="table_book_mac_theme">{{'Number Of Guests' | translate}}</th>
+                                            <th>{{'BRANCH NAME' | translate}}</th>
+                                            <th>{{'USER NAME' | translate}}</th>
+                                            <th>{{'EMAIL' | translate}}</th>
+                                            <th>{{'BOOKING DATE' | translate}}</th>
+                                            <th>{{'ACTION' | translate}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="booking in orders">
+                                            <td>{{booking.id}}</td>
+                                            <td>{{booking.table_name}}</td>
+                                            <td>{{booking.table_number}}</td>
+                                            <td>{{booking.table_seating_capacity}}</td>
+                                            <td ng-if="table_book_mac_theme">{{booking.seating_capacity}}</td>
+                                            <td>{{booking.branch_name}}</td>
+                                            <td>{{booking.user_name}}</td>
+                                            <td>{{booking.user_email}}</td>
+                                            <td>
+                                                <span>
+                                                    {{booking.schedule_date | date: 'MMM d, y' : 'UTC'}}
+                                                </span>
+                                                <span>
+                                                    {{booking.schedule_date | date: 'hh:mm a' : 'UTC'}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span ng-if="booking.status == 1">{{'CONFIRMED' | translate}}</span>
+                                                <span ng-if="booking.status == 2">{{'REJECTED' | translate}}</span>
+                                                <span ng-if="booking.status == 3">{{'COMPLETED' | translate}}</span>
+                                                <button ng-if="booking.status == 0" type="button" class="bg-secondary"
+                                                    ng-click="rejectBooking(booking)">{{'REJECT' | translate}}</button>
+                                                <button ng-if="booking.status == 0" type="button" class="bg-success"
+                                                    ng-click="tableBookingStatus(booking, 1, 'confirm')">{{(app_type ==
+                                                    2 ? 'APPROVE' : 'CONFIRM') | translate}}</button>
+                                                <button ng-if="booking.status == 1" type="button" class="bg-secondary"
+                                                    ng-click="tableBookingStatus(booking, 3, 'complete')">{{'COMPLETED'
+                                                    | translate}}</button>
+                                                <button type="button" class="bg-success"
+                                                    ng-click="tableSelection(booking)">{{'Update Table' |
+                                                    translate}}</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                        <div class="no-data-found"
+                            ng-if="((orders.length == 0 && [0,1,2,5].includes(tabStatus)) || (orderRequests.length == 0 && [3,4].includes(tabStatus))) && dataLoaded">
+                            {{'NO DATA FOUND' | translate}}
+                        </div>
+
+                        <div class="paging-count" ng-if="orders.length > 0 && dataLoaded && count">
+                            <h3>{{'TOTAL' | translate}} {{localisation.orders | translate}} : {{count}}</h3>
+                        </div>
+
+                        <div ng-if="orders.length > 0 && dataLoaded" class="row pagination">
+                            <ul ng-if="pager.pages && pager.pages.length">
+                                <li ng-class="{disabled:pager.currentPage === 1}">
+                                    <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                                </li>
+                                <li ng-class="{disabled:pager.currentPage === 1}">
+                                    <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                                </li>
+                                <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                    <a ng-click="setPage(page)">{{page}}</a>
+                                </li>
+                                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                    <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                                </li>
+                                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                    <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="assign_agent_to_order">
+    <div class="modal-dialog" style="max-width: 360px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead" style="padding: 20px 30px">
+                    <h2 class="bold" style="display: inline-block;">{{'CHOOSE' | translate}}
+                        {{localisation.agent | translate}}</h2>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="padding: 20px 30px">
+                    <div ng-if="is_vehicle_category_enable == '1'" class="select-category mb-3">
+                        <select class="app" ng-model="selected_agent_vehicle_cat"
+                            ng-change="onSelectAgentVehicle(selected_agent_vehicle_cat)">
+                            <option value="">{{'SELECT VEHICLE' | translate}}</option>
+                            <option ng-repeat="vehicle in vehicleCatList" value="{{vehicle.id}}">{{vehicle.name}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div isteven-multi-select input-model="agents" output-model="selected_agent" max-height="250px"
+                        button-label="name total_active_orders" item-label="assigned_id name total_active_orders"
+                        tick-property="ticked" selection-mode="single">
+                    </div>
+                </div>
+
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button ng-if="tabStatus == 1" type="submit" class="bg-success bold" ng-click="assignAgent()"
+                        ng-class="selected_agent == '' ? 'disabled' : ''" ng-disabled="selected_agent == ''">{{'ASSIGN'
+                        | translate}}</button>
+
+                    <button ng-if="tabStatus == 1 && show_agent_slots==1" type="submit" class="bg-success bold"
+                        ng-click="getAgentOrderList(selected_agent)" ng-class="selected_agent == '' ? 'disabled' : ''"
+                        ng-disabled="selected_agent == ''">{{'DETAILS'
+                        | translate}}</button>
+
+                    <button ng-if="tabStatus == 4" type="submit" class="bg-success bold"
+                        ng-click="assignAgentForRetunOrder()" ng-class="selected_agent == '' ? 'disabled' : ''"
+                        ng-disabled="selected_agent == ''">{{'ASSIGN' | translate}}</button>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="check_slots">
+    <div class="modal-dialog" style="max-width: 50%">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead" style="padding: 20px 30px">
+                    <h2 class="bold" style="display: inline-block;">{{'SLOTS' | translate}}
+                    </h2>
+                    <button type="button" class="close" data-dismiss="modal" ng-click="hideSlotModal()"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="padding: 20px 30px;max-height:80vh;overflow-y:scroll">
+                    <div class="select-category mb-3">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Address</th>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="slot in slots">
+                                        <td>{{slot.product}}</td>
+                                        <td>{{slot.date}}</td>
+                                        <td>{{slot.start_time}}</td>
+                                        <td>{{slot.end_time}}</td>
+                                        <td>{{slot.address_line_1}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="prodcuts">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>{{localisation.products | translate}}</h3>
+                </div>
+
+                <div class="modbody list-products" style="border: none;">
+                    <ul>
+                        <li ng-repeat="product in selectedProducts">
+                            <img src="{{compressImage(product.product_image, '100x100')}}">
+                            <p>{{product.product_name}} x {{product.product_quantity}}</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="prep_time">
+    <div class="modal-dialog" style="max-width: 500px;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>{{localisation.order_confirmation | translate}}</h3>
+                </div>
+
+                <div class="modbody list-products" style="border: none;">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group timeslot" style="padding: 0px; border: none;">
+                                <label>{{localisation.preparation_time | translate}}</label>
+                                <div class="input" clock-picker data-autoclose="true">
+                                    <input autocomplete="off" type="text" ng-model="prep_time" id="preptime" readonly>
+                                    <span class="inputtag"><img src="img/v1_images/timeg.png"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7 modfooter" style="background-color: #ffffff;">
+                            <button type="submit" class="bg-success bold" style="width: 250px; margin-top: 10px;"
+                                ng-click="orderConfirmation(1, selected_order, 1)">{{'ADD' | translate}}
+                                {{localisation.preparation_time | translate}}</button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button type="submit" class="bg-success bold" style="width: 250px;"
+                        ng-click="orderConfirmation(1, selected_order, 0)">{{'Continue With Default' |
+                        translate}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="zelle_confirmation">
+    <div class="modal-dialog" style="max-width: 550px;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>Order Confirmation</h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="receipt">
+                        <img src="{{compressImage(zelle_order.zelle_receipt_url, '300x200', true)}}">
+                    </div>
+                </div>
+
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button type="button" class="bg-secondary" data-dismiss="modal"
+                        ng-click="ConfirmUpdate(2, zelle_order)">{{'REJECT' | translate}}</button>
+                    <button type="button" class="bg-success" data-dismiss="modal"
+                        ng-click="ConfirmUpdate(1, zelle_order)">{{(app_type == 2 ? 'APPROVE' : 'CONFIRM') |
+                        translate}}</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="payment_confirmation">
+    <div class="modal-dialog" style="max-width: 550px;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>Payment Confirmation</h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="receipt">
+                        <img src="{{compressImage(zelle_order.zelle_receipt_url, '300x200', true)}}">
+                    </div>
+                </div>
+
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button type="button" class="bg-secondary" data-dismiss="modal"
+                        ng-click="ConfirmPayment(0, zelle_order)">{{'REJECT' | translate}}</button>
+                    <button type="button" class="bg-success" data-dismiss="modal"
+                        ng-click="ConfirmPayment(1, zelle_order)">{{(app_type == 2 ? 'APPROVE' : 'CONFIRM') |
+                        translate}}</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="order_prescription">
+    <div class="modal-dialog" style="max-width: 550px;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>{{localisation.prescription_value | translate}}</h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="receipt">
+                        <img src="{{compressImage(prescription_image, '300x200', true)}}">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="order_rejection">
+    <div class="modal-dialog" style="max-width: 550px;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>{{(localisation.order + ' ' + (order_cancel_type == 0 ? 'Rejection' : 'Cancellation') + '
+                        Reason') | translate}}</h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <textarea style="width: 100%;" class="form-control" placeholder="{{'Reason' | translate}}" rows="4"
+                        ng-model="rejection_reason"></textarea>
+                </div>
+
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button type="button" class="bg-success" data-dismiss="modal"
+                        ng-click="tabStatus == 0 ? orderConfirmation(2, selected_order, 0) : (tabStatus == 5 ? tableBookingStatus(selected_table_booking, 2, 'reject') : submitRejection())">{{'Submit'
+                        | translate}}</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="updateTable">
+    <div class="modal-dialog" style="max-width: 320px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead" style="padding: 20px 30px">
+                    <h2 class="bold" style="display: inline-block;">{{'CHOOSE' | translate}} {{'Table' | translate}}
+                    </h2>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="padding: 20px 30px">
+                    <div class="select-category">
+                        <select class="app" ng-model="selected_table" ng-change="selectTable(selected_table)">
+                            <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                            <option ng-repeat="table in tables" value="{{table.id}}">{{table.table_name}} :
+                                {{table.table_number}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button type="submit" class="bg-success bold" ng-click="updateTable()"
+                        ng-class="selected_table == '' ? 'disabled' : ''" ng-disabled="selected_table == ''">{{'UPDATE'
+                        | translate}}</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="rejection_reason">
+    <div class="modal-dialog" style="max-width: 550px;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>{{(localisation.order + ' ' + (reason_type == 0 ? 'Rejection' : 'Cancellation') + ' Reason') |
+                        translate}}
+                    </h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <p class="word_break">{{rejection_reason}}</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="msg_description"></success-modal>
+
+<style>
+    .disabled {
+        opacity: .6;
+        cursor: default;
+        filter: grayscale(1);
+    }
+
+    .agent {
+        display: inline;
+    }
+
+    .agent .dropdown {
+        display: inline;
+    }
+
+    .agent span {
+        display: inline;
+        border: 1px solid var(--primary-color);
+        margin-right: 10px;
+        border-radius: 4px;
+        padding: 3px 8px;
+        font-size: 14px;
+    }
+
+    .list-products img {
+        height: 50px;
+        width: 50px;
+        border-radius: 50%;
+    }
+
+    .list-products p {
+        display: inline-flex;
+        margin-left: 15px;
+        color: #585858d9;
+        font-weight: 600;
+    }
+
+    .list-products ul li {
+        margin-bottom: 16px;
+    }
+
+    .list-products ul li:last-child {
+        margin-bottom: 0px !important;
+    }
+
+    .list-products ul {
+        box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.12);
+        padding: 20px;
+    }
+
+    .search-order {
+        height: 32px !important;
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+        border-radius: 4px !important;
+        color: #4a4a4a !important;
+        font-size: 13px !important;
+    }
+
+    .receipt {
+        text-align: center;
+    }
+
+    .receipt img {
+        width: 100%;
+        height: 480px;
+        object-fit: contain;
+    }
+
+    .order-det {
+        color: var(--primary-color);
+        /* #36838a; */
+        border: 1px solid var(--primary-color);
+        filter: brightness(0.9);
+        /* #36838a; */
+        border-radius: 4px;
+        padding: 2px 8px;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    .multiSelect>button {
+        width: 100% !important;
+    }
+</style>

@@ -1,0 +1,116 @@
+<div class="wrapper">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'Survey Pages' | translate}}</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="secnav m-top-40">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <input type="text" placeholder="{{'SEARCH' | translate}}" ng-model="search"
+                        ng-keypress="searchAdmin($event)">
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <div class="topfil">
+                        <ul>
+                            <!-- <li>
+                                <button type="button" class="bold create"
+                                    ui-sref="surveyMonkey.survey-monkey-templates">
+                                    View Templates</button>
+                            </li> -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{'POSITION' | translate}}</th>
+                                <th>{{'TITLE' | translate}}</th>
+                                <th>{{'HREF' | translate}}</th>
+                                <th>{{'DESCRIPTION' | translate}}</th>
+                                <th ng-if="is_superAdmin == 1">{{'ACTION' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="srvP in surveyPages">
+                                <td>{{srvP.id}}</td>
+                                <td>{{srvP.position || 'N/A'}}</td>
+                                <td>{{srvP.title || 'N/A'}}</td>
+                                <td>{{srvP.href || 'N/A' }}</td>
+                                <td>{{srvP.description||'N/A'}}</td>
+                                <td ng-if="is_superAdmin == 1">
+                                    <button type="button" class="bg-success"
+                                        ui-sref="surveyMonkey.survey-monkey-page-details({pageId:srvP.id,surveyId:surveyId})">
+                                        View Page Details</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="surveyPages.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND'}}
+                    </div>
+
+                    <div ng-if="surveyPages.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .submit-admin {
+        text-align: right;
+    }
+
+    .submit-admin button {
+        display: inline-block;
+        color: #ffffff;
+        font-size: 14px;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 4px;
+        vertical-align: middle;
+        background-color: var(--primary-color);
+    }
+
+    .str {
+        display: inline-block;
+        margin-left: 1px;
+        color: #e71818;
+    }
+</style>

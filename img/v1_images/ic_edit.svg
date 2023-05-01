@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="28px" height="28px" viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_edit</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-6">
+            <rect id="Rectangle" stroke="#9B8B5F" x="0.5" y="0.5" width="27" height="27" rx="4"></rect>
+            <g id="ic_post" transform="translate(2.000000, 2.000000)" stroke="#2D2D2D" stroke-linejoin="round">
+                <g transform="translate(4.000000, 5.000000)">
+                    <rect id="Rectangle-2" stroke-width="0.842105263" stroke-linecap="round" transform="translate(8.829711, 7.145500) rotate(-45.000000) translate(-8.829711, -7.145500) " x="0.408657999" y="5.46128958" width="16.8421053" height="3.36842105"></rect>
+                    <polygon id="Path-1" stroke-width="0.842105263" stroke-linecap="round" transform="translate(2.279669, 13.695542) rotate(-45.000000) translate(-2.279669, -13.695542) " points="3.12177413 12.0113313 3.12177413 15.3797524 1.43756361 13.6955419"></polygon>
+                    <path d="M12.997919,1.29308118 L12.997919,4.66150224" id="Line" stroke-width="0.842105263" transform="translate(12.997919, 2.977292) rotate(-45.000000) translate(-12.997919, -2.977292) "></path>
+                    <path d="M0.842105263,15.1578947 L16,15.1578947" id="Line" stroke-width="0.842105263" stroke-linecap="round"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,277 @@
+<section class="login back fade-in"
+    ng-style="client_code !== 'sangtini_0746' ? {'backgroundImage': 'url(img/v1_images/background.svg)'} : ''"
+    ng-if="show_login">
+    <div class="box">
+        <!-- <div class="left back" style="background-image: url(img/v1_images/howcuttingdo.jpg);"> -->
+        <div class="left back"
+            ng-style="settings.key_value.brandImage_url ? {'backgroundImage': 'url(' + compressImage(settings.key_value.brandImage_url, '300x620') + ')'} : {'backgroundImage': 'url(img/v1_images/howcuttingdo.jpg)'}">
+            <!-- <div class="shade"
+                ng-style="!settings.key_value.brandImage_url ? {'background': settings.key_value.theme_color, 'opacity': '0.6'} : ''"> -->
+
+            <div class="shade" ng-style="{'background': settings.key_value.theme_color, 'opacity': '0.6'}"></div>
+            <div class="btm">
+                <ul class="pri m-top-15">
+                    <li ng-if="settings.termsAndConditions[0].privacyPolicy"><a ui-sref="privacy" target="_blank"
+                            class="bold">{{'PRIVACY POLICY' | translate}}</a></li>
+                    <li ng-if="settings.termsAndConditions[0].termsAndConditions"><a ui-sref="terms" target="_blank"
+                            class="bold">{{'TERMS & CONDITIONS' | translate}}</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="right select-category">
+            <div id="login_app_logo" style="text-align: center; margin-bottom: 15px;"
+                ng-class="logo_background_color == 1 ? 'logo-bck' : ''">
+                <img ng-if="login_app_image" style="border-radius: 8px; object-fit: contain;" width="120px"
+                    height="90px" src="{{compressImage(login_app_image, '150x100', true)}}">
+                <div ng-if="!login_app_image" class="app-image" ng-style="{'backgroundColor': logo_data.background}"
+                    style="text-align: center">
+                    <p ng-style="{'color': logo_data.theme_color, 'fontFamily': logo_data.font_family}"
+                        style="padding: 0px; margin-top: 0px;">{{business_name}}</p>
+                </div>
+            </div>
+            <h2 class="bold">{{'WELCOME TO' | translate}} {{business_name}}</h2>
+            <p ng-style="login_page_primary_color == 1 ? {color: theme_color} : ''">
+                {{'LOGIN BY ENETERING THE INFORMATION BELOW!' | translate}}</p>
+            <div class="form-group tabs m-top-30" ng-if="isSingleVendor == 0 && login_page_type == 0">
+                <label>
+                    <input type="radio" name="name" ng-checked="profile_type === 'ADMIN'"
+                        ng-click="changeProfile('ADMIN')">
+                    <span
+                        ng-style="login_page_primary_color == 1 ? (profile_type === 'ADMIN' ? {backgroundColor: theme_color, borderColor: theme_color} : {borderColor: theme_color}) : ''"
+                        style="border-radius: 4px 0px 0px 4px;">{{'ADMIN' | translate}}</span>
+                </label>
+
+                <label>
+                    <input type="radio" name="name" ng-checked="['SUPPLIER','BRANCH'].includes(profile_type)"
+                        ng-click="changeProfile('SUPPLIER')">
+                    <span ng-style="login_page_primary_color == 1 ? (['SUPPLIER','BRANCH'].includes(profile_type) ? {backgroundColor: theme_color, borderColor: theme_color} : {borderColor: theme_color}) : '' ||
+                        is_delivery_company == 0 && {'border-radius': '0px 4px 4px 0px'}">{{supplier_localisation |
+                        translate}}</span>
+                </label>
+                <label ng-if="is_delivery_company == 1">
+                    <input type="radio" name="name" ng-checked="profile_type === 'SHIPPING'"
+                        ng-click="changeProfile('SHIPPING')">
+                    <span style="border-radius: 0px 4px 4px 0px;">{{shipping_localisation | translate}}</span>
+                </label>
+            </div>
+            <select class="app"
+                ng-if="(['SUPPLIER','BRANCH'].includes(profile_type) || settings.screenFlow[0].is_single_vendor == 1) && branch_flow == 1"
+                ng-model="profile_type" ng-change="changeProfile(profile_type)">
+                <option ng-if="settings.screenFlow[0].is_single_vendor == 0" value="SUPPLIER">
+                    {{supplier_localisation | translate}}</option>
+                <option ng-if="settings.screenFlow[0].is_single_vendor == 1" value="ADMIN">{{'ADMIN' | translate}}
+                </option>
+                <option value="BRANCH">{{'BRANCH' | translate}}</option>
+            </select>
+            <form role="form" id="loginForm" name="loginForm" ng-submit="loginSubmit(loginForm)" novalidate>
+                <div class="form-group"
+                    ng-if="enable_signup_phone_only!=1 || ['ADMIN', 'SHIPPING'].includes(profile_type) || enable_supplier_email_login == 1">
+                    <input type="email" ng-class="(arabic_text_right_align == 1) ? 'arabic_align' : ''"
+                        placeholder="{{'EMAIL' | translate}}" name="email" ng-model="login.username" required>
+                    <span><img src="img/v1_images/ic_username.svg"></span>
+                    <div class="error" ng-show="loginForm.email.$invalid && loginForm.$submitted">
+                        <small ng-show="loginForm.email.$error.required">{{'PLEASE ENTER EMAIL' | translate}}</small>
+                        <small ng-show="loginForm.email.$error.email">{{'PLEASE ENTER A VALID EMAIL' |
+                            translate}}</small>
+                    </div>
+                </div>
+                <div class="form-group" ng-if="enable_signup_phone_only == 1 && profile_type === 'SUPPLIER'">
+                    <div class="form-group" ng-if="enable_supplier_email_login==0">
+                        <input id="sup_phone" type="text" name="mobile" ng-minlength="6" ng-maxlength="15"
+                            ng-model="login.mobile" production-qty placeholder="{{'' | translate}}" required>
+                        <div class="error" ng-show="loginForm.mobile.$invalid && loginForm.$submitted">
+                            <small ng-show="loginForm.mobile.$error.required">{{'PLEASE ENTER PHONE NO.' |
+                                translate}}</small>
+                            <small ng-show="loginForm.mobile.$error.minlength">{{'PHONE NO. MUST BE MORE THAN 6 DIGITS'
+                                | translate}}</small>
+                            <small ng-show="loginForm.mobile.$error.maxlength">{{'PHONE NO. MUST BE LESS THAN 15 DIGITS'
+                                | translate}}</small>
+                        </div>
+                        <div class="error"
+                            ng-show="!loginForm.mobile.$invalid && loginForm.$submitted && invalid_phone_no">
+                            <small>{{'INVALID PHONE NUMBER' | translate}}</small>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="form-group pass">
+                    <input type="{{view_password ? 'text' : 'password'}}" name="password"
+                        placeholder="{{'PASSWORD' | translate}}" ng-minlength="6" ng-model="login.password"
+                        ng-class="(arabic_text_right_align == 1) ? 'arabic_align' : ''" required>
+                    <span><img src="img/v1_images/ic_password.svg"></span>
+                    <a ng-click="passwordView(!view_password)"
+                        ng-class="(arabic_text_right_align == 1) ? 'arabic_align_image' : ''">
+                        <img ng-if="view_password" src="img/v1_images/ic_eye_hide.svg">
+                        <img ng-if="!view_password" src="img/v1_images/ic_eye.svg">
+                    </a>
+                    <div class="error" ng-show="loginForm.password.$invalid && loginForm.$submitted">
+                        <small ng-show="loginForm.password.$error.required">{{'PLEASE ENTER PASSWORD' |
+                            translate}}</small>
+                        <small ng-show="loginForm.password.$error.minlength">{{'Password must be atleast 6 characters
+                            long' | translate}}</small>
+
+                    </div>
+
+                    <!-- <div class="col-md-6 mb-4 mt-4">
+                        <span class="suppro">
+                            <label style="float: none"><input type="checkbox" ng-click="rememberMe($event)"
+                                    ng-checked="is_remember_checked">
+                                <span></span>
+                            </label>
+                            <span class="ml-2 tnc_txt">
+                                <a ui-sref="terms" target="_blank"
+                                    style="color: var(--primary-color)">{{'Remember Me'}}</a>
+                            </span>
+                        </span>
+                    </div> -->
+
+
+                </div>
+                <div class="checkbox"
+                    ng-if="enable_signup_phone_only==0 && enable_rememberme_supplier == 1 && profile_type === 'SUPPLIER'">
+                    <label class="suppro">
+                        <input type="checkbox" name="branch" ng-model="is_remember_checked"
+                            ng-click="rememberMe($event)"> {{'Remember Me' | translate}}
+                    </label>
+                </div>
+                <div class="checkbox mt-2" ng-if="profile_type === 'SUPPLIER' && client_code == 'XYZ'">
+                    <label class="suppro">
+                        <input type="checkbox" name="branch" ng-model="termsCheck" ng-click="updateTerms()">
+                        <a href="https://servium.royostaging1.com/terms-and-conditions" target="_blank" class="bold">I accept the
+                            Terms & Conditions</a>
+                    </label>
+                    <label ng-if="!termsCheck && submitted" class="error" style="color:red;">please accept Terms and
+                        conditions first.</label>
+                </div>
+
+                <button ng-style="login_page_primary_color == 1 ? {backgroundColor: theme_color} : ''" type="submit"
+                    class="bold">{{'LOGIN' | translate}}</button>
+                <div class="vender-login-outter">
+                    <a ng-style="login_page_primary_color == 1 ? {color: theme_color} : ''"
+                        ng-if="show_vendor_registration == 1" class="bold forgot" ng-click="toSupplierReg()">
+                        {{'REGISTER AS' | translate}}
+                        {{supplier_localisation | translate}}</a>
+
+                    <a ng-if="show_shipping_registration == 1" class="bold forgot"
+                        ng-click="toDeliveryCompanyReg()">{{'REGISTER AS' | translate}}
+                        {{shipping_localisation | translate}}?</a>
+
+                    <a ng-style="login_page_primary_color == 1 ? {color: theme_color} : ''" class="bold forgot"
+                        data-toggle="modal" data-target="#forgot_pass">{{'FORGOT PASSWORD' | translate}}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="forgot_pass">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                    <h2 class="bold" style="text-align: center;">{{'FORGOT PASSWORD' | translate}}</h2>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <form role="form" id="forgotPassForm" name="forgotPassForm" ng-submit="forgotPassword(forgotPassForm)"
+                    class="forgot" novalidate>
+                    <div class="modbody" style="padding: 25px 16px 10px; border: none;">
+                        <div class="form-group">
+                            <input type="email" placeholder="Email" name="email" ng-model="forgot.email" required>
+                            <span><img src="img/v1_images/ic_username.svg"></span>
+                            <div class="error" ng-show="forgotPassForm.email.$invalid && forgotPassForm.$submitted">
+                                <small ng-show="forgotPassForm.email.$error.required">{{'PLEASE ENTER EMAIL' |
+                                    translate}}</small>
+                                <small ng-show="forgotPassForm.email.$error.email">{{'PLEASE ENTER A VALID EMAIL' |
+                                    translate}}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="forgot-submit">
+                        <button type="submit" class="bold">{{'SUBMIT' | translate}}</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+
+<!--- Modal --->
+
+<div class="modal" id="video">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: transparent; border: none;">
+            <div class="modal-body">
+                <div class="videomod">
+                    <video controls id="video1">
+                        <source src="img/v1_images/video.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .forgot input {
+        padding: 0px 20px 0px 40px !important;
+        position: relative;
+    }
+
+    .forgot span {
+        position: absolute;
+        left: 24px;
+        bottom: 116px;
+    }
+
+    .forgot .forgot-submit {
+        text-align: center;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 20px 0px;
+    }
+
+    .forgot .forgot-submit button {
+        color: #ffffff;
+        border-radius: 4px;
+        background-color: var(--primary-color);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+        border: none;
+        font-size: 14px;
+        padding: 9px 25px;
+        width: 155px;
+    }
+
+    .checkbox {
+        text-align: left;
+        margin-bottom: -20px;
+        margin-top: -8px;
+        margin-left: 2px;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .logo-bck img {
+        padding: 5px 20px;
+        width: 200px;
+        height: 120px;
+        background-color: var(--theme-color);
+    }
+
+    .arabic_align {
+        text-align: right !important;
+    }
+
+    .arabic_align_image {
+        left: 0px;
+        right: 271px !important;
+    }
+</style>

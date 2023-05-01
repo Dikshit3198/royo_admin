@@ -1,0 +1,52 @@
+
+<form role="form" style="height:100vh" id="stepOneForm" prevent-enter-press
+novalidate>
+<div class="persinfo">
+    <div class="bx">
+        <div class="select-category">
+            <label>{{'Select Suggestions' | translate}}</label>
+        </div>
+
+        <div id="category" isteven-multi-select input-model="productList" output-model="selectedProducts" max-height="250px"
+            button-label="img name" item-label="img name"
+            tick-property="ticked"
+            group-property="msGroup"
+            max-labels="2">
+        </div>
+
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 mt-3" style="text-align: right">
+        <button type="submit" style="float: none; margin: 0px; text-align: center"
+            class="submit" ng-click="assignInventory()">{{'SUBMIT' | translate}}</button>
+    </div>
+</div>
+</form>
+<style>
+.multiSelect>button {
+    width: 60% !important;
+
+}
+#category .multiSelect .checkboxLayer {
+    height: auto !important;
+    min-height: 1px;
+    /* max-height: 210px; */
+    overflow-y: auto;
+}
+
+.multiSelect .tickMark {
+    right: 16px;
+}
+
+.multiSelect .multiSelectItem {
+    width: 100%;
+}
+
+.multiSelect .checkboxLayer button {
+    background: none;
+    width: auto;
+}
+</style>
+

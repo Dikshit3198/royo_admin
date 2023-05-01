@@ -1,0 +1,231 @@
+<div class="reporttop m-top-30"
+    style="border: 1px solid rgba(18,17,17,0.1);	border-radius: 4px;	background-color: #FDFDFC;">
+    <form>
+
+        <div class="row select-category" style="margin-top: 20px">
+            <div class="col-md-3" ng-if="categories.length" style="margin-bottom: 10px;">
+                <label class="cat-label">{{'SELECT' | translate}} {{localisation.category | translate}}</label>
+                <select data-placeholder="Choose {{localisation.category | translate}}" class="app" tabindex="4"
+                    ng-model="selected_cat" ng-options="category.name for category in categories"
+                    ng-change="onSelectCategory(selected_cat, true)">
+                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                </select>
+            </div>
+
+            <div class="col-md-3" style="margin-bottom: 10px;" ng-repeat="cat in dynamicSubCategories track by $index"
+                ng-init="parentIndex = $index">
+                <label class="cat-label" ng-if="parentIndex == 0">{{selected_cat.name}}</label>
+                <label class="cat-label" ng-if="parentIndex > 0">{{selectedCategory[childIndex-1].name}}</label>
+                <select data-placeholder="Choose Category" tabindex="4" class="app"
+                    ng-model="selectedCategory[childIndex]" ng-init="childIndex = $index"
+                    ng-options="subCat.name for subCat in cat"
+                    ng-change="changeSubCatId(selectedCategory[childIndex], parentIndex + 1, true)">
+                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="row">
+                    <!-- <div class="col-md-6">
+                        <div class="form-group" style="margin-top: 0px">
+                            <label>{{'SEARCH' | translate}}</label>
+                            <input type="text" ng-model="filter.search"
+                                placeholder="{{'SEARCH BY NAME / EMAIL' | translate}}">
+                            <span class="inputtag"><img src="/img/v1_images/calendar.svg"></span>
+                        </div>
+                    </div> -->
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>{{'Sort By' | translate}}</label>
+                            <select class="app" name="sortBy" ng-model="sort_by " ng-change="sortBy(sort_by )">
+                                <option value="">{{ 'None' | translate}}</option>
+                                <option value="quantity">{{'Quantity' | translate}}</option>
+                                <option value="product_count">{{localisation.product | translate}} {{'Count' | translate}}</option>
+                                <option value="revenue">{{'Revenue' | translate}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div ng-if="profile === 'ADMIN' && is_single_vendor == 0" class="col-md-4">
+                        <div class="form-group select-category">
+                            <label>{{localisation.supplier | translate}}</label>
+                            <select class="app" ng-model="selected_supplier"
+                                ng-options="supplier.supplier_name for supplier in suppliers"
+                                ng-change="changeSupplier(selected_supplier)">
+                                <option value="">{{'ALL' | translate}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>{{'DATE' | translate}}</label>
+                            <input type="text" id="datepicker_supplier_report" placeholder="{{'DATE' | translate}}">
+                            <span class="inputtag"><img src="/img/v1_images/calendar.svg"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="btns" style="margin-top: 32px">
+                    <button type="button" ng-click="downloadCSV()"
+                        style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'DOWNLOAD CSV' | translate}}</button>
+                    <button type="button" ng-click="resetFilter()"
+                        style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'RESET' | translate}}</button>
+                    <button type="button" class="bg-success" ng-click="selectFilter()"
+                        style="color: #fff; border: 1px solid var(--primary-color); margin-left: 7px;">{{'FILTER' | translate}}</button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<div class="dashgra m-top-30">
+    <div class="row dashboard-box-outter">
+        <div class="col-md-6 col-sm-6">
+            <div class="box">
+                <div class="top">
+                    <h3 class="bold">{{'REVENUE' | translate}}</h3>
+                    <div class="detail">
+                        <!-- <h4>{{localisation.total_revenue | translate}}
+                            ({{localisation.delivered_orders | translate}}) : <span>
+                                {{currency}}{{dash_data.total_revenue ? (dash_data.total_revenue).toFixed(2) : 0}}</span>
+                        </h4> -->
+                    </div>
+                </div>
+                <div class="btm">
+                    <canvas class="chart chart-bar" chart-data="totalRevenue" chart-labels="labels"
+                        chart-options="options" chart-dataset-override="datasetOverride">
+                    </canvas>
+                    <div class="nodata" ng-if="no_revenue">
+                        <p style="font-weight: bold;"> {{'NO DATA FOUND' | translate}} </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6">
+            <div class="box">
+                <div class="top">
+                    <h3 class="bold">{{localisation.orders | translate}}</h3>
+                    <div class="detail">
+                        <!-- <h4>{{'TOTAL' | translate}} {{localisation.orders | translate}}
+                            ({{'PLACED' | translate}}) : <span>{{dash_data.total_orders}}</span></h4> -->
+                    </div>
+                </div>
+                <div class="btm">
+                    <canvas class="chart chart-bar" chart-data="totalOrders" chart-labels="labels"
+                        chart-options="options" chart-dataset-override="datasetOverride">
+                    </canvas>
+                    <div class="nodata" ng-if="no_orders">
+                        <p style="font-weight: bold;"> {{'NO DATA FOUND' | translate}} </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="repbtm m-top-40">
+    <!-- <div class="secnav ">
+    <div class="row">
+      <div class="col-md-6 col-sm-6">
+        <input type="text" placeholder="Search">
+      </div>
+    </div>
+  </div> -->
+
+    <div class="tableouter m-top-20">
+        <table>
+            <thead>
+                <tr>
+                    <!-- <th>{{localisation.order | translate}} ID</th> -->
+                    <th>{{localisation.product_name | capitalLetters | translate}}</th>
+                    <th>{{localisation.category  | translate }} {{'NAME' | translate}}</th>
+                    <th ng-if="profile === 'ADMIN' || disable_product_report_columns_supplier == 0">{{'Average Cost Price' |  capitalLetters | translate}}</th>
+                    <th> {{'AVERAGE SELLING PRICE' | translate}}
+                        <p>
+                            <i ng-click="sortColumnBy('up','sellingPrice')" class="fa fa-caret-up fa-caret-sort"></i>
+                            <i ng-click="sortColumnBy('down','sellingPrice')"
+                                class="fa fa-caret-down fa-caret-sort"></i>
+                        </p>
+                    </th>
+                    <th>{{'SELLING PRICE RANGE'|translate}}</th>
+                    <th ng-if="profile === 'ADMIN' || disable_product_report_columns_supplier == 0">{{'PROFIT'|translate}} (%)</th>
+                    <th ng-if="profile === 'ADMIN'"> {{'Number Of' | capitalLetters | translate}} {{localisation.suppliers  | translate }}</th>
+                    <th ng-if="profile === 'ADMIN' || disable_product_report_columns_supplier == 0">{{'TOTAL CURRENT SUPPLY' | translate}}</th>
+                    <th ng-if="profile === 'ADMIN' || disable_product_report_columns_supplier == 0">{{'TOTAL SOLD' | translate}}
+                        <p>
+                            <i ng-click="sortColumnBy('up','itemCount')" class="fa fa-caret-up fa-caret-sort"></i>
+                            <i ng-click="sortColumnBy('down','itemCount')" class="fa fa-caret-down fa-caret-sort"></i>
+                        </p>
+                    </th>
+                    <th>{{ 'DEMAND' | translate}}</th>
+                    <th ng-if="profile === 'ADMIN' || disable_product_report_columns_supplier == 0">{{ 'TOTAL REVENUE' | translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="product in products">
+                    <!-- <td>{{product.order_id}}</td> -->
+                    <td>{{product.product_name}}</td>
+                    <td>{{product.category_name}}</td>
+                    <td ng-if="profile === 'ADMIN' || disable_product_report_columns_supplier == 0">{{currency}} {{(product.making_price).toFixed(price_decimal_length) | number : addon_decimal_value}}</td>
+                    <td>{{currency}} {{(product.price).toFixed(price_decimal_length) | number : addon_decimal_value}}</td>
+                    <td>{{indexText(product.selling_price_index) || '0'}}</td>
+                    <td ng-if="profile === 'ADMIN' || disable_product_report_columns_supplier == 0">{{product.profit == 'Infinity' ?  '--' : ((product.profit).toFixed(price_decimal_length))}}</td>
+                    <td ng-if="profile === 'ADMIN'">{{product.name}}</td>
+                    <td ng-if="profile === 'ADMIN' || disable_product_report_columns_supplier == 0">{{product.quantity | number : addon_decimal_value}}</td>
+                    <td ng-if="profile === 'ADMIN' || disable_product_report_columns_supplier == 0">{{product.product_count}}</td>
+                    <td>{{indexText(product.item_count_index) || '0'}}</td>
+                    <td ng-if="profile === 'ADMIN' || disable_product_report_columns_supplier == 0">{{currency}} {{(product.revenue).toFixed(price_decimal_length) | number : addon_decimal_value}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="no-data-found" ng-if="products.length == 0 && dataLoaded">
+            {{'NO DATA FOUND' | translate}}
+        </div>
+
+        <div ng-if="products.length > 0 && dataLoaded" class="row pagination">
+            <ul ng-if="pager.pages && pager.pages.length">
+                <li ng-class="{disabled:pager.currentPage === 1}">
+                    <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === 1}">
+                    <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                </li>
+                <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                    <a ng-click="setPage(page)">{{page}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                    <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                </li>
+                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                    <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+    .agent-toggle {
+        position: absolute;
+        right: 20px;
+        top: -8px;
+    }
+
+    .agent-toggle .togglebtn {
+        display: inline-block;
+        margin-left: 8px;
+        margin-bottom: -4px;
+    }
+
+    .fa-caret-sort {
+        font-size: 20px;
+        cursor: pointer;
+    }
+</style>

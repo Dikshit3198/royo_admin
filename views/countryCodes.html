@@ -1,0 +1,179 @@
+<div class="container-fluid back">
+
+</div>
+
+
+<div class="container">
+    <div class="row profile">
+        <div class="col-4">
+
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'COUNTRY CODE' | translate}}</h1>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)" ng-if="permissions('promotions', 'create') == 1">
+                                <button type="button" class="bold create" data-toggle="modal"
+                                    ng-click="changeView(true)"
+                                    data-target="#addCurrencyRef">{{'ADD COUNTRY CODE' | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{'COUNTRY NAME' | translate}}</th>
+                                <th>{{'COUNTRY CODE' | translate}}</th>
+                                <th>{{'ISO' | translate}}</th>
+                                <th>{{'FLAG' | translate}}</th>
+                                <th>{{'ACTION' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="cr in countries">
+                                <td>{{cr.id}}</td>
+                                <td>{{cr.country_name || 'N/A'}}</td>
+                                <td>{{cr.country_code}}</td>
+                                <td>{{cr.iso}}</td>
+                                <td><img src="{{cr.flag_image}}" /></td>
+                                <td ng-if="cr.is_default!=1">
+                                    <span class="delete" ng-click="deleteCountryCode(cr)">
+                                        {{'Delete'}}
+                                    </span>
+                                    <br />
+                                    <span class="delete" ng-click="updateCountryCode(cr)">
+                                        {{'Update'}}
+                                    </span>
+                                </td>
+                                <td ng-if="cr.is_default==1">
+                                    <span class="delete">
+                                        {{'Default'}}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="countries.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="addCurrencyRef">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{is_updating?'UPDATE':'ADD'}}&nbsp;{{'COUNTRY CODE' | translate}}</h3>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+
+                    <form role="form" class="persinfo setting" id="addCountryForm" name="addCountryForm"
+                        ng-submit="addCountries(addCountryForm)" autocomplete="off" novalidate>
+                        <div class="row ml-2">
+                            <div class="form-group">
+                                <label>{{'COUNTRY NAME' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="country_name" ng-model="country_info.country_name"
+                                    placeholder="{{'COUNTRY NAME' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addCountryForm.country_name.$invalid && country_info.$submitted">
+                                    <small ng-show="addCountryForm.country_name.$error.required">Please enter
+                                        country name.</small>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>{{'COUNTRY CODE' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="countrycode" ng-model="country_info.country_code"
+                                    placeholder="{{'COUNTRY CODE' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addCountryForm.countrycode.$invalid && country_info.$submitted">
+                                    <small ng-show="addCountryForm.countrycode.$error.required">Please enter
+                                        country code.</small>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                    <label>{{'ISO' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="iso" ng-model="country_info.iso"
+                                        placeholder="{{'ISO' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addCountryForm.iso.$invalid && country_info.$submitted">
+                                        <small ng-show="addCountryForm.iso.$error.required">Please enter
+                                            country code.</small>
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="row ml-2">
+                            <div class="form-group">
+                                <label>{{'FLAG IMAGE' | translate}}</label>
+
+                                <div class="form-group pic">
+                                    <input type="file" accept="image/*" name="flag_image"
+                                        ng-click="selectPlaceholder(placeholder)" ng-model="country_info.flag_image"
+                                        class="cursor" style="height: 100%; width: 160px;" data-button-text="Single"
+                                        data-class-button="btn btn-default" data-classinput="form-control inline"
+                                        onchange="angular.element(this).scope().file_to_upload_for_flag(this.files)">
+                                    <span ng-if="flag_image_to_view" style="width: 160px; height: 120px;">
+                                        <img style="width: 160px; height: 120px;" id="croppr"
+                                            src="{{compressImage(flag_image_to_view, '200x150')}}">
+                                    </span>
+                                    <span ng-if="!flag_image_to_view" style="height: 135px; width: 180px;">
+                                        <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="bold m-top-40 save"
+                            ng-if="permissions('settings', 'update') == 1">{{'SAVE' | translate}}</button>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+
+<style>
+    .delete {
+        cursor: pointer;
+    }
+
+    .delete:hover {
+        text-decoration: underline;
+        font-weight: 600;
+    }
+
+    .star {
+        top: 0pxc !important;
+    }
+</style>

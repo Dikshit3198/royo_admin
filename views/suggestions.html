@@ -1,0 +1,144 @@
+<div class="wrapper order_page">
+    <div class="category">
+
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="button" class="btn suggestion" ng-click="addModal()">{{'Add Suggestions' | translate}}</button>
+                </div>
+                <div class="col-md-6" style="text-align: right;">
+                    <a ui-sref="feedback.list" style="color: #00000094; font-weight: 600;" class="back">{{'BACK' | translate}}</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF; padding-bottom: 20px;">
+            <div class="tab-content">
+                <div class="tab-pane  active" id="menu1">
+                    <div class="dashpenord ">
+
+                        <div class="tableouter">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>{{'SUGGESTION ID' | translate}}</th>
+                                        <th>{{'NAME' | translate}}</th>
+                                        <th>{{'ADDED ON' | translate}}</th>
+                                        <th>{{localisation.user | translate}} {{'COUNT' | translate}}</th>
+                                        <th>{{'STATUS' | translate}}</th>
+                                        <th>{{'ACTION' | translate}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="suggestion in suggestions">
+                                        <td>
+                                            {{suggestion.id}}
+                                        </td>
+                                        <td>{{suggestion.name}}</td>
+                                        <td>{{suggestion.added_at | date}}</td>
+                                        <td>{{suggestion.used_count}}</td>
+                                        <td>
+                                            <span ng-if="suggestion.status == 0">{{'PENDING' | translate}}</span>
+                                            <span ng-if="suggestion.status == 1">{{'APPROVED' | translate}}</span>
+                                            <span ng-if="suggestion.status == 2">{{'BLOCKED' | translate}}</span>
+                                            <span ng-if="suggestion.status == 3">{{'DELETED' | translate}}</span>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="bg-success"
+                                                ng-click="deleteBlockSuggestion(suggestion, 3, 'delete')">{{'DELETE' | translate}}</button>
+                                            <button type="button" class="bg-success"
+                                                ng-click="deleteBlockSuggestion(suggestion, 2, 'block')">{{'BLOCK' | translate}}</button>
+                                            <button type="button" class="bg-success" ng-if="[0,1].includes(suggestion.status)"
+                                                ng-click="editSuggestion(suggestion)">{{'EDIT' | translate}}</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="no-data-found" ng-if="suggestions.length == 0 && dataLoaded">
+                            {{'NO DATA FOUND' | translate}}
+                        </div>
+
+                        <div ng-if="suggestions.length > 0 && dataLoaded" class="row pagination">
+                            <ul ng-if="pager.pages && pager.pages.length">
+                                <li ng-class="{disabled:pager.currentPage === 1}">
+                                    <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                                </li>
+                                <li ng-class="{disabled:pager.currentPage === 1}">
+                                    <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                                </li>
+                                <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                    <a ng-click="setPage(page)">{{page}}</a>
+                                </li>
+                                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                    <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                                </li>
+                                <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                    <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="modal" id="addSuggestion">
+    <div class="modal-dialog" style="max-width: 420px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead" style="padding: 24px 30px">
+                    <h2 class="bold" style="display: inline-block;">{{(is_edit ? 'Edit' : 'Add New') | translate}}
+                        {{'SUGGESTION' | translate}}</h2>
+                    <button type="button" class="close" id="closeBrandModal" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <form role="form" id="addSuggestionForm" name="addSuggestionForm"
+                    ng-submit="submitAdd(addSuggestionForm)" novalidate>
+
+                    <div class="modbody" style="padding: 20px 30px">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="bold">{{'NAME' | translate}}<p class="star">*</p></label>
+                                    <input type="text" ng-model="suggestion.name" name="name" placeholder="Name"
+                                        required>
+                                    <div class="error"
+                                        ng-show="addSuggestionForm.name.$invalid && addSuggestionForm.$submitted">
+                                        <small ng-show="addSuggestionForm.name.$error.required">Please Enter
+                                            Name</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="modfooter">
+                        <button type="submit" class="bg-success bold">{{'SAVE' | translate}}</button>
+                    </div>
+            </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .suggestion {
+        float: none !important;
+        color: #ffffff;
+        background-color: var(--primary-color);
+    }
+</style>

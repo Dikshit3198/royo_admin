@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_edit_pic</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M0,11.2962963 L0,14.0740741 L2.77777778,14.0740741 L10.9703704,5.88148148 L8.19259259,3.1037037 L0,11.2962963 Z M13.1185185,3.73333333 C13.4074074,3.44444444 13.4074074,2.97777778 13.1185185,2.68888889 L11.3851852,0.955555556 C11.0962963,0.666666667 10.6296296,0.666666667 10.3407407,0.955555556 L8.98518519,2.31111111 L11.762963,5.08888889 L13.1185185,3.73333333 Z" id="path-1"></path>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-18" transform="translate(1.000000, 1.000000)">
+            <circle id="Oval" stroke="#FFFFFF" stroke-width="2" fill="#2CA6B1" cx="15" cy="15" r="15"></circle>
+            <g id="Group-12" transform="translate(9.000000, 6.000000)">
+                <g id="ic_edit_24px" transform="translate(0.444444, 1.481481)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="Shape" fill="#FCFCFC" fill-rule="nonzero" xlink:href="#path-1"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

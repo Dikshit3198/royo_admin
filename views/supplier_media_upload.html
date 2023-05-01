@@ -1,0 +1,87 @@
+<div class="document-image persinfo">
+    <div class="select-category row">
+        <div class="col-md-2"
+            style="padding-left: 0px !important; bottom: 11px;">
+            <div class="form-group">
+                <label>{{'MEDIA TYPE' | translate}}</label>
+                <select ng-model="media_type.is_video" name="is_video" class="app"
+                    ng-change="changeMediaType(media_type.is_video)" convert-to-number>
+                    <!-- <option disabled selected value="">{{'SELECT' | translate}}</option> -->
+                    <option selected value="0">{{'IMAGE' | translate}}</option>
+                    <option value="1">{{'VIDEO' | translate}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="bx row">
+        <div class="col-md-3 col-sm-3" style="float: inherit">
+            <div class="form-group pic">
+                <label class="bold">{{'UPLOAD MEDIA' | translate}}</label>
+                <p class="aspect-ratio">{{'Aspect Ratio' | translate}} - 4 : 3 </p>
+                <input filestyle="" type="file" accept="video/*,image/*" name="image1" class="cursor"
+                    style="width: 242px;" onchange="angular.element(this).scope().file_to_upload_for_image(this.files)"
+                    data-button-text="Single" data-class-button="btn btn-default" data-classinput="form-control inline"
+                    nv-file-select="" uploader="uploader" />
+                <span ng-if="product_images.file && !media_type.is_video" style="height: 135px;">
+                    <img style="width: 100%; height: 100%; object-fit: contain;" id="croppr"
+                        src="{{product_images.file}}">
+                </span>
+                <span
+                    ng-if="product_images.file && media_type.is_video"
+                    style="height: 135px;">
+                    <!-- <img style="width: 100%; height: 100%; object-fit: contain;" id="croppr" src="{{image.image}}"> -->
+                    <video id="myVideo1" width="100%" height=100% controls>
+                        <source src="{{product_images.file}}" type="video/mp4">
+                    </video>
+                </span>
+                <span ng-if="!product_images.file">
+                    <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                </span>
+            </div>
+        </div>
+        <div class="row col-md-12 btns">
+
+            <button type="button" class="submit" style="
+        text-align: center; margin-left: 15px;" ng-click="uploadPics(image_file);">Save</button>
+        </div>
+
+    </div>
+</div>
+
+<div class="document-image persinfo">
+    <div class="bx">
+        <div class="row">
+            <div class="col-md-4 file" ng-repeat="image in ratingImageList track by $index">
+                <div class="form-group pic" style="margin-left: 15px;">
+                    <span ng-if="image && !image.is_video" style="height: 104px; cursor: pointer; position: relative;">
+                        <a class="remove-image" ng-click="removeImage(image.id)"><img
+                                style="width: 100%; height: 100%; margin-top: -60px; border: 0px;"
+                                src="img/v1_images/ic_cross.svg"></a>
+                        <img style="width: 100%; height: 100%; object-fit: contain;" id="croppr" src="{{image.image}}">
+                    </span>
+
+                    <span ng-if="image.is_video"
+                        style="height: 104px; cursor: pointer; position: relative;">
+                        <a class="remove-image" ng-click="removeImage(image.id)"><img
+                                style="width: 100%; height: 100%; margin-top: -60px; border: 0px;"
+                                src="img/v1_images/ic_cross.svg"></a>
+                        <!-- <img style="width: 100%; height: 100%; object-fit: contain;" id="croppr" src="{{image.image}}"> -->
+                        <video id="myVideo" width="100%" height=100% controls>
+                            <source src="{{image.image}}" type="video/mp4">
+                            Your browser does not support HTML5 video.
+                        </video>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .remove-image {
+        position: absolute;
+        right: -12px;
+        /* top: -12px; */
+    }
+</style>

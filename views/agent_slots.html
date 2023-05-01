@@ -1,0 +1,276 @@
+<div class="wrapper">
+  <div class="category">
+
+    <a class="backbtn" style="float: right"
+    ui-sref="profile.agent({page: '1'})"><img
+        src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+        
+    <div class="secnav">
+      <div class="row">
+        <div class="col-md-6 col-sm-6">
+          <h1 class="bold" style="text-transform: capitalize">{{localisation.agent | translate}} {{'SLOTS' | translate}} : {{agentName}}</h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="row m-top-30">
+      <div class="col-md-12">
+
+        <table>
+          <thead>
+            <tr>
+              <th ng-repeat="day in days track by $index">{{day}}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr ng-repeat="week in daysArr track by $index" ng-init="parentIndex = $index">
+              <td ng-repeat="day in week track by $index" ng-init="childIndex = $index"
+                ng-class="day == ' ' ? 'slot-disabled' : 'slots'" ng-click="bookSlot(day)">
+                <div class="date">
+                  <span>{{day.date | date: medium}}</span>
+                </div>
+                <div ng-if="day != ' ' && day.slots.length" class="slot-time" ng-repeat="slot in day.slots">
+                  {{slot.start_time + ' - ' + slot.end_time}}
+                </div>
+                <div ng-if="day != ' ' && !day.slots.length" class="slot-time">
+                  <div ng-if="!choose_slot_to_unavailable">
+                  {{'CHOOSE SLOT' | translate}}
+                </div>
+                  <div ng-if= "choose_slot_to_unavailable == 1">
+                  {{'UNAVAILABLE' | translate}}
+                  </div>
+
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal" id="agent_slot">
+  <div class="modal-dialog">
+      <!-- modal-sm -->
+    <div class="modal-content">
+      <div class="modal-body">
+
+        <div class="modhead" style="border: none; border-bottom: 1px solid rgba(0,0,0,0.1);">
+          <h2 class="bold" style="text-align: center;">{{'SLOT ASSIGNMENT' | translate}}</h2>
+          <button type="button" class="close" data-dismiss="modal"><img src="img/v1_images/ic_cross.svg"></button>
+        </div>
+
+        <div class="modbody" style="border: none;">
+          <div class="row" ng-if="!multiple" style="margin-bottom: 12px">
+            <div class="col-md-12">
+
+              <td class="week-cell">
+                <table class="slot_data table-responsive">
+                  <thead ng-If="slotArr.length">
+                    <tr>
+                      <th style="text-align: left; padding: 0px 5px">{{'FROM' | translate}}</th>
+                      <th style="text-align: left; padding: 0px 5px 0px 17px">{{'TO' | translate}}</th>
+                    </tr>
+                  </thead>
+                  <tr ng-If="!slotArr.length">
+                    <td colspan="2" class="unavailable">
+                      {{'UNAVAILABLE' | translate}}
+                    </td>
+                  </tr>
+                  <tr ng-repeat="val in slotArr track by $index" ng-init="childIndex = $index" class="t-row">
+                    <td style="padding-right: 12px">
+                      <input type="time" class="time" id="{{childIndex-1}}" name="from"
+                        ng-model="slotArr[childIndex].start_time" placeholder="HH:mm:ss" required />
+                    </td>
+                    <td style="padding-left: 12px">
+                      <input type="time" class="time" id="{{childIndex-2}}" name="to"
+                        ng-model="slotArr[childIndex].end_time" placeholder="HH:mm:ss" required />
+                    </td>
+                    <!-- <td ng-if="$last" class="add-remove">
+                                  <button type="button" ng-click="addSlot(childIndex)" class="btn btn-xs"><i
+                                      class="fa fa-plus"></i></button>
+                                </td> -->
+                    <td class="add-remove" ng-if="permissions('agents', 'delete') == 1"> <button type="button" style="background: transparent"
+                        ng-click="deleteSlot(childIndex)" class="btn btn-xs"><i class="fa fa-trash-o"></i></button>
+                    </td>
+                  </tr>
+                  <tr ng-if="permissions('agents', 'create') == 1">
+                    <td class="add" colspan="2" ng-click="addSlot(childIndex)">+ {{'ADD INTERVAL' | translate}}</td>
+                  </tr>
+                  <tr ng-if="error">
+                    <td colspan="2" class="error">{{'INVALID INTERVALS' | translate}}</td>
+                  </tr>
+                </table>
+              </td>
+
+              <div class="cst-btn-grp" ng-if="permissions('agents', 'update') == 1">
+                <div>
+                  <button type="button" class="slot-btn" ng-click="applyCurrent()">{{'APPLY TO' | translate}}
+                    {{selectedDate.date | date: medium}} {{'ONLY' | translate}}</button>
+                  <button type="button" class="slot-btn" ng-click="applyToDay(selectedDate.day)">{{'APPLY TO' | translate}}
+                    all {{selectedDate.day}}s</button>
+                </div>
+                <br>
+                <button type="button" class="btn btn-inverse" ng-click="switch()"
+                  style="margin-bottom: 15px; width: 100%">{{'OR APPLY TO MULTIPLE' | translate}}</button>
+
+                <!-- <a class="mul" ng-click="switch()">Or Apply to Multiple...</a> -->
+              </div>
+
+            </div>
+          </div>
+
+          <div class="row" ng-if="multiple">
+            <div class="col-md-12" style="padding: 0px 35px">
+              <h5 style="margin-bottom: 15px; font-style: italic;">{{'REPEATING DAYS OF WEEK' | translate}}:</h5>
+              <div class="checkbox" ng-repeat="day in days track by $index">
+                <label><input type="checkbox" value="{{$index}}" name="{{day}}" id="{{$index}}"
+                    ng-model="selectedDays[$index]"><span></span>{{day}}</label>
+              </div>
+              <button type="button" class="slot-btn" ng-click="applyAll()"
+                style="margin: 15px 0px;">{{'APPLY' | translate}}</button>
+                <div style="text-align: center; cursor: pointer;"><span ng-click="switch()"><i class="fa fa-angle-left"></i> {{'BACK' | translate}}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+  .slots {
+    height: 100px;
+    cursor: pointer;
+    padding: 8px 15px !important;
+  }
+
+  .slots:hover {
+    background-color: #f7f7f7a6;
+  }
+
+  .slot-disabled {
+    background-color: #f5f5f6;
+  }
+
+  .slots .date {
+    /* float: right; */
+    font-size: 12px;
+    color: #909090;
+    margin-bottom: 25px;
+  }
+
+  .slots .date span {
+    float: right;
+  }
+
+  .slot-time {
+    /* margin-top: 29px; */
+    font-size: 12px;
+    border: 1px dotted #9f9f9f;
+    border-radius: 4px;
+    padding: 4px 0px;
+    margin: 8px 0px;
+  }
+
+  .slot_data {
+    margin-bottom: 20px;
+    box-shadow: none;
+  }
+
+  .slot_data td,
+  .slot_data th {
+    border-right: none;
+  }
+
+  .slot_data .t-row {
+    background-color: #ffffff !important;
+  }
+
+  .slot_data .t-row td {
+    padding-top: 10px;
+  }
+
+  .slot_data .t-row td input {
+    height: 40px;
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 9px 8px;
+    font-size: 14px;
+  }
+
+  .slot_data .t-row td button {
+    margin-left: 10px;
+  }
+
+  .checkbox label {
+    font-weight: 500;
+    color: #343434ed;
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .cst-btn-grp button {
+    margin: 5px 0px;
+  }
+
+  .cst-btn-grp .mul {
+    margin-top: 5px;
+    font-weight: 600;
+  }
+
+  .checkbox {
+    padding: 2px 0px !important;
+  }
+
+  .error {
+    text-align: center;
+    color: red;
+    text-transform: uppercase;
+    padding-top: 10px;
+  }
+
+  .btn-inverse {
+    border-color: #224356;
+    color: #224356;
+    background-color: #ffffff;
+  }
+
+  .add {
+    color: #224356;
+    cursor: pointer;
+    font-size: 15px;
+    padding-top: 5px;
+  }
+
+  .fa-trash-o {
+    color: red;
+    font-size: 18px;
+  }
+
+  .unavailable {
+    /* border: 1px solid rgba(124, 124, 124, 0.712); */
+    padding: 15px;
+    text-align: center;
+    font-size: 16px;
+  }
+
+  .slot-btn {
+    color: #ffffff;
+    border-radius: 4px;
+    background-color: var(--primary-color);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+    border: none;
+    font-size: 14px;
+    padding: 9px 18px;
+    margin: 30px 0px;
+    width: 100%;
+  }
+</style>

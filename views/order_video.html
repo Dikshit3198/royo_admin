@@ -1,0 +1,119 @@
+<div class="wrapper">
+    <div class="category">
+
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">Video Call</h1>
+                    <h5 ng-if="orderId" class="modal-title text-capitalize">{{(localisation.order | translate)}}:
+                        {{orderId}}</h5>
+                    <h5 class="modal-title text-capitalize">{{'NAME'|translate}}: {{name}}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row col-md-12 ml-2  mb-5 pb-5">
+    <div class="chat col-md-12">
+        <div class="container mt-4">
+            <div id="chatBox1" class="chat-body" style="border-bottom: 1px solid #0000001f">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <h5 style="font-weight: 600; text-decoration: underline;">{{'Call History' | translate}}</h5>
+                </div>
+                <div ng-if="!chatPersons.length" class="no-chat-history">
+                    <h5>{{'No Call History' | translate}}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .my-msg {
+        float: right;
+        width: 80%;
+        text-align: right;
+    }
+
+    .my-msg p {
+        padding: 15px;
+        border-radius: 25px 0px 25px 25px;
+        color: #000000b0;
+        background-color: #dddddd;
+        display: inline-block;
+        margin-bottom: 0px;
+    }
+
+    .my-msg span {
+        margin-top: 0px;
+        font-size: 13px;
+        color: #a3a3a3;
+        margin-bottom: 10px;
+        padding: 0;
+    }
+
+    .agent-msg {
+        float: left;
+        width: 80%;
+        text-align: left;
+    }
+
+    .agent-msg p {
+        padding: 15px;
+        border-radius: 0px 25px 25px 25px;
+        background-color: #dddddd;
+        display: inline-block;
+        margin-bottom: 0px;
+    }
+
+    .agent-msg span {
+        margin-top: 0px;
+        font-size: 13px;
+        color: #a3a3a3;
+        margin-bottom: 10px;
+        padding: 0;
+    }
+
+    .chat img {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+    }
+
+    .chat h5 {
+        margin-left: 8px;
+        margin-top: 5px;
+    }
+
+    .chat-body {
+        max-height: 400px;
+        overflow-y: scroll;
+        min-height: 400px;
+        border: 1px solid #0000001f;
+        border-bottom: none;
+        border-radius: 4px 4px 0px 0px;
+        padding: 15px;
+    }
+
+    .chat-p-detail {
+        cursor: pointer;
+        box-shadow: 1px 5px 5px -7px #0000004f;
+        padding: 6px;
+    }
+
+    .chat-p-detail:hover {
+        transition: 0.7s;
+        background-color: #f3f3f3;
+    }
+
+    .no-chat-history {
+        text-align: center;
+        margin-top: 22%;
+        border: 1px solid #00000029;
+        margin-left: 50px;
+        margin-right: 50px;
+        padding: 30px;
+        border-radius: 4px;
+    }
+</style>

@@ -1,0 +1,248 @@
+<div class="wrapper supplier-plan-page">
+    <div class="row">
+        <div class="col-6">
+            <h2>{{localisation.subscription | translate}}</h2>
+        </div>
+    </div>
+    <div class="row plan-list">
+        <div class="col-md-4 col" ng-repeat="plan in planList">
+            <div class="plan-card">
+                <div class="plan-title">
+                    <h2>{{plan.name}}</h2>
+                    <div ng-if="plan.is_active == 1" class="plan-active">{{'Active' | translate}}</div>
+                    <p>{{currency}}{{plan.price}}/{{plan.type}}</p>
+                    <small style="color: #ffffff">{{'ADMIN COMMISSION' | translate}} :
+                        {{plan.admin_commission}}%</small>
+                </div>
+                <div class="plan-body">
+                    <div>
+                        {{plan.description}}
+                    </div>
+                    <div class="buy-now">
+                        <button ng-if="!isPlanActive" ng-click="checkPaymentGateway(plan)">{{'Buy Now' |
+                            translate}}</button>
+                        <button ng-if="isPlanActive && plan.is_active == 1"
+                            ng-click="cancelSubscription(plan)">{{'CANCEL' |translate}}
+                            {{localisation.subscription | translate}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Choose Payment Gateway -->
+    <div class="modal fade" id="selectGateway" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{'Choose Payment Gateway' | translate}}</h5>
+                </div>
+                <div class="modal-body">
+                    <form role="form" id="addAgentForm">
+
+                        <div class="">
+                            <div class="col-md-6">
+                                <div class="form-group persinfo" style="margin-top: 20px;">
+                                    <div class="radio">
+                                        <label style="margin-right: 20px;" ng-if="paymentGateways.stripe">
+                                            <input ng-model="selectedPaymentType" value="Stripe" type="radio"
+                                                name="type" ng-click="selectPayment('Stripe')"><span
+                                                style="margin-right: 8px"></span>{{['faindy_0016','faindiy_0561'].includes(client_code)
+                                            ? 'Credit or Debit Card Payment' : 'STRIPE' | translate}}
+                                        </label>
+                                        <label style="margin-left: 0px;" ng-if="paymentGateways.oxxo">
+                                            <input ng-model="selectedPaymentType" value="OXXO" type="radio" name="type"
+                                                ng-click="selectPayment('OXXO')"><span
+                                                style="margin-right: 8px"></span>{{localisation.oxxo | translate}}
+                                        </label>
+                                        <label style="margin-left: 0px;" ng-if="paymentGateways.knet">
+                                            <input ng-model="selectedPaymentType" value="KNET" type="radio" name="type"
+                                                ng-click="selectPayment('KNET')"><span
+                                                style="margin-right: 8px"></span>{{localisation.knet | translate}}
+                                        </label>
+                                        <label style="margin-left: 0px;" ng-if="paymentGateways.paymaya">
+                                            <input ng-model="selectedPaymentType" value="PAYMAYA" type="radio"
+                                                name="type" ng-click="selectPayment('PAYMAYA')"><span
+                                                style="margin-right: 8px"></span>{{localisation.paymaya | translate}}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="close-csv-btn" type="button" class="btn btn-secondary" data-dismiss="modal">{{'CLOSE' |
+                        translate}}</button>
+
+                    <button type="button" class="btn btn-primary" ng-click="openPaymentSteps()">{{'SUBMIT' |
+                        translate}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Csv -->
+    <div class="modal fade" id="uploadReceipt" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="csvModelLabel">{{localisation.oxxo | translate}} Payment</h5>
+                </div>
+                <div class="csv-body modal-body">
+                    <div class="">
+
+                        <div class="col-md-12 m-top-20">
+                            {{'To buy this subcription please transfer amount' | translate}}
+                            <b>({{currency}}{{planToPurchase.price}})</b>
+                            {{'to account' | translate}}
+                            <b>{{oxxo_detail.oxxo_name}} - {{oxxo_detail.oxxo_account}}</b> {{'and upload payment
+                            receipt below.' | translate}}
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group m-top-30 registration_docs">
+                                <div class="row">
+                                    <div class="col-md-6 file">
+                                        <!-- <label>{{'UPLOAD RECEIPT' | translate}}</label> -->
+                                        <span style="height: 104px; width: 160px;">
+                                            <img ng-if="!Receipt_url_toView" src="img/v1_images/ic_dummy.png">
+                                            <img ng-if="Receipt_url_toView"
+                                                style="height: 100%; width: 100%; object-fit: cover;"
+                                                src="{{Receipt_url_toView}}">
+                                        </span>
+                                        <input filestyle="" type="file" accept="image/*" name="image2"
+                                            ng-model="Receipt_url" class="form-control"
+                                            onchange="angular.element(this).scope().file_to_upload_for_doc(this.files, 1)"
+                                            data-button-text="Single" data-class-button="btn btn-default"
+                                            data-classinput="form-control inline" nv-file-select=""
+                                            uploader="uploader" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="close-csv-btn" type="button" ng-click="removeCsv()" class="btn btn-secondary"
+                        data-dismiss="modal">{{'CLOSE' | translate}}</button>
+                    <button type="button" class="btn btn-primary" ng-class="{'disabled': !planToPurchase}"
+                        ng-click="purchasePlanOxxo(planToPurchase)">{{'UPLOAD' | translate}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .supplier-plan-page h2 {
+        font-size: 24px;
+        font-weight: 500;
+    }
+
+    .plan-list {
+        margin-top: 40px;
+    }
+
+    .plan-card {
+        border: 1px solid #dddddd;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.75);
+    }
+
+    .plan-card:hover {
+        box-shadow: 1px 1px 12px 1px rgba(0, 0, 0, 0.75);
+    }
+
+    .plan-card .plan-title {
+        padding-bottom: 10px;
+        border-bottom: 1px solid #dddddd;
+        text-align: center;
+        background-color: var(--primary-color);
+        color: #ffffff;
+    }
+
+    .plan-active {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        right: auto;
+        color: #fff
+    }
+
+    .plan-card .plan-title h2 {
+        padding: 5px;
+        font-size: 22px;
+        text-transform: capitalize;
+        padding-top: 15px;
+    }
+
+    .plan-card .plan-body {
+        padding: 15px;
+    }
+
+    .plan-card .buy-now {
+        margin-top: 10px;
+    }
+
+    .plan-card .buy-now button {
+        color: #262626;
+        border: 1px solid #262626;
+        border-radius: 4px;
+        padding: 10px;
+        width: 100%;
+        background-color: #ffffff;
+    }
+
+
+    .form-group.registration_docs .file {
+        position: relative;
+    }
+
+    .form-group.registration_docs .file span {
+        height: 72px;
+        width: 128px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 4px;
+        background-color: #f7f7f7;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .form-group.registration_docs .file input {
+        width: 128px;
+        height: 96;
+        position: absolute;
+        left: 15px;
+        bottom: 0;
+        padding: 0;
+        height: 72px;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .plan-card {
+        min-height: 220px !important;
+        transition: 0.7s;
+        box-shadow: 3px 4px 3px 1px #c4c4c4;
+    }
+
+    .plan-card:hover {
+        box-shadow: 3px 4px 3px 1px var(--primary-color);
+    }
+
+    .plan-card .buy-now button:hover {
+        box-shadow: 1px 1px 1px 1px #c4c4c4;
+    }
+
+    .plan-active {
+        background: #fff;
+        color: var(--primary-color);
+        padding: 0px 5px 0px 5px;
+        border-radius: 20px;
+        margin-top: 7px;
+        font-weight: 600;
+    }
+</style>

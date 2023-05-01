@@ -1,0 +1,47 @@
+
+<form role="form" style="height:100vh" id="stepOneForm" name="stepOneForm" ng-submit="setSupplierDetails(stepOneForm)" prevent-enter-press
+    novalidate>
+    <div class="persinfo">
+        <div class="bx">
+            <div class="row select-category">
+                <label>{{'ASSIGN INVENTORY' | translate}}</label>
+            </div>
+
+            <div isteven-multi-select input-model="products" id="category" output-model="selected_product" max-height="250px"
+                button-label="name total_active_orders" item-label="name" tick-property="ticked" group-property="msGroup">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 mt-3" style="text-align: right">
+            <button type="submit" style="float: none; margin: 0px; text-align: center"
+                class="submit" ng-click="assignInventory()">{{'SUBMIT' | translate}}</button>
+        </div>
+    </div>
+</form>
+<style>
+    .multiSelect>button {
+        width: 60% !important;
+
+    }
+    #category .multiSelect .checkboxLayer {
+        height: auto !important;
+        min-height: 1px;
+        /* max-height: 210px; */
+        overflow-y: auto;
+    }
+
+    .multiSelect .tickMark {
+        right: 16px;
+    }
+
+    .multiSelect .multiSelectItem {
+        width: 100%;
+    }
+
+    .multiSelect .checkboxLayer button {
+        background: none;
+        width: auto;
+    }
+</style>
+

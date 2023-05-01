@@ -1,0 +1,239 @@
+<div class="accstat">
+
+    <div class="reporttop m-top-30"
+        style="border: 1px solid rgba(18,17,17,0.1); padding: 0px 25px 25px;	border-radius: 4px;	background-color: #FDFDFC;">
+        <form>
+
+            <div class="row">
+                <div class="col-md-4">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>{{'FROM DATE' | translate}}</label>
+                                <input type="text" id="datepicker_statement" placeholder="{{'DATE' | translate}}">
+                                <span class="inputtag"><img src="/img/v1_images/calendar.svg"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12 m-top-15" ng-if="enable_free_delivery_account_filter">
+
+                            <div class="form-group select-category">
+                                <label>{{'Free Delivery Charge' | translate}}</label>
+                                <select class="app" ng-model="is_free_delivery"
+                                    ng-change="changeDeliveryCharge(is_free_delivery)">
+                                    <option selected disabled value="">{{'Select' | translate}}</option>
+                                    <option value="0">{{'No' | translate}}</option>
+                                    <option value="1">{{'Yes' | translate}}</option>
+                                </select>
+                                <span class="inputtag"><img src="/img/v1_images/ic_dropdown.svg"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group select-category" ng-if="profile === 'ADMIN' && is_single_vendor == 0">
+                        <label>{{localisation.supplier | translate}}</label>
+                        <select class="app" placeholder="Choose {{localisation.supplier | translate}}" tabindex="4"
+                            ng-model="selected_supplier" ng-options="supplier.supplier_name for supplier in suppliers"
+                            ng-change="changeSupplier(selected_supplier)">
+                            <option selected value="">{{'ALL' | translate}}</option>
+                        </select>
+                        <span class="inputtag"><img src="/img/v1_images/ic_dropdown.svg"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="btns">
+                        <button type="button" ng-click="downloadCSV()"
+                            ng-if="disable_csv_download == 0 && (profile == 'ADMIN' || (profile == 'SUPPLIER' && disable_csv_download_supplier == 0))"
+                            ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                            ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                            style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'DOWNLOAD CSV'
+                            | translate}}</button>
+                        <button type="button" ng-click="resetFilter()"
+                            ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                            ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                            style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'RESET'
+                            |
+                            translate}}</button>
+                        <button type="button" class="bg-success" ng-click="selectFilter()"
+                            ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                            ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                            style="color: #fff; border: 1px solid var(--primary-color); margin-left: 7px;">{{"FILTER" |
+                            translate}}</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+
+
+    <div class="repbtm m-top-40">
+        <div class="secnav ">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <input style="width: 330px" type="text" placeholder="{{'SEARCH BY ID / CUSTOMER NAME' | translate}}"
+                        ng-model="search" ng-keypress="searchOrder($event)">
+                </div>
+                <!-- <div class="col-md-6 col-sm-6">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)">
+                                <button type="button" class="bold create" data-toggle="modal"
+                                    data-target="#successmod">Pay Selected</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="tableouter m-top-20">
+            <table>
+                <thead>
+                    <tr>
+                        <!-- <th></th> -->
+                        <th>{{(client_code !='piramiefood_0038' ? localisation.user : localisation.order) | translate}} {{'ID' | translate}} </th>
+                        <th>{{'CUSTOMER NAME' | translate}}</th>
+                        <th>{{localisation.order_delivery_date | translate}} </th>
+                        <th ng-if="profile === 'ADMIN' && show_supplier_name_in_account_statement == 1">
+                            {{localisation.supplier | translate}} {{'NAME' | translate}}
+                        </th>
+                        <th>{{'DELIVERY MODE' | translate}}</th>
+                        <th>{{'PROMO DISCOUNT' | translate}}</th>
+                        <th ng-show="no_tax_in_category == 0">{{localisation.tax | translate}}</th>
+                        <th ng-if="enable_order_desc_price_breakdown==0">
+                            {{is_dine_in ? 'DIGIDINE FEES' : 'COMMISSION' | translate}}
+                        </th>
+                        <th ng-show="is_dine_in == 0 && (profile == 'ADMIN' || (profile == 'SUPPLIER' && no_supplier_delivery_charge == 0)) && 
+                            (profile == 'ADMIN' || remove_delivery_charge_supplier == 0)">
+                            {{'DELIVERY CHARGES' | translate}}</th>
+                        <th>{{localisation.order_amount | translate}}</th>
+                        <th>{{'NET AMOUNT' | translate}} </th>
+
+                        <th ng-if="enable_order_desc_price_breakdown==1">
+                            {{localisation.pay_to_restaurant | translate}}
+                        </th>
+                        <th ng-if="enable_order_desc_price_breakdown==1">
+                            {{localisation.pay_to_compnay | translate}}
+                        </th>
+                        <th ng-if="client_code =='peeparound_0104'">{{'SERVICE CHARGE' | translate}}</th>
+                        <th>{{localisation.customer_payment_source | translate}}</th>
+                        <th>{{localisation.customer_payment_id | translate}}</th>
+                        <th>{{localisation.customer_payment_reference_no | translate}}</th>
+                        <th ng-if="show_loyalty_amount_in_accounting == 1">{{'LOYALTY AMOUNT' | translate}}</th>
+                        <th style="width: 110px">{{'BALANCE AMOUNT' | translate}}</th>
+                        <th>{{'TRANSACTION STATUS' | translate}}</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="statement in statement_data">
+                        <!-- <td><label class="check"><input type="checkbox"><span></span></label></td> -->
+                        <td>{{statement.id}}</td>
+                        <td>{{statement.firstname}}</td>
+                        <td>
+                            <span>
+                                {{statement.delivered_on | date: 'MMM d, y' : 'UTC'}}
+                            </span> <br>
+                            <span>
+                                {{statement.delivered_on | date: 'hh:mm a' : 'UTC'}}
+                            </span>
+                        </td>
+                        <td ng-if="profile === 'ADMIN' && show_supplier_name_in_account_statement == 1">
+                            {{statement.name}}</td>
+                        <td>
+                            <span ng-if="statement.self_pickup == 1">{{'Self Pickup' | translate}}</span>
+                            <span ng-if="statement.self_pickup == 0">{{'Delivery' | translate}}</span>
+                            <span ng-if="statement.self_pickup == 3">{{'Dine In' | translate}}</span>
+                        </td>
+                        <td>{{statement.promo_discount ? (statement.promo_discount).toFixed(price_decimal_length) :
+                            'NA'}}</td>
+                        <td ng-show="no_tax_in_category == 0">
+                            {{currency}} {{(statement.handling_admin).toFixed(price_decimal_length) | number :
+                            addon_decimal_value}}</td>
+                        <td ng-if="enable_order_desc_price_breakdown==0">
+                            {{(statement.commission).toFixed(price_decimal_length)}}
+                        </td>
+                        <td ng-show="is_dine_in == 0 && (profile == 'ADMIN' || (profile == 'SUPPLIER' && no_supplier_delivery_charge == 0)) && 
+                            (profile == 'ADMIN' || remove_delivery_charge_supplier == 0)">
+                            {{currency}} {{(statement.delivery_charges).toFixed(price_decimal_length) | number :
+                            addon_decimal_value}}</td>
+                        <td>{{currency}} {{(statement.sub_total).toFixed(price_decimal_length) | number :
+                            addon_decimal_value}}</td>
+                        <td>
+                            {{currency}} {{(statement.net_amount).toFixed(price_decimal_length) | number :
+                            addon_decimal_value}}
+                        </td>
+
+                        <td ng-if="enable_order_desc_price_breakdown==1">
+                            {{currency}}{{getPaytoRestaurant(statement)}}
+                        </td>
+                        <td ng-if="enable_order_desc_price_breakdown==1">
+                           {{getPaytoCompnay(statement)}} {{currency}}
+                        </td>
+                        <td ng-if="client_code =='peeparound_0104'">
+                            {{currency}}{{(account.user_service_charge).toFixed(2) || '0.00'}}
+                          </td>
+                        <td>{{statement.payment_source}} </td>
+                        <td>{{statement.payment_id ? statement.payment_id : 'NA'}} </td>
+                        <td>{{statement.payment_reference_number ? statement.payment_reference_number : 'NA'}} </td>
+                        <td ng-if="show_loyalty_amount_in_accounting == 1">
+                            {{(statement.loyality_point_discount).toFixed(price_decimal_length) | number :
+                            addon_decimal_value}}</td>
+                        <td>
+                            <span ng-if="enable_order_desc_price_breakdown==0">
+                                {{currency}} {{show_loyalty_amount_in_accounting == 1 ? (statement.order_status == 2 ||
+                                statement.order_status == 8 ? '0' :
+                                (statement.total_amount).toFixed(price_decimal_length) |
+                                number :
+                                addon_decimal_value) : (statement.total_amount).toFixed(price_decimal_length) | number :
+                                addon_decimal_value}}
+                            </span>
+                            <span ng-if="enable_order_desc_price_breakdown==1">
+                                {{currency}}{{getPaytoRestaurant(statement)}}
+                            </span>
+                        </td>
+                        <td>
+                            <p style="color: #7A9E50;">{{'RECEIVED' | translate}}</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="no-data-found" ng-if="statement_data.length == 0 && dataLoaded">
+                {{'NO DATA FOUND' | translate}}
+            </div>
+
+            <div ng-if="statement_data.length > 0 && dataLoaded" class="row pagination">
+                <ul ng-if="pager.pages && pager.pages.length">
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                    </li>
+                    <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                        <a ng-click="setPage(page)">{{page}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .reporttop .btns {
+        margin-bottom: 0;
+        margin-top: 48px;
+        position: relative;
+    }
+</style>

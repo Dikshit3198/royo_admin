@@ -1,0 +1,208 @@
+<div class="wrapper">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'SUB ADMIN' | translate}}</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="secnav m-top-40">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <input type="text" placeholder="{{'SEARCH' | translate}}" ng-model="search"
+                        ng-keypress="searchAdmin($event)">
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)" ng-if="is_superAdmin == 1">
+                                <button type="button" class="bold create" data-toggle="modal" ng-click="openAdd()"
+                                    ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                                    ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                                    data-target="#addAdmin">{{'ADD ADMIN' | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table class="">
+                        <thead>
+                            <tr>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{'EMAIL' | translate}}</th>
+                                <th>{{'PHONE NUMBER' | translate}}</th>
+                                <th>{{'REGISTRATION DATE' | translate}}</th>
+                                <!-- <th ng-if="is_superAdmin == 1">{{'SUPERADMIN' | translate}}</th> -->
+                                <th>{{'STATUS' | translate}}</th>
+                                <th style="width: 33%;" ng-if="is_superAdmin == 1">{{'ACTION' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="admin in adminList track by $index">
+                                <!-- <td>{{$index+1}}</td> -->
+                                <td>{{admin.id}}</td>
+                                <td>{{admin.email}}</td>
+                                <td>{{admin.phone_number ? admin.phone_number : 'NA'}}</td>
+                                <td>{{admin.created_on ? (admin.created_on | date) : 'NA'}}</td>
+                                <!-- <td ng-if="is_superAdmin == 1">{{admin.is_superadmin ? 'Yes' : 'No'}}</td> -->
+                                <td>
+                                    <label ng-if="is_superAdmin == 1">
+                                        <div class="switch togglebtn"
+                                            ng-if="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant !== '1' : true)">
+                                            <input type="checkbox" id="togBtn" ng-checked="{{admin.is_active}}"
+                                                ng-click="changeAdminStatus(admin.is_active, admin.id)">
+                                            <div class="slider round"> <span class="on"></span> <span
+                                                    class="off"></span> </div>
+                                        </div>
+                                    </label>
+                                    <span ng-if="is_superAdmin == 0">{{(admin.is_active == 1 ? 'ACTIVE' : 'INACTIVE') |
+                                        translate}}</span>
+                                </td>
+                                <td ng-if="is_superAdmin == 1">
+                                    <button type="button" class="bg-success"
+                                        ng-if="(profile === 'SUPPLIER' ? restriction_view_only_for_restaurant !== '1' : true)"
+                                        ui-sref="profile.admin_permissions({id:admin.id, user:admin.email})">
+                                        {{'Permissions' | translate}}</button>
+                                    <span ng-if="admin.is_superadmin != 1"> 
+                                        <button type="button" style="float: right; width: 100px;" class="bg-success"
+                                            ng-click="deleteSubAdmin(admin.id)">{{'DELETE' | translate}}</button>
+                                    </span> 
+                                    <span ng-if="admin.is_superadmin == 1">
+                                        <button type="button" style="float: right; width: 100px;" class="bg-success">{{'ADMIN' | translate}}</button>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="adminList.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND'}}
+                    </div>
+
+                    <div ng-if="adminList.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal" id="addAdmin">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{'ADD ADMIN' | translate}}</h3>
+                    <button type="button" class="close" data-dismiss="modal"
+                        ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                        ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <form role="form" id="addAdminForm" name="addAdminForm" ng-submit="addAdmin(addAdminForm)"
+                        novalidate>
+
+                        <div class="form-group">
+                            <label>{{'EMAIL' | translate}}<p class="str">*</p></label>
+                            <input type="email" ng-model="admin.email" name="email"
+                                placeholder="{{'EMAIL' | translate}}" autocomplete="off" id="input_email" required>
+                            <div class="error" ng-show="addAdminForm.email.$invalid && addAdminForm.$submitted">
+                                <small ng-show="addAdminForm.email.$error.required">{{'PLEASE ENTER EMAIL' |
+                                    translate}}</small>
+                                <small ng-show="addAdminForm.email.$error.email">{{'PLEASE ENTER A VALID EMAIL' |
+                                    translate}}</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>{{'PASSWORD' | translate}}<p class="str">*</p></label>
+                            <input id="input_password" type="password" name="password" ng-model="admin.password"
+                                ng-minlength="6" placeholder="{{'PASSWORD' | translate}}" autocomplete="off" required>
+                            <div class="error" ng-show="addAdminForm.password.$invalid && addAdminForm.$submitted">
+                                <small ng-show="addAdminForm.password.$error.required">{{'PLEASE ENTER PASSWORD' |
+                                    translate}}</small>
+                                <small ng-show="addAdminForm.password.$error.minlength">{{'Password must be atleast 6 characters long' | translate}}</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>{{'PHONE' | translate}}<p class="str">*</p></label>
+                            <input id="admin_phone" type="text" name="phone" production-qty ng-model="admin.phone"
+                                ng-maxlength="15" ng-minlength="6" placeholder="{{'PHONE' | translate}}" required>
+                            <div class="error" ng-show="addAdminForm.phone.$invalid && addAdminForm.$submitted">
+                                <small ng-show="addAdminForm.phone.$error.required">{{'PLEASE ENTER ADMIN PHONE NO.' |
+                                    translate}}</small>
+                                <small ng-show="addAdminForm.phone.$error.minlength">{{'PHONE NO. MUST BE MORE THAN 6 DIGITS' 
+                                    | translate}}</small>
+                                <small ng-show="addAdminForm.phone.$error.maxlength">{{'PHONE NO. MUST BE LESS THAN 15 DIGITS' 
+                                    | translate}}</small>
+                            </div>
+                            <div class="error"
+                                ng-show="!addAdminForm.phone.$invalid && addAdminForm.$submitted && invalid_phone_no">
+                                <small>{{'INVALID PHONE NUMBER' | translate}}</small>
+                            </div>
+                        </div>
+                        <div class="submit-admin" ng-if="iction_view_only_for_restaurant !== '1'">
+                            <button type="submit"
+                                ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                                ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''">{{'SUBMIT'
+                                | translate}}</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .submit-admin {
+        text-align: right;
+    }
+
+    .submit-admin button {
+        display: inline-block;
+        color: #ffffff;
+        font-size: 14px;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 4px;
+        vertical-align: middle;
+        background-color: var(--primary-color);
+    }
+
+    .str {
+        display: inline-block;
+        margin-left: 1px;
+        color: #e71818;
+    }
+</style>

@@ -1,0 +1,416 @@
+<div class="wrapper">
+
+    <a class="backbtn" ui-sref="orders.ordersManager({status: 3})"><img
+            src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+
+    <div class="orddet">
+        <div class="top">
+            <h1 class="bold">{{localisation.order | translate}} Creation
+                <!-- <a href=""><img src="img/v1_images/ic_dropdown_fill.svg"></a> -->
+            </h1>
+
+        </div>
+
+        <div class="row  m-top-20">
+            <div class="col-md-8">
+
+                <div style="position: relative; margin-top: 40px;">
+                    <div class="product-update-btns">
+
+                        <select class="payment-drop"
+                            style="float: none; height: 34px; margin-right: 10px; padding: 2px 6px;"
+                            ng-change="changePaymentType(payment_type)" ng-model="payment_type" convert-to-number>
+                            <option value="0" ng-selected="payment_type == 0">Cash On Delivery</option>
+                            <option value="1" ng-selected="payment_type == 1">Online</option>
+                        </select>
+
+                        <button class="button-primary" type="button"
+                            style="width: auto; padding: 4px 20px; font-size: 16px; margin-top: 10px;"
+                            ng-click="openProductModal()">Add More {{localisation.products | translate}}</button>
+                    </div>
+                    <h2 style="color: #4a4a4a; font-weight: 500;">{{localisation.products | translate}}</h2>
+                    <div class="box" style="margin-top: 25px;" ng-repeat="product in products">
+                        <div class="left" style="padding: 12px; width: 160px">
+                            <div class="leftimg">
+                                <img style="height: 100px" src="{{product.image}}">
+                                <!-- <h6 class="ellipsis" data-toggle="tooltip" title="{{product.product}} x {{product.quantity}}">
+                                {{product.product}} x {{product.quantity}}</h6>
+                            <span class="bold">AED {{product.Product_cost}}</span> -->
+                            </div>
+                        </div>
+                        <div class="right" style="padding: 12px; width: 85%">
+                            <ul>
+                                <li style="width: 100%"><label>{{product.name}} x {{product.quantity}}</label></li>
+                            </ul>
+                            <ul>
+                                <li style="width: 100%">{{currency}}{{(product.price).toFixed(price_decimal_length)}}</li>
+                            </ul>
+
+                            <ul ng-if="product.addons.length">
+                                <li style="width: 100%" ng-repeat="addon in product.addons track by $index">
+                                    <small>{{addon.addon_name}} : {{addon.addon_types}}</small>
+                                </li>
+                            </ul>
+
+                            <ul class="variants" ng-if="product.variants.length && app_type == 2">
+                                <li ng-repeat="variant in product.variants">{{variant.variant_name}} :
+                                    <span ng-if="variant.variant_type == 0">{{variant.variant_value}}</span>
+                                    <span ng-if="variant.variant_type == 1" class="v-color"
+                                        ng-style="{'backgroundColor': variant.variant_value}"> </span>
+                                </li>
+                            </ul>
+
+                            <div class="row" style="margin-top: 10px;">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend cursor" ng-click="decreaseQuantity(product)">
+                                            <span class="input-group-text"><i class="fa fa-minus"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" value="{{product.quantity}}"
+                                            placeholder="Qty" readonly>
+                                        <div class="input-group-append cursor" ng-click="increaseQuantity(product)">
+                                            <span class="input-group-text"><i class="fa fa-plus"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="remove-product">
+                                        <button type="button" ng-click="removeProduct($index)">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="no-data-found" style="border-radius: 8px;" ng-if="products.length == 0">
+                        Add {{localisation.products | translate}} to this {{localisation.order | translate}}
+                    </div>
+
+                    <button ng-click="updateProducts()" type="button" class="button-primary"
+                        style="width: auto; padding: 4px 20px; font-size: 16px; margin-top: 10px;">Create
+                        {{localisation.order | translate}}</button>
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="bx-top m-bottom-30" style="margin-top: 82px;">
+                    <ul>
+                        <li>{{localisation.order | translate}}
+                            {{'PRICE' | translate}}<span>{{currency}}{{(order_cost).toFixed(price_decimal_length)}}</span>
+                        </li>
+                        <li ng-if="service_charge">{{localisation.supplier | translate}} service charge<span>
+                                {{currency}}{{(service_charge).toFixed(price_decimal_length)}}</span></li>
+                        <li>{{localisation.tax | translate}}<span>{{currency}}{{(handling_admin).toFixed(price_decimal_length)}}</span>
+                        </li>
+                        <li>Delivery Charges<span>{{currency}}{{(delivery_charges).toFixed(price_decimal_length)}}</span>
+                        </li>
+
+                        <li>{{'TOTAL PRICE' | translate}}<strong class="bold">
+                                {{currency}}{{ (net_total).toFixed(price_decimal_length) }}</strong>
+                        </li>
+                    </ul>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="add_products">
+    <div class="modal-dialog" style="max-width: 72%; width: 80%;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                    <h3>Choose {{localisation.products | translate}} to add</h3>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <div class="wrapper" style="margin-bottom: 30px;">
+
+                        <div class="category">
+
+                            <div class="secnav">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <div class="row select-category" style="margin-top: -30px">
+                                            <div class="col-md-3" ng-if="categories.length"
+                                                style="margin-bottom: 10px;">
+                                                <label class="cat-label">{{'SELECT' | translate}}
+                                                    {{localisation.category | translate}}</label>
+                                                <select data-placeholder="Choose {{localisation.category | translate}}"
+                                                    class="app" tabindex="4" ng-model="selected_cat"
+                                                    ng-options="category.name for category in categories"
+                                                    ng-change="onSelectCategory(selected_cat, true)">
+                                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-3" style="margin-bottom: 10px;"
+                                                ng-repeat="cat in dynamicSubCategories track by $index"
+                                                ng-init="parentIndex = $index">
+                                                <label class="cat-label"
+                                                    ng-if="parentIndex == 0">{{selected_cat.name}}</label>
+                                                <label class="cat-label"
+                                                    ng-if="parentIndex > 0">{{selectedCategory[childIndex-1].name}}</label>
+                                                <select data-placeholder="Choose Category" tabindex="4" class="app"
+                                                    ng-model="selectedCategory[childIndex]"
+                                                    ng-init="childIndex = $index"
+                                                    ng-options="subCat.name for subCat in cat"
+                                                    ng-change="changeSubCatId(selectedCategory[childIndex], parentIndex + 1, true)">
+                                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <input style="width: 100%" type="text" placeholder="{{'SEARCH' | translate}}"
+                                            ng-keypress="searchProduct($event)" ng-model="search">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF;">
+                                <div class="catbox">
+                                    <div class="addcatbr">
+                                        <div class="row">
+                                            <div class="col-md-2" ng-repeat="product in product_list">
+                                                <div class="product-assign">
+                                                    <label style="margin-bottom: 0px">
+                                                        <input ng-if="product.price" type="checkbox"
+                                                            ng-click="selectProduct(product)">
+                                                        <span ng-if="product.price"></span>
+                                                        <img ng-style="product.price ? {'cursor': 'pointer'} : {'cursor': 'default'}"
+                                                            src="{{product.images[0].image_path}}"
+                                                            style="height: 110px;">
+                                                    </label>
+                                                    <div class="text">
+                                                        <strong class="bold ellipsis"
+                                                            style="width: 100%; font-size: 14px;" data-toggle="tooltip"
+                                                            title="{{product.name_en}}">{{product.name_en}}</strong>
+                                                        <p class="price" style="cursor: default; font-size: 14px">
+                                                            {{product.price ? (currency + (product.price).toFixed(price_decimal_length)) : 'Price Not Added'}}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="no-data-found" ng-if="product_list.length == 0 && dataLoaded">
+                                    {{'NO DATA FOUND' | translate}}
+                                </div>
+
+                                <div class="no-data-found" ng-if="!dataLoaded">
+                                    {{'PLEASE SELECT CATEGOY' | translate}}
+                                </div>
+
+                                <div ng-if="product_list.length > 0 && dataLoaded" class="row pagination">
+                                    <ul ng-if="pager.pages && pager.pages.length">
+                                        <li ng-class="{disabled:pager.currentPage === 1}">
+                                            <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                                        </li>
+                                        <li ng-class="{disabled:pager.currentPage === 1}">
+                                            <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                                        </li>
+                                        <li ng-repeat="page in pager.pages"
+                                            ng-class="{active:pager.currentPage === page}">
+                                            <a ng-click="setPage(page)">{{page}}</a>
+                                        </li>
+                                        <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                            <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                                        </li>
+                                        <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                            <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+                <div class="modfooter" style="padding: 15px 15px">
+                    <button type="button" class="bg-success" data-dismiss="modal"
+                        style="width: auto; padding: 2px 20px;" ng-click="addProducts()">Add selected
+                        {{localisation.product | translate}}</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="msg_description"></success-modal>
+
+<style>
+    .refund {
+        font-size: 16px !important;
+    }
+
+    .refund strong {
+        float: right;
+    }
+
+    .questions {
+        margin: 8px 0px;
+    }
+
+    .questions h5 {
+        text-transform: capitalize;
+        color: #000000cf;
+        font-weight: 500;
+    }
+
+    .questions h5 span {
+        color: #2097a2;
+        font-weight: 600;
+        margin-right: 8px;
+    }
+
+    .questions p {
+        font-weight: 500;
+        color: #000000ad;
+        margin-left: 22px;
+        margin-top: 5px;
+    }
+
+    .questions ul {
+        margin-left: 36px;
+        margin-top: 5px;
+    }
+
+    .questions li {
+        font-weight: 500;
+        color: #000000ad;
+        list-style: disc;
+    }
+
+    .questions li span,
+    .questions p span {
+        float: right;
+        font-weight: 500;
+    }
+
+    .addon-charges {
+        color: #000000c7;
+        font-weight: 500;
+    }
+
+    .variants {
+        margin-top: 10px;
+    }
+
+    .variants li {
+        display: block !important;
+        padding: 3px 0px;
+    }
+
+    .variants li span {
+        font-weight: 500;
+        margin-left: 5px;
+        font-size: 14px;
+    }
+
+    .variants li .v-color {
+        height: 17px;
+        width: 22px;
+        border: 1px solid #0000006b;
+        padding: 3px;
+        display: inline-block;
+        vertical-align: middle;
+        border-radius: 2px;
+        margin-left: 5px;
+    }
+
+    .receipt {
+        text-align: center;
+    }
+
+    .receipt img {
+        width: 100%;
+        height: 480px;
+        object-fit: contain;
+    }
+
+    .prescription {
+        padding: 15px;
+    }
+
+    .prescription li img {
+        height: 70px;
+        width: 70px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .prescription ul {
+        display: inline-flex;
+    }
+
+    .prescription li {
+        margin-right: 15px;
+    }
+
+    .instructions {
+        padding: 15px;
+    }
+
+    .product-update-btns {
+        position: absolute;
+        right: 0px;
+        top: -15px;
+    }
+
+    .remove-product {
+        text-align: right;
+    }
+
+    .remove-product button {
+        color: #ffffff;
+        border-radius: 4px;
+        background-color: rgb(226, 47, 47);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+        border: none;
+        font-size: 14px;
+        padding: 6px 20px;
+    }
+
+    .input-group {
+        width: 35%;
+    }
+
+    .input-group input {
+        text-align: center;
+        padding: 3px;
+    }
+
+    .input-group .input-group-text {
+        font-size: 12px;
+    }
+
+    .payment-drop {
+        color: #ffffff;
+        height: 28px;
+        width: 155px;
+        border-radius: 4px;
+        background-color: var(--primary-color);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+        font-size: 14px;
+        text-align: center;
+        cursor: pointer;
+    }
+</style>

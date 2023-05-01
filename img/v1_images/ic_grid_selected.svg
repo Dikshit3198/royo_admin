@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_grid_selected</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" fill="#2CA6B1" x="0" y="0" width="24" height="24" rx="3"></rect>
+        <g id="Group-20" transform="translate(3.750000, 5.250000)" fill="#F5F7FB">
+            <rect id="Rectangle" x="0" y="0" width="7.5" height="6" rx="1.5"></rect>
+            <rect id="Rectangle-Copy-22" x="0" y="7.5" width="7.5" height="6" rx="1.5"></rect>
+            <rect id="Rectangle-Copy-21" x="9" y="0" width="7.5" height="6" rx="1.5"></rect>
+            <rect id="Rectangle-Copy-23" x="9" y="7.5" width="7.5" height="6" rx="1.5"></rect>
+        </g>
+    </g>
+</svg>

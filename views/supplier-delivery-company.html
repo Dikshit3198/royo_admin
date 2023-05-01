@@ -1,0 +1,119 @@
+<div class="suppro">
+
+    <div class="row"
+        ng-if="profile == 'ADMIN' && permissions('suppliers', 'update') == 1">
+        <div class="col-md-6">
+            <button ng-if="!is_assigned" ng-click="changeView(true)"
+                class="asgn-btn">{{'ASSIGN SHIPPING PANEL' | translate}}</button>
+                <!-- DELIVERY COMPANIES -->
+            <button ng-if="is_assigned" ng-click="changeView(false)"
+                class="asgn-btn">{{'VIEW ASSIGNED SHIPPING PANEL' | translate}}</button>
+                <!-- DELIVERY COMPANIES -->
+        </div>
+    </div>
+
+    <div class="row" ng-if="!is_assigned" style="margin-top: 20px; padding-bottom: 10px;">
+        <div style="margin-bottom: 20px;" class="col-md-4">
+            <div class="box">
+                <div class="top">
+                    <h2 class="bold">{{localisation.delivery_companies}}</h2>
+                </div>
+                <ul class="items">
+                    <span ng-repeat="data in deliveryCompanyData">
+                        <li ng-if="data.is_assigned" class="cursor primary-color" ui-sref="profile.deliveryCompanySetup.step_one({id: data.id, tab: 1})">
+                            {{data.name}}
+                        </li>
+                        <!-- <a -->
+                                        <!-- ui-sref="profile.deliveryCompanySetup.step_one({id: company.id, tab: 1})"> -->
+                    </span>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="persinfo" ng-if="is_assigned">
+        <div class="row suppro" style="margin-bottom: 15px">
+
+            <div class="catalogue-transition col-md-4">
+                <div class="form-group">
+                    <div class="box">
+                        <div class="top">
+                            <h2 class="bold">{{localisation.delivery_companies}}</h2>
+                        </div>
+                        <div class="scroll">
+                            <ul class="items">
+                                <li>
+                                    <input type="text" id="query" placeholder="Search Delivery Company.." ng-model="query" />
+                                </li>
+                                <li class="cursor" ng-repeat="data in deliveryCompanyData | filter:query | orderBy: orderList">
+                                    <p style="width: 80%" class="cursor primary-color" ui-sref="profile.deliveryCompanySetup.step_one({id: data.id, tab: 1})">{{data.name}}</p>
+                                    <label style="margin-top: -18px"><input type="checkbox"
+                                            ng-click="selectedDeliveryCompanyForAssignment(data)"
+                                            ng-checked="data.checked">
+                                        <span></span></label>
+                                    <!-- <span ng-if="data.is_assign" class="remove"
+                                        ng-click="removeCategory(data)">{{'REMOVE' | translate}}</span> -->
+                                </li>
+                            </ul>
+
+                            <button ng-disabled="selectedIds.length == 0"
+                                ng-class="selectedIds.length == 0 ? 'disabled' : ''"
+                                class="asgn-btn assign"
+                                ng-click="assignDeliveryCompany()"
+                                style="text-align: center">{{'ASSIGN SELECTED' | translate}}
+                                {{localisation.delivery_companies | translate}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<success-modal message="message"></success-modal>
+
+
+<style>
+        .asgn-btn {
+            width: auto;
+            border: 1px solid var(--primary-color);
+            border-radius: 4px;
+            display: block;
+            text-align: center;
+            padding: 10px 20px;
+            font-size: 14px;
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+    
+        .assign {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            margin: 0 auto !important;
+        }
+    
+        .disabled {
+            opacity: 0.6;
+        }
+    
+        .remove {
+            border-radius: 4px;
+            color: #ffffff;
+            background-color: var(--primary-color);
+            font-size: 12px;
+            padding: 3px 10px;
+            width: 65px;
+            position: absolute;
+            right: 10px;
+            top: 12px;
+        }
+    
+        .catalogue-transition {
+            transition: all 0.3s ease-in-out;
+        }
+    </style>

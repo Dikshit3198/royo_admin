@@ -1,0 +1,1185 @@
+<div class="container-fluid back">
+
+</div>
+
+
+<div class="container">
+    <div class="row profile">
+        <div class="col-4">
+
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper" ng-if="!is_assiging">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'Events' | translate}}</h1>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)">
+                                <button type="button" class="bold create" data-toggle="modal" ng-click="changeView()"
+                                    data-target="#addEventRef">{{'CREATE EVENT' |
+                                    translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{'IMAGES' | translate}}</th>
+                                <th>{{'NAME' | translate}}</th>
+                                <th>{{'VENUE NAME' | translate}}</th>
+                                <th>{{'EMAIL' | translate}}</th>
+                                <th>{{'PHONE' | translate}}</th>
+                                <th>{{'ADDRESS' | translate}}</th>
+                                <th>{{'CREATE TIME' | translate}}</th>
+                                <th>{{'START TIME' | translate}}</th>
+                                <th>{{'END TIME' | translate}}</th>
+                                <th>{{'ORDERING RADIUS' | translate}}</th>
+                                <th>{{'COSTS OF TICKETS' | translate}}</th>
+                                <th>{{'WEB LINK' | translate}}</th>
+                                <th>{{'FACEBOOK LINK' | translate}}</th>
+                                <th>{{'INSTAGRAM LINK' | translate}}</th>
+                                <th>{{'CANCELLATION POLICY' | translate}}</th>
+                                <th>{{'REFUND POLICY' | translate}}</th>
+                                <th>{{'HOST POLICY' | translate}}</th>
+                                <th>{{'DESCRIPTION' | translate}}</th>
+                                <th>{{'TYPE' | translate}}</th>
+                                <th>{{'STATUS' | translate}}</th>
+                                <th>{{'ACTION' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in eventsList">
+                                <td>{{item.id}}</td>
+                                <td title="View More Images" class="min_td_width">
+                                    <img ng-if="item.images.length"
+                                        src="{{compressImage(item.images[0].path, '80x80')}}">
+                                    <img ng-if="!item.images.length" src="/img/default_user.png">
+                                </td> 
+                                <td class="min_td_width">{{item.name || 'N/A'}}</td>
+                                <td class="min_td_width">{{item.venue_name || 'N/A'}}</td>
+                                <td class="min_td_width">{{item.email || 'N/A'}}</td>
+                                <td class="min_td_width">{{item.phone || 'N/A'}}</td>
+                                <td class="min_td_width">{{item.address || 'N/A'}}</td>
+                                <td class="min_td_width">{{item.created_at | date: 'dd/MM/yyyy hh:mm a' : 'UTC'}}</td>
+                                <td class="min_td_width">{{item.start_time | date: 'dd/MM/yyyy hh:mm a' : 'UTC'}}</td>
+                                <td class="min_td_width">{{item.end_time | date: 'dd/MM/yyyy hh:mm a' : 'UTC'}}</td>
+                                <td class="min_td_width">{{item.order_radius || 'N/A'}}</td>
+                                <td class="min_td_width">{{currency}}{{getTicketPricing(item.tickets) || 'N/A'}}</td>
+                                <td class="min_td_width">
+                                    <a target="_blank" href="{{item.browser_link}}">
+                                        Web Link
+                                    </a>
+                                </td>
+                                <td class="min_td_width">
+                                    <a target="_blank" href="{{item.facebook_link}}">
+                                        Facebook Link
+                                    </a>
+                                </td>
+                                <td class="min_td_width">
+                                    <a target="_blank" href="{{item.instagram_link}}">
+                                        Instagram Link
+                                    </a>
+                                </td>
+                                <td class="min_td_width">
+                                    <a target="_blank" href="{{item.cancellation_policy}}">
+                                        Cancellation Policy
+                                    </a>
+                                </td>
+                                <td class="min_td_width">
+                                    <a target="_blank" href="{{item.refund_policy}}">
+                                        Refund Policy
+                                    </a>
+                                </td>
+                                <td class="min_td_width">
+                                    <a target="_blank" href="{{item.host_terms_policy}}">
+                                        Host Terms Policy
+                                    </a>
+                                </td>
+                                <td class="eclips min_td_width" title="{{item.description}}">{{item.description ||
+                                    'N/A'}}</td>
+                                <td>{{item.type==1?'PUBLIC':'PRIVATE'}}</td>
+                                <td style="color: red;">{{item.is_approved==1?'APPROVED':'UN APPROVED'}}</td>
+                                <td class="min_td_width">
+                                    <p class="delete" ng-click="deleteEvent(item)">
+                                        {{'Delete'}}
+                                    </p>
+                                    <p class="delete" ng-click="updateEvent(item)">
+                                        {{'Update'}}
+                                    </p>
+                                    <p class="delete" ng-show="profile=='ADMIN'" ng-click="approveEvent(item)">
+                                        <span class="green">{{item.is_approved?'Un Approve':'Approve'}}?</span>
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="eventsList.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+                    <div ng-if="eventsList.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container" ng-if="is_assiging">
+    <div class="row profile">
+        <div class="col-md-12">
+            <div class="row suppro" style="margin-bottom: 15px; margin-top: 20px;">
+                <div class="col-md-6 suppro" style="margin-bottom: 15px; margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <div class="box">
+                                <h1 class="text-center mt-4">
+                                    <label class="scroll_bx_heading">
+                                        <b>{{'All Events' | translate}}</b>
+                                    </label>
+                                </h1>
+                                <div class="scroll">
+                                    <ul class="items time_slot">
+                                        <li ng-repeat="item in eventsList track by $index" class="event_item">
+                                            <p class="cursor" ng-click="getEventItems(item)">
+                                                <b>{{item.name || item.venue_name}}</b>
+                                            </p>
+                                            <span title="View Details" class="join_event green view_detT"
+                                                ng-click="viewEventDetails(item)">
+                                                <i class="fa fa-list"></i>
+                                            </span>
+                                        </li>
+                                        <p ng-if="!eventsList.length" class="no_event">
+                                            {{'No Event Found'}}
+                                        </p>
+                                    </ul>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 suppro" style="margin-bottom: 15px; margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <div class="box">
+                                <h1 class="text-center mt-4">
+                                    <label class="scroll_bx_heading">
+                                        <b>{{'Invited Events' | translate}}</b>
+                                    </label>
+                                </h1>
+                                <div class="scroll">
+                                    <ul class="items time_slot">
+                                        <li ng-repeat="item in invitedEventsList track by $index" class="event_item">
+                                            <p class="cursor" ng-click="getEventItems(item)">
+                                                <b>{{item.name || item.venue_name}}</b>
+                                            </p>
+                                            <span class="join_event red"
+                                                ng-if="!item.is_accepted && profile=='SUPPLIER'"
+                                                ng-click="joinEvent(item)">
+                                                {{'Join Event' | translate }}
+                                            </span>
+                                            <span class="join_event green" ng-if="item.is_accepted">
+                                                {{'Accepted Event' | translate }}
+                                            </span>
+                                            <span title="View Details" class="join_event green view_det"
+                                                ng-click="viewEventDetails(item)">
+                                                <i class="fa fa-list"></i>
+                                            </span>
+                                        </li>
+                                        <p ng-if="!invitedEventsList.length" class="no_event">
+                                            {{'No Event Found'}}
+                                        </p>
+                                    </ul>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 suppro" style="margin-bottom: 15px; margin-top: 20px;" ng-if="is_event_item_show">
+                    <div class="col-md-12" style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <div class="box">
+                                <h1 class="text-center mt-4">
+                                    <label class="scroll_bx_heading">
+                                        <b>{{'EVENT ITEMS' | translate}}</b>
+                                        <p class="menu_name">{{menu_name_obj.name}}</p>
+                                    </label>
+
+                                    <span class="add_ic" title="Add New Items" ng-if="profile=='SUPPLIER'"
+                                        ng-click="goToAssignItems()">
+                                        <img src="img/v1_images/ic_add.svg">
+                                    </span>
+                                </h1>
+                                <div class="scroll">
+                                    <ul class="items time_slot">
+                                        <li ng-repeat="item in eventItemList track by $index" class="event_item">
+                                            <p class="cursor">
+                                                <b>{{item.name}}</b>
+                                            </p>
+                                            <span class="join_event red" ng-if="profile=='SUPPLIER'"
+                                                ng-click="removeMenuItem(item)">
+                                                {{'Remove Item' | translate }}
+                                            </span>
+                                        </li>
+                                        <p ng-if="!eventItemList.length" class="no_event">
+                                            {{'No Item Found'}}
+                                        </p>
+                                    </ul>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="addEventRef">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{is_updating?'UPDATE':'ADD'}}&nbsp;{{'EVENT' | translate}}</h3>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <form role="form" id="addEventForm" name="addEventForm" ng-submit="addEvent(addEventForm)"
+                        novalidate>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>{{'EVENT NAME' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="name" ng-model="event_obj.name"
+                                    placeholder="{{'EVENT NAME' | translate}}" required>
+                                <div class="error" ng-show="addEventForm.name.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.name.$error.required">PLEASE ENTER
+                                        EVENT NAME.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>{{'VENUE NAME' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="venue_name" ng-model="event_obj.venue_name"
+                                    placeholder="{{'VENUE NAME' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addEventForm.venue_name.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.venue_name.$error.required">PLEASE ENTER
+                                        VENUE NAME.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>{{'LOCATION' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="address" ng-model="event_obj.address"
+                                    placeholder="{{'ADDRESS' | translate}}" id="searchTextField" required>
+                                <div class="error" ng-show="addEventForm.address.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.address.$error.required">{{'PLEASE ENTER ADDRESS.'
+                                        |
+                                        translate}}</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>{{'ORGANIZER NAME' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="organizer_name" ng-model="event_obj.organizer_name"
+                                    placeholder="{{'ORGANIZER NAME' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addEventForm.organizer_name.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.organizer_name.$error.required">
+                                        {{'PLEASE ENTER ORGANIZER NAME.' |translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>{{'EVENT START DATE' | translate}}<span class="star">*</span></label>
+                                <input type="text" id="datepicker_1" placeholder="{{'EVENT START DATE' | translate}}"
+                                    name="start_time" ng-model="event_obj.start_time" readonly required>
+                                <span style="position: absolute; right: 27px; top: 37px" class="inputtag"><img
+                                        src="/img/v1_images/calendar.svg"></span>
+                                <div class="error"
+                                    ng-show="addEventForm.start_time.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.start_time.$error.required">PLEASE ENTER
+                                        START DATE TIME.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>{{'EVENT END DATE' | translate}}<span class="star">*</span></label>
+                                <input type="text" id="datepicker_2" placeholder="{{'EVENT END DATE' | translate}}"
+                                    name="end_time" ng-model="event_obj.end_time" readonly required>
+                                <span style="position: absolute; right: 27px; top: 37px" class="inputtag"><img
+                                        src="/img/v1_images/calendar.svg"></span>
+                                <div class="error" ng-show="addEventForm.end_time.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.end_time.$error.required">PLEASE ENTER
+                                        END DATE TIME.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>{{'EVENT START TIME' | translate}}<span class="star">*</span></label>
+                                <input type="time" placeholder="{{'EVENT START TIME' | translate}}" name="start_time_t1"
+                                    ng-model="event_time_obj.start_time_t1" ng-disabled="!event_obj.start_time"
+                                    required>
+                                <div class="error"
+                                    ng-show="addEventForm.start_time_t1.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.start_time_t1.$error.required">PLEASE ENTER
+                                        START TIME.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>{{'EVENT END TIME' | translate}}<span class="star">*</span></label>
+                                <input type="time" placeholder="{{'EVENT END TIME' | translate}}" name="end_time_t1"
+                                    ng-model="event_time_obj.end_time_t1" ng-disabled="!event_obj.end_time" required>
+                                <div class="error"
+                                    ng-show="addEventForm.end_time_t1.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.end_time_t1.$error.required">PLEASE ENTER
+                                        END TIME.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>{{'TYPE' | translate}}<span class="star">*</span></label>
+                                <select class="app" name="type" ng-model="event_obj.type" convert-to-number
+                                    ng-change="setEventType(event_obj.type)">
+                                    <option value="1">{{'PUBLIC' | translate}}</option>
+                                    <option value="2">{{'PRIVATE' | translate}}</option>
+                                </select>
+                                <div class="error" ng-show="addEventForm.type.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.type.$error.required">PLEASE ENTER
+                                        EVENT TYPE.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>{{'ORDERING RADIUS' | translate}}<span class="star">*</span></label>
+                                <input type="range" min="1" max="528" value="5" class="slider" name="order_radius"
+                                    ng-model="event_obj.order_radius" id="myRange">
+                                <p class="order_radius">{{event_obj.order_radius}} feet</p>
+                                <div class="error"
+                                    ng-show="addEventForm.order_radius.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.order_radius.$error.required">PLEASE ENTER
+                                        EVENT ORDERING RADIUS.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label>{{'DESCRIPTION' | translate}}<span class="star">*</span></label>
+                                <textarea name="description" ng-model="event_obj.description" ng-minlength="1"
+                                    ng-maxlength="250" placeholder="{{'DESCRIPTION' | translate}}" required></textarea>
+                                <div class="error"
+                                    ng-show="addEventForm.description.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.description.$error.required">PLEASE ENTER
+                                        DESCRIPTION.</small>
+                                    <small ng-show="addEventForm.description.$error.maxlength">
+                                        MAXIMUM 250 CHARACTORS ALLOWED.
+                                    </small>
+                                </div>
+                            </div>
+                            <!-- <div class="col-md-12 form-group text-left" ng-if="profile=='SUPPLIER'">
+                                <label class="cursor checkbox_lbl">
+                                    <input type="checkbox" class="supplier_participating mr-2"
+                                        ng-checked="event_obj.is_supplier_participating"
+                                        ng-model="event_obj.is_supplier_participating">
+                                    <span>Are you Participating?</span>
+                                </label>
+                            </div> -->
+                        </div>
+
+
+
+
+
+
+                        <div class="row" ng-if="event_obj.type==2 && !is_updating">
+                            <div class="col-md-12">
+                                <p>{{'ADD USERS'}}</p>
+                            </div>
+                            <div class="row col-md-12">
+                                <div class="col-md-4 form-group">
+                                    <label>{{'NAME' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="userName" ng-model="invited_user_obj.name"
+                                        placeholder="{{'USER NAME' | translate}}" ng-disabled="is_updating">
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label>{{'EMAIL' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="userEmail" ng-model="invited_user_obj.email"
+                                        placeholder="{{'USER EMAIL' | translate}}" ng-disabled="is_updating">
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label>{{'PHONE' | translate}}<span class="star">*</span></label>
+                                    <input id="sup_phone_user" type="text" name="userPhone" ng-minlength="6"
+                                        ng-maxlength="15" ng-model="invited_user_obj.phone"
+                                        placeholder="{{'USER PHONE' | translate}}" ng-disabled="is_updating">
+                                    <div class="error"
+                                        ng-show="!addEventForm.userPhone.$invalid && addEventForm.$submitted && invalid_phone_no">
+                                        <small>{{'INVALID PHONE NUMBER' | translate}}</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 form-group" ng-if="!is_updating">
+                                    <p ng-if="user_error_msg" class="user_error_msg">{{'PLEASE FILL ALL FEILDS.'}}</p>
+                                    <div class="submit-plan add_user">
+                                        <button type="button" ng-click="addUser()">{{'ADD USER' | translate}}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 suppro" style="margin-bottom: 15px; margin-top: 20px;"
+                                ng-if="event_obj.type==2">
+                                <div class="col-md-12" style="margin-bottom: 15px;" ng-init="parentIndex = $index">
+                                    <div class="form-group">
+                                        <div class="box">
+                                            <h1 class="text-center mt-4">
+                                                <label class="scroll_bx_heading">{{'USERS TO INVITE' | translate}}
+                                                </label>
+                                            </h1>
+                                            <div class="scroll">
+                                                <ul class="items time_slot">
+                                                    <li ng-repeat="user in invited_user_list track by $index">
+                                                        <p>
+                                                            <small><b>{{user.name || user.email}}</b></small>
+                                                        </p>
+                                                        <i class="fa fa-minus" ng-if="!is_updating"
+                                                            ng-click="removeUser()"></i>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 suppro" style="margin-bottom: 15px; margin-top: 20px;">
+                                <div class="col-md-12" style="margin-bottom: 15px;" ng-init="parentIndex = $index">
+                                    <div class="form-group">
+                                        <div class="box">
+                                            <h1 class="text-center mt-4">
+                                                <label class="scroll_bx_heading">{{'INVITE SUPPLIERS' | translate}}
+                                                </label>
+                                            </h1>
+                                            <div class="scroll">
+                                                <ul class="items time_slot">
+                                                    <li ng-repeat="supplier in suppliersList track by $index">
+                                                        <p>
+                                                            <small><b>{{supplier.name || supplier.email}}</b></small>
+                                                        </p>
+                                                        <input type="checkbox" class="checkbx"
+                                                            ng-click="selectSupplier(supplier)"
+                                                            ng-checked="supplier.checked" ng-disabled="is_updating">
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>{{'HOST DETAILS'}}</p>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>{{'EMAIL' | translate}}<span class="star">*</span></label>
+                                <input type="email" name="email" ng-model="event_obj.email"
+                                    placeholder="{{'EMAIL' | translate}}" required>
+                                <div class="error" ng-show="addEventForm.email.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.email.$error.required">PLEASE ENTER
+                                        EMAIL.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>{{'PHONE' | translate}}<span class="star">*</span></label>
+                                <input id="sup_phone" type="text" name="phone" ng-minlength="6" ng-maxlength="15"
+                                    ng-model="event_obj.phone" placeholder="{{'MOBILE' | translate}}" required>
+                                <div class="error" ng-show="addEventForm.phone.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.phone.$error.required">{{'PLEASE ENTER PHONE NO.' |
+                                        translate}}</small>
+                                    <small ng-show="addEventForm.phone.$error.minlength">{{'PHONE NO. MUST BE MORE THAN
+                                        6
+                                        DIGITS' | translate}}</small>
+                                    <small ng-show="addEventForm.phone.$error.maxlength">{{'PHONE NO. MUST BE LESS THAN
+                                        15
+                                        DIGITS' | translate}}</small>
+                                </div>
+                                <div class="error"
+                                    ng-show="!addEventForm.phone.$invalid && addEventForm.$submitted && invalid_phone_no">
+                                    <small>{{'INVALID PHONE NUMBER' | translate}}</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>{{'WEB LINK' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="browser_link" ng-model="event_obj.browser_link"
+                                    placeholder="{{'WEB LINK' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addEventForm.browser_link.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.browser_link.$error.required">PLEASE ENTER
+                                        WEB LINK.</small>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>{{'SOCIAL MEDIA INFO'}}</p>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>{{'FACEBOOK LINK' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="facebook_link" ng-model="event_obj.facebook_link"
+                                    placeholder="{{'FACEBOOK LINK' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addEventForm.facebook_link.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.facebook_link.$error.required">PLEASE ENTER
+                                        FACEBOOK LINK.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>{{'INSTAGRAM LINK' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="instagram_link" ng-model="event_obj.instagram_link"
+                                    placeholder="{{'INSTAGRAMLINK' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addEventForm.instagram_link.$invalid && addEventForm.$submitted">
+                                    <small ng-show="addEventForm.instagram_link.$error.required">PLEASE ENTER
+                                        INSTAGRAM LINK.</small>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>{{'TICKETS'}}</p>
+                            </div>
+                            <div class="row col-md-12" ng-repeat="tkt in ticket_types track by $index">
+                                <div class="col-md-5 form-group">
+                                    <label>{{'TICKET NAME' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="name{{$index+1}}" ng-model="tkt.name"
+                                        placeholder="{{'TICKET NAME' | translate}}" required>
+                                </div>
+                                <div class="col-md-5 form-group">
+                                    <label>{{'TICKET PRICE' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="price{{$index+1}}" ng-model="tkt.price"
+                                        placeholder="{{'TICKET PRICE' | translate}}" required>
+                                    <span class="currency">{{currency}}</span>
+                                </div>
+                                <div class="col-md-2 form-group">
+                                    <i ng-if="$last" class="fa fa-plus green" ng-click="addTickets()"></i>
+
+                                    <i ng-if="$last" class="fa fa-minus red" ng-click="removeTickets()"></i>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+
+                        <div class="persinfo row">
+                            <div class="col-md-4">
+                                <div class="form-group pic">
+                                    <label>{{'Refund Policy' | translate}}</label>
+                                    <input filestyle="" type="file" accept=".pdf" name="pdf" ng-model="logo"
+                                        class="cursor" style="width: 242px;"
+                                        onchange="angular.element(this).scope().file_to_upload_for_events_refund_policy(this.files)"
+                                        data-button-text="Single" data-class-button="btn btn-default"
+                                        data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+
+                                    <span ng-show="!event_obj.refund_policy" class="img_span">
+                                        <img src="img/v1_images/dumy_pdf.jpg" style="width: 100%; height: 178px;">
+                                    </span>
+                                    <span ng-show="event_obj.refund_policy" class="img_span">
+                                        <img src="img/v1_images/uploaded_pdf.png" style="width: 100%; height: 178px;">
+                                    </span>
+
+                                    <p ng-show="event_obj.refund_policy" class="green">
+                                        <b>{{'Refund Policy Added'}}</b>
+                                    </p>
+
+                                    <div class="error" ng-show="!event_obj.refund_policy && addEventForm.$submitted">
+                                        <small>{{'PLEASE UPLOAD
+                                            REFUND POLICY' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group pic">
+                                    <label>{{'Cancellation Policy' | translate}}</label>
+                                    <input filestyle="" type="file" accept=".pdf" name="pdf1" ng-model="logo"
+                                        class="cursor" style="width: 242px;"
+                                        onchange="angular.element(this).scope().file_to_upload_for_events_cancellation_policy(this.files)"
+                                        data-button-text="Single" data-class-button="btn btn-default"
+                                        data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+
+                                    <span ng-show="!event_obj.cancellation_policy" class="img_span">
+                                        <img src="img/v1_images/dumy_pdf.jpg" style="width: 100%; height: 178px;">
+                                    </span>
+                                    <span ng-show="event_obj.cancellation_policy" class="img_span">
+                                        <img src="img/v1_images/uploaded_pdf.png" style="width: 100%; height: 178px;">
+                                    </span>
+
+                                    <p ng-show="event_obj.cancellation_policy" class="green">
+                                        <b>{{'Cancellation Policy Added'}}</b>
+                                    </p>
+
+                                    <div class="error"
+                                        ng-show="!event_obj.cancellation_policy && addEventForm.$submitted">
+                                        <small>{{'PLEASE UPLOAD
+                                            CANCELLATION POLICY' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group pic">
+                                    <label>{{'HOST TERMS POLICY' | translate}}</label>
+                                    <input filestyle="" type="file" accept=".pdf" name="pdf1" ng-model="logo"
+                                        class="cursor" style="width: 242px;"
+                                        onchange="angular.element(this).scope().file_to_upload_for_events_host_terms_policy(this.files)"
+                                        data-button-text="Single" data-class-button="btn btn-default"
+                                        data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+
+                                    <span ng-show="!event_obj.host_terms_policy" class="img_span">
+                                        <img src="img/v1_images/dumy_pdf.jpg" style="width: 100%; height: 178px;">
+                                    </span>
+                                    <span ng-show="event_obj.host_terms_policy" class="img_span">
+                                        <img src="img/v1_images/uploaded_pdf.png" style="width: 100%; height: 178px;">
+                                    </span>
+
+                                    <p ng-show="event_obj.host_terms_policy" class="green">
+                                        <b>{{'Host Policy Added'}}</b>
+                                    </p>
+
+                                    <div class="error"
+                                        ng-show="!event_obj.host_terms_policy && addEventForm.$submitted">
+                                        <small>{{'PLEASE UPLOAD
+                                            HOST POLICY' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="persinfo row">
+                            <div class="col-md-12">
+                                <div class="form-group pic">
+                                    <label>{{'UPLOAD IMAGES' | translate}}</label>
+                                    <input filestyle="" type="file" accept="image/*" name="image1" ng-model="logo"
+                                        class="cursor" style="width: 242px;"
+                                        onchange="angular.element(this).scope().file_to_upload_for_events(this.files)"
+                                        data-button-text="Single" data-class-button="btn btn-default"
+                                        data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+
+                                    <span ng-if="event_images.length<5">
+                                        <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                                    </span>
+
+                                    <p ng-if="event_images.length>0" ng-click="removeAllImages(event_images)"
+                                        class="delete del_img mb-4">
+                                        Clear All Images
+                                    </p>
+
+                                    <div ng-if="event_images.length" class="row mt-4">
+                                        <div ng-repeat="image in event_images track by $index" class="col-md-4">
+                                            <span class="mr-4 mb-4 img_span">
+                                                <img style="width: 100%; height: 100%; object-fit: contain;" id="croppr"
+                                                    src="{{image}}">
+                                            </span>
+                                            <p class="delt_img" ng-click="deleteEventImage(image,$index)">
+                                                <i class="fa fa-trash"></i>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="error" ng-show="event_images.length<=0 && addEventForm.$submitted">
+                                        <small>{{'PLEASE UPLOAD
+                                            IMAGE' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="submit-plan">
+                            <button type="submit">{{'SUBMIT' | translate}}</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<div class="modal" id="viewEventRef">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none;">
+                    <h3>{{'EVENT DETAILS'}}</h3>
+                    <button type="button" class="close" data-dismiss="modal"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label>{{'EVENT NAME' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="name" ng-model="event_obj.name"
+                                placeholder="{{'EVENT NAME' | translate}}" disabled>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>{{'VENUE NAME' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="venue_name" ng-model="event_obj.venue_name"
+                                placeholder="{{'VENUE NAME' | translate}}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label>{{'LOCATION' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="address" ng-model="event_obj.address"
+                                placeholder="{{'ADDRESS' | translate}}" disabled>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>{{'ORGANIZER NAME' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="organizer_name" ng-model="event_obj.organizer_name"
+                                placeholder="{{'ORGANIZER NAME' | translate}}" disabled>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label>{{'EVENT START DATE' | translate}}<span class="star">*</span></label>
+                            <input type="text" placeholder="{{'EVENT START DATE' | translate}}" name="start_time"
+                                ng-model="event_obj.start_time" readonly disabled>
+                            <span style="position: absolute; right: 27px; top: 37px" class="inputtag"><img
+                                    src="/img/v1_images/calendar.svg"></span>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>{{'EVENT END DATE' | translate}}<span class="star">*</span></label>
+                            <input type="text" placeholder="{{'EVENT END DATE' | translate}}" name="end_time"
+                                ng-model="event_obj.end_time" readonly disabled>
+                            <span style="position: absolute; right: 27px; top: 37px" class="inputtag"><img
+                                    src="/img/v1_images/calendar.svg"></span>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>{{'EVENT START TIME' | translate}}<span class="star">*</span></label>
+                            <input type="time" placeholder="{{'EVENT START TIME' | translate}}" name="start_time_t1"
+                                ng-model="event_time_obj.start_time_t1" disabled>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>{{'EVENT END TIME' | translate}}<span class="star">*</span></label>
+                            <input type="time" placeholder="{{'EVENT END TIME' | translate}}" name="end_time_t1"
+                                ng-model="event_time_obj.end_time_t1" disabled>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label>{{'TYPE' | translate}}<span class="star">*</span></label>
+                            <select class="app" name="type" ng-model="event_obj.type" convert-to-number
+                                ng-change="setEventType(event_obj.type)" disabled>
+                                <option value="1">{{'PUBLIC' | translate}}</option>
+                                <option value="2">{{'PRIVATE' | translate}}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>{{'ORDERING RADIUS' | translate}}<span class="star">*</span></label>
+                            <input type="range" min="1" max="528" value="5" class="slider" name="order_radius"
+                                ng-model="event_obj.order_radius" id="myRange" disabled>
+                            <p class="order_radius">{{event_obj.order_radius}} feet</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <label>{{'DESCRIPTION' | translate}}<span class="star">*</span></label>
+                            <textarea name="description" ng-model="event_obj.description" ng-minlength="1"
+                                ng-maxlength="250" placeholder="{{'DESCRIPTION' | translate}}" disabled></textarea>
+                        </div>
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>{{'HOST DETAILS'}}</p>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>{{'EMAIL' | translate}}<span class="star">*</span></label>
+                            <input type="email" name="email" ng-model="event_obj.email"
+                                placeholder="{{'EMAIL' | translate}}" disabled>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>{{'PHONE' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="phone" ng-minlength="6" ng-maxlength="15"
+                                ng-model="event_obj.phone" placeholder="{{'MOBILE' | translate}}" disabled>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>{{'WEB LINK' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="browser_link" ng-model="event_obj.browser_link"
+                                placeholder="{{'WEB LINK' | translate}}" disabled>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>{{'SOCIAL MEDIA INFO'}}</p>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>{{'FACEBOOK LINK' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="facebook_link" ng-model="event_obj.facebook_link"
+                                placeholder="{{'FACEBOOK LINK' | translate}}" disabled>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>{{'INSTAGRAM LINK' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="instagram_link" ng-model="event_obj.instagram_link"
+                                placeholder="{{'INSTAGRAMLINK' | translate}}" disabled>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>{{'TICKETS'}}</p>
+                        </div>
+                        <div class="row col-md-12" ng-repeat="tkt in ticket_types track by $index">
+                            <div class="col-md-6 form-group">
+                                <label>{{'TICKET NAME' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="name{{$index+1}}" ng-model="tkt.name"
+                                    placeholder="{{'TICKET NAME' | translate}}" disabled>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>{{'TICKET PRICE' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="price{{$index+1}}" ng-model="tkt.price"
+                                    placeholder="{{'TICKET PRICE' | translate}}" disabled>
+                                <span class="currency">{{currency}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="persinfo row">
+                        <div class="col-md-4">
+                            <div class="form-group pic">
+                                <label>{{'Refund Policy' | translate}}</label>
+                                <span ng-show="event_obj.refund_policy" class="cursor img_span">
+                                    <a target="_blank" href="{{event_obj.refund_policy}}">
+                                        <img src="img/v1_images/uploaded_pdf.png" style="width: 100%; height: 178px;">
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group pic">
+                                <label>{{'Cancellation Policy' | translate}}</label>
+                                <span ng-show="event_obj.cancellation_policy" class="cursor img_span">
+                                    <a target="_blank" href="{{event_obj.cancellation_policy}}">
+                                        <img src="img/v1_images/uploaded_pdf.png" style="width: 100%; height: 178px;">
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group pic">
+                                <label>{{'HOST TERMS POLICY' | translate}}</label>
+                                <span ng-show="event_obj.host_terms_policy" class="cursor img_span">
+                                    <a target="_blank" href="{{event_obj.host_terms_policy}}">
+                                        <img src="img/v1_images/uploaded_pdf.png" style="width: 100%; height: 178px;">
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="persinfo row">
+                        <div class="col-md-12">
+                            <div class="form-group pic">
+                                <label>{{'IMAGES' | translate}}</label>
+                                <div ng-if="event_images.length" class="row mt-4">
+                                    <div ng-repeat="image in event_images track by $index" class="col-md-4">
+                                        <span class="mr-4 mb-4 img_span">
+                                            <img style="width: 100%; height: 100%; object-fit: contain;" id="croppr"
+                                                src="{{image}}">
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+
+
+
+<style>
+    .delete {
+        cursor: pointer;
+    }
+
+    .delete:hover {
+        text-decoration: underline;
+        font-weight: 600;
+    }
+
+    .eclips {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        padding: 30px 0px 0px 0px;
+    }
+
+    .pac-container {
+        z-index: 9999 !important;
+    }
+
+    .star {
+        position: relative !important;
+    }
+
+    .del_img {
+        position: absolute;
+        right: 0;
+    }
+
+    .modbody .form-group textarea {
+        height: 150px !important;
+    }
+
+    @media (min-width: 576px) {
+        .modal-dialog {
+            max-width: 830px !important;
+            margin: 1.75rem auto;
+        }
+    }
+
+    .delt_img {
+        position: absolute;
+        top: 0;
+        right: 20px;
+        font-size: 22px;
+        color: red;
+        cursor: pointer;
+        transition: 0.7s;
+    }
+
+    .delt_img:hover {
+        padding: 0px 9px 0px 9px;
+        border-radius: 50px;
+        background-color: #a2a2a2;
+        margin-top: 5px;
+    }
+
+    .fa-plus {
+        position: absolute;
+        bottom: 9px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .fa-minus {
+        position: absolute;
+        bottom: 10px;
+        right: 70px;
+        font-size: 21px;
+        cursor: pointer;
+    }
+
+    .fa_user_minus {
+        right: 20px;
+    }
+
+    .checkbx {
+        appearance: auto;
+        position: absolute;
+        right: 8px;
+        bottom: 16px;
+        height: 16px !important;
+        width: 28% !important;
+    }
+
+    .suppro .box .items {
+        height: 220px !important;
+        overflow: auto;
+    }
+
+    .user_error_msg {
+        position: absolute;
+        font-size: 13px;
+        color: red;
+        right: 17%;
+        top: 9px;
+    }
+
+    .scroll_bx_heading {
+        font-size: 20px !important;
+    }
+
+    .min_td_width {
+        min-width: 200px;
+    }
+
+    .green {
+        color: green;
+    }
+
+    .red {
+        color: red;
+    }
+
+    .order_radius {
+        position: absolute;
+        top: 10px;
+        right: 24px;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .currency {
+        position: absolute;
+        left: 0px;
+        top: 38px;
+        font-weight: 700;
+    }
+
+    .no_event {
+        position: absolute;
+        left: 38%;
+        top: 50%;
+        text-align: center;
+    }
+
+    .event_item:hover {
+        background-color: #f1f1f1;
+    }
+
+    .join_event {
+        position: absolute;
+        right: 7px;
+        top: 15px;
+        padding: 0px 5px 0px 5px;
+        background-color: #fff;
+        z-index: 9;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .join_event:hover {
+        text-decoration: underline;
+        font-weight: 600;
+    }
+
+    .menu_name {
+        font-size: 14px;
+        font-weight: 700;
+        margin-top: 10px;
+    }
+
+    .add_ic {
+        position: absolute;
+        right: 35px;
+        cursor: pointer;
+    }
+
+    .view_det {
+        right: 26% !important;
+    }
+
+    .view_detT {
+        right: 10PX !important;
+    }
+
+    .supplier_participating {
+        height: 20px !important;
+        width: 20px !important;
+    }
+
+    .checkbox_lbl {
+        font-size: 20px !important;
+    }
+
+    .checkbox_lbl:hover {
+        text-decoration: underline;
+    }
+
+    label {
+        text-transform: uppercase;
+    }
+
+    .error small {
+        text-transform: uppercase;
+    }
+
+    .persinfo .form-group.pic .img_span {
+        width: 100% !important;
+    }
+
+    @media screen and (min-width: 768px) {
+        .modal-dialog {
+            width: auto;
+        }
+    }
+</style>

@@ -1,0 +1,579 @@
+<div class="wrapper">
+    <div class="category" ng-if="!is_add">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'BANNERS' | translate}} <span style="color: #ff2020; font-size: 13px;"> {{activeSubscription ? "" : "(Sorry but your subscription is expired)"}}</span></h1>
+                </div>
+            </div>
+        </div>
+        <div ng-if='activeSubscription' class="secnav m-top-20">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <input type="text" placeholder="{{'SEARCH BY NAME' | translate}}" ng-model="search"
+                        ng-keypress="searchBanner($event)">
+                </div>
+                <div ng-if='activeSubscription' class="col-md-6 col-sm-6">
+                    <div class="topfil">
+                        <ul>
+                            <!-- <li>
+                                <label>Show</label>
+                                <input type="number" name="quantity" min="1" max="5">
+                                <label>entries</label>
+                            </li> -->
+                            <li style="filter: grayscale(0)"
+                                ng-if="permissions('banners', 'create') == 1 && profile === 'ADMIN'">
+                                <button type="button" class="bold create" ng-click="viewDefault()"
+                                    ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                                    ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''">{{is_default_banners
+                                    ? ('REGULAR BANNERS' | translate) : ('DEFAULT BANNERS' | translate)}}</button>
+                            </li>
+                            <li style="filter: grayscale(0)"
+                                ng-if="permissions('banners', 'create') == 1 && profile === 'ADMIN'">
+                                <button type="button" class="bold create" ng-click="changeView(true)"
+                                    ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                                    ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''">+
+                                    {{'ADD BANNER' | translate}}</button>
+                            </li>
+                            <li style="filter: grayscale(0)"
+                                ng-if="permissions('banners', 'create') == 1 && 
+                                (profile === 'SUPPLIER' && (!banner_limit || banners.length<banner_limit)  && allow_supplier_banner_edit == 1)">
+                                <button type="button" class="bold create" ng-click="changeView(true)"
+                                    ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                                    ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''">+
+
+                                    {{'ADD BANNER' | translate}}</button>
+                            </li>
+                            <li
+                                ng-if="profile === 'SUPPLIER' && allow_supplier_banner_edit == 0 && client_code == 'meezzaa_0687'">
+                                <small style="text-transform: uppercase;">please contact admin if you wish to add
+                                    banners</small></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mainbanner m-top-30" ng-if="!is_default_banners && activeSubscription" >
+            <div class="row">
+                <div class="col-md-4" ng-repeat="banner in banners">
+                    <div class="bx banner_box">
+                        <div class="banner-edit"
+                            ng-if="permissions('banners', 'update') == 1 && (profile === 'ADMIN' || (profile === 'SUPPLIER' && allow_supplier_banner_edit == 1)) && (profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant !== '1' : true)"
+                            ng-click="editBanner(banner)">
+
+                            <i class="fa fa-edit"></i>
+                        </div>
+                        <div ng-if="permissions('banners', 'delete') == 1 && (profile === 'ADMIN' || (profile === 'SUPPLIER' && allow_supplier_banner_edit == 1)) && (profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant !== '1' : true)"
+                            class="delete" ng-click="delete(banner)"
+                            ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                            ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''">
+                            <img src="img/v1_images/ic_card_del.svg"
+                                style="width: auto; height:auto; border-radius:0; box-shadow: none">
+                        </div>
+                        <a style="cursor: default">
+                            <img style="cursor: default" src="{{compressImage(banner.website_image, '420x180')}}">
+                            <p class="bold">{{banner.name}}</p>
+                            <p ng-if="is_single_vendor == 0" class="sup-name">{{'BY' | translate}}:
+                                {{banner.supplier_name}}</p>
+                            <small ng-if="banner.start_date && banner.start_date != '0000-00-00 00:00:00'"
+                                style="padding-bottom: 0">{{'START DATE' | translate}}:
+                                {{banner.start_date | date : 'MMM d, y' : 'UTC'}}</small>
+                            <small ng-if="banner.end_date && banner.end_date != '0000-00-00 00:00:00'">{{'EXPIRY DATE' |
+                                translate}}:
+                                {{banner.end_date | date : 'MMM d, y' : 'UTC'}}</small>
+                            <small ng-if="(!banner.start_date || banner.start_date == '0000-00-00 00:00:00')
+                            || (!banner.end_date || banner.end_date == '0000-00-00 00:00:00')">
+                                No Validity Added
+                            </small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="no-data-found" ng-if="banners.length == 0 && dataLoaded">
+                {{'NO DATA FOUND' | translate}}
+            </div>
+
+            <div ng-if="banners.length > 0 && dataLoaded" class="row pagination">
+                <ul ng-if="pager.pages && pager.pages.length">
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                    </li>
+                    <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                        <a ng-click="setPage(page)">{{page}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mainbanner m-top-30" ng-if="is_default_banners  && activeSubscription ">
+            <div class="row">
+                <div class="col-md-4" ng-repeat="banner in defaultBanners track by $index">
+                    <div class="bx" style="position: relative;">
+                        <div class="banner-edit" ng-if="permissions('banners', 'update') == 1"
+                            ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                            ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                            ng-click="selectDefaultBanner(banner)">
+                            <i class="fa fa-edit"></i>
+                            <input filestyle="" type="file" accept="video/*,image/*" name="image1"
+                                ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                                ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                                ng-model="category_image" class="form-control banner-input" ng-disabled="if_image1"
+                                onchange="angular.element(this).scope().file_to_upload_for_default_banner(this.files)"
+                                data-button-text="Single" data-class-button="btn btn-default"
+                                data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                        </div>
+                        <a style="cursor: default">
+                            <img style="cursor: default" src="{{banner.value}}">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div  class="category" ng-if="is_add" style="width: 80%; margin: 0 auto">
+
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'ADD' | translate}} {{'BANNER' | translate}}</h1>
+                </div>
+                <div class="col-md-6 col-sm-6" style="text-align: right">
+                    <a ng-click="changeView(false)" class="backbtn"><img src="img/v1_images/ic_dropdown.svg">{{'BACK' |
+                        translate}}</a>
+
+                    <!-- <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)">
+                                <button type="button" class="bold create" ng-click="submitBannerAd()">SAVE
+                                    CHANGES</button>
+                            </li>
+                        </ul>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
+        <div class="addban m-top-30 innpad">
+            <div class="persinfo">
+                <form role="form" novalidate id="addBannerForm" name="addBannerForm" enctype="multipart/form-data"
+                    ng-submit="submitBannerAd(addBannerForm)">
+                    <div class="row select-category">
+                        <div class="col-md-6" ng-if="is_single_vendor == 0 && profile == 'ADMIN'">
+                            <div class="form-group">
+                                <label>{{localisation.supplier | translate}}<span class="star">*</span></label>
+                                <select class="app" name="supplier" placeholder="{{localisation.supplier | translate}}"
+                                    tabindex="4" ng-model="selected_supplier"
+                                    ng-options="supplier.supplier_name for supplier in suppliers"
+                                    ng-change="changeSupplier(selected_supplier)" required>
+                                </select>
+                                <div class="error"
+                                    ng-show="addBannerForm.supplier.$invalid && addBannerForm.$submitted">
+                                    <small ng-show="addBannerForm.supplier.$error.required">{{'PLEASE SELECT' |
+                                        translate}}
+                                        {{localisation.supplier | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="is_multiple_branch && hide_supplier_branch == 0 && selected_supplier.is_multibranch == 1">
+                            <div class="form-group">
+                                <label>{{localisation.supplier | translate}} {{'BRANCH' | translate}}<span
+                                        class="star">*</span></label>
+                                <select class="app" name="branch" placeholder="Choose {{'BRANCH' | translate}}"
+                                    tabindex="4" ng-model="selected_branch"
+                                    ng-options="branch.branch_name for branch in branches"
+                                    ng-change="changeBranch(selected_branch)" required>
+                                </select>
+                                <div class="error" ng-show="addBannerForm.branch.$invalid && addBannerForm.$submitted">
+                                    <small ng-show="addBannerForm.branch.$error.required">{{'PLEASE SELECT BRANCH' |
+                                        translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="(profile === 'ADMIN' || (profile === 'SUPPLIER' && hide_banner_category_supplier == 0))">
+                            <div class="form-group">
+                                <label>{{localisation.category | translate}}<span class="star">*</span></label>
+                                <select class="app" name="category" ng-model="selected_category"
+                                    ng-options="category.name for category in categories"
+                                    ng-change="changeCat(selected_category)" required>
+                                </select>
+                                <div class="error"
+                                    ng-show="addBannerForm.category.$invalid && addBannerForm.$submitted">
+                                    <small ng-show="addBannerForm.category.$error.required">{{'PLEASE SELECT' |
+                                        translate}}
+                                        {{localisation.category | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+
+                        <div class="col-md-6" ng-if="(is_single_vendor == 0 && app_type != 8) || enable_banner_redirection == 1">
+                            <div class="form-group">
+                                <label>{{'BANNER REDIRECTION TYPE' | translate}}</label>
+                                <select ng-model="banner.flow_banner_type" name="redirection" class="app"
+                                    ng-change="changeRedirection(banner.flow_banner_type)" convert-to-number>
+                                    <option disabled selected value="">{{'SELECT' | translate}}</option>
+                                    <option ng-if="(is_user_subscription == 1 && enable_banner_redirection !== 1)" value="0">{{localisation.category | translate}}</option>
+                                    <option ng-if="is_single_vendor == 0" value="1">{{localisation.supplier |
+                                        translate}}</option>
+                                    <option ng-if="(is_user_subscription == 1 && enable_banner_redirection !== 1)" value="3">{{'subscription' | translate}}
+                                    </option>
+                                    <option value="2">{{'NO REDIRECTION' | translate}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Banner Position</label>
+                                <select ng-model="isBottom" name="isBottom" class="app"
+                                    ng-change="changeBannerPosition(isBottom)" convert-to-number>
+                                    <option disabled selected value="">{{'SELECT' | translate}}</option>
+                                    <option value="0">Top</option>
+                                    <option value="1">Bottom</option>
+                                </select>
+                            </div>
+                        </div> -->
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'BANNER VALIDITY' | translate}}</label>
+                                <select ng-model="banner_validity" name="banner_validity" class="app"
+                                    ng-change="changeValidity(banner_validity)" convert-to-number>
+                                    <option disabled selected value="">{{'SELECT' | translate}}</option>
+                                    <option value="0">{{'NO' | translate}}</option>
+                                    <option value="1">{{'YES' | translate}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="banner_validity">
+                            <div class="form-group" style="position: relative">
+                                <label>{{'START DATE - END DATE' | translate}}<span class="star">*</span></label>
+                                <input ng-focus="addBannerForm.$submitted = false" type="text" name="validity"
+                                    ng-model="validity" placeholder="{{'BANNER VALIDITY' | translate}}"
+                                    autocomplete="off" id="datepicker" style="padding-left: 45px;" readonly required />
+                                <span class="inputtag calender"
+                                    ng-style="addBannerForm.validity.$invalid && addBannerForm.$submitted ? {'bottom' : '32px'} : {'bottom' : '10px'}"><img
+                                        src="/img/v1_images/calendar.svg"></span>
+                                <div class="error"
+                                    ng-show="addBannerForm.validity.$invalid && addBannerForm.$submitted">
+                                    <small ng-show="addBannerForm.validity.$error.required">{{'PLEASE SELECT VALIDITY' |
+                                        translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- <div class="col-md-6">
+                            <div class="form-group" style="margin-top: 0;">
+                                <label>Banner Display Order</label>
+                                <input type="number" ng-model="banner.order" min="1" required>
+                            </div>
+                        </div> -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'BANNER NAME' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="name" ng-model="banner.name"
+                                    placeholder="{{'BANNER NAME' | translate}}" required>
+                                <div class="error" ng-show="addBannerForm.name.$invalid && addBannerForm.$submitted">
+                                    <small ng-show="addBannerForm.name.$error.required">{{'PLEASE SELECT NAME' |
+                                        translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="is_secondary_language == 1">
+                            <div class="form-group">
+                                <label>{{'BANNER NAME' | translate}} ({{languages[1].name}})<span
+                                        class="star">*</span></label>
+                                <input type="text" name="name_other" ng-model="banner.name_other"
+                                    placeholder="{{'BANNER NAME' | translate}} ({{languages[1].name}})" required>
+                                <div class="error"
+                                    ng-show="addBannerForm.name_other.$invalid && addBannerForm.$submitted">
+                                    <small ng-show="addBannerForm.name_other.$error.required">{{'PLEASE SELECT NAME' |
+                                        translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6" ng-if="enable_video_in_banner == '1'">
+                            <div class="form-group">
+                                <label>{{'BANNER TYPE' | translate}}</label>
+                                <select ng-model="banner.is_video" name="is_video" class="app"
+                                    ng-change="changeBannerType(banner.is_video)" convert-to-number>
+                                    <option disabled selected value="">{{'SELECT' | translate}}</option>
+                                    <option value="0">{{'IMAGE' | translate}}</option>
+                                    <option value="1">{{'VIDEO' | translate}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label>{{(!banner.is_video ? 'BANNER IMAGE' : 'BANNER VIDEO') | translate}} ({{'Website'
+                                    | translate}})<p class="star">*</p></label>
+                                <br>
+                                <button type="button" style="width: 230px;" class="button-primary"
+                                    ng-click="chooseWebBanner()">{{(!banner.is_video ? 'CHOOSE WEB BANNER IMAGE' :
+                                    'CHOOSE WEB BANNER VIDEO') | translate}}</button>
+                                <input style="display: none;" type="file" name="image1" ng-model="banner.website_image"
+                                    id="web_banner_input" required="{{!is_edit}}"
+                                    onchange="angular.element(this).scope().file_to_upload_for_image_web(this.files)">
+                                <br>
+                                <!-- <small style="margin-left: 6px;">Min. Dimensions : 900 X 225 ( 4 : 1 )</small> -->
+                                <small ng-if="!banner.is_video" style="margin-left: 6px;">{{'ASPECT RATIO' | translate}}
+                                    - 4 : 1</small>
+
+                                <div ng-if="!banner.is_video && website_image" class="banner-image">
+                                    <img id="web_image" src="{{website_image}}">
+                                </div>
+                                <!-- {{compressImage(website_image, '380x100')}} -->
+
+                                <div class="m-top-20" ng-if="banner.is_video && website_image">
+                                    <video id="myVideo" width="100%" height="218" controls>
+                                        <source src="{{website_image}}" type="video/mp4">
+                                        {{'Your browser does not support HTML5 video.' | translate}}
+                                    </video>
+                                </div>
+
+                                <!-- <input filestyle="" type="file" accept="image/*" name="image1"
+                                    ng-model="banner.website_image" class="cursor"
+                                    onchange="angular.element(this).scope().file_to_upload_for_image_web(this.files)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader"
+                                    required="{{!is_edit}}" />
+                                <span ng-if="website_image">
+                                    <img style="width: 100%; height: 100%" src="{{website_image}}">
+                                </span>
+                                <span ng-if="!website_image">
+                                    <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                                </span> -->
+                                <div class="error" ng-show="addBannerForm.image1.$invalid && addBannerForm.$submitted">
+                                    <small ng-show="!banner.is_video && addBannerForm.image1.$error.required">{{'PLEASE CHOOSE BANNER IMAGE (WEBSITE)'
+                                        | translate}}</small>
+
+                                    <small ng-show="banner.is_video && addBannerForm.image1.$error.required">{{'PLEASE CHOOSE BANNER IMAGE (WEBSITE)'
+                                        | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{(!banner.is_video ? 'BANNER IMAGE' : 'BANNER VIDEO') | translate}} ({{'Mobile'
+                                    | translate}})<p class="star">*</p></label>
+                                <br>
+                                <button type="button" style="width: 230px;" class="button-primary"
+                                    ng-click="chooseAppBanner()">{{(!banner.is_video ? 'CHOOSE MOBILE BANNER IMAGE' :
+                                    'CHOOSE MOBILE BANNER VIDEO') | translate}}</button>
+                                <input style="display: none;" type="file" name="image2" ng-model="banner.phone_image"
+                                    id="app_banner_input" required="{{!is_edit}}"
+                                    onchange="angular.element(this).scope().file_to_upload_for_image_phone(this.files)">
+                                <br>
+                                <!-- <small style="margin-left: 6px;" ng-if="!(app_type == 1 && app_banner_width == 1)">Min.
+                                    Dimensions : 400 X 200 ( 4 : 2 )</small>
+                                <small style="margin-left: 6px;" ng-if="app_type == 1 && app_banner_width == 1">Min.
+                                    Dimensions : 152 X 168 ( 0.9 : 1 )</small> -->
+                                <span ng-if="!banner.is_video">
+                                    <small style="margin-left: 6px;"
+                                        ng-if="!(app_type == 1 && app_banner_width == 1)">{{'ASPECT RATIO' | translate}}
+                                        - 4
+                                        : 2</small>
+                                    <small style="margin-left: 6px;"
+                                        ng-if="app_type == 1 && app_banner_width == 1">{{'ASPECT RATIO' | translate}} -
+                                        0.9
+                                        : 1</small>
+                                </span>
+                                <div ng-if="!banner.is_video && phone_image" class="banner-image">
+                                    <!-- <img id="app_image" src="{{compressImage(phone_image, '200x150')}}"> -->
+                                    <img id="app_image" src="{{phone_image}}">
+                                </div>
+                                <!-- autoplay -->
+                                <div class="m-top-20" ng-if="banner.is_video && phone_image">
+                                    <video id="myVideo" width="100%" height="218" controls>
+                                        <source src="{{phone_image}}" type="video/mp4">
+                                        {{'Your browser does not support HTML5 video.' | translate}}
+                                    </video>
+                                </div>
+
+                                <!-- <input filestyle="" type="file" accept="image/*" name="image2"
+                                    ng-model="banner.phone_image" class="cursor"
+                                    onchange="angular.element(this).scope().file_to_upload_for_image_phone(this.files)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader"
+                                    required="{{!is_edit}}" />
+                                <span ng-if="phone_image">
+                                    <img style="width: 100%; height: 100%" src="{{phone_image}}">
+                                </span>
+                                <span ng-if="!phone_image">
+                                    <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                                </span> -->
+                                <div class="error" ng-show="addBannerForm.image2.$invalid && addBannerForm.$submitted">
+                                    <small ng-show="!banner.is_video && addBannerForm.image2.$error.required">{{'PLEASE CHOOSE BANNER IMAGE (MOBILE)'
+                                        | translate}}</small>
+
+                                    <small ng-show="banner.is_video && addBannerForm.image1.$error.required">{{'PLEASE CHOOSE BANNER IMAGE (MOBILE)'
+                                        | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="submit" class="submit width_auto"
+                                ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                                ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                                style="float: none; margin: 30px 0px 0px">{{'SAVE CHANGES' | translate}}</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="updateDefaultBanner">
+    <div class="modal-dialog" style="max-width: 800px">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="modhead" style="padding: 24px 30px">
+                    <h2 class="bold" style="display: inline-block;">{{'UPDATE DEFAULT BANNER' | translate}}</h2>
+                    <button type="button" class="close" id="closeBrandModal" data-dismiss="modal"
+                        ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                        ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="padding: 20px 30px">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="default-image">
+                                <img height="100%" width="100%" src="{{default_banner_image}}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modfooter">
+                    <button type="button" ng-click="editDefaultBanner()"
+                        ng-disabled="(profile === 'SUPPLIER' ?  restriction_view_only_for_restaurant === '1' : false)"
+                        ng-class="(profile === 'SUPPLIER' && restriction_view_only_for_restaurant === '1') ? 'restrictRestaurant' : ''"
+                        class="bg-success bold">{{'SAVE' | translate}}</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- <div class="modal" id="cover_image_modal" data-backdrop="static">
+    <div class="modal-dialog  modal-dialog-centered" style="max-width: 65%;">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none; padding: 6px 16px;">
+                    <button type="button" class="close" data-dismiss="modal" ng-click="closeModal()"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody">
+                    <div class="cover-image">
+                        <img id="supp_cover_img" height="100%" width="100%" src="{{cover_to_upload}}">
+                    </div>
+                    <hr>
+                    <button ng-disabled="!cover_image_file" ng-class="cover_image_file ? '' : 'disabled' "
+                        ng-click="uploadCoverImage()" class="button-primary"
+                        style="width: 200px; margin-left: 20px;">Set Cover
+                        Image</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .calender {
+        bottom: 10px;
+        position: absolute;
+        left: 10px;
+    }
+
+    .sup-name {
+        font-size: 16px !important;
+        margin-top: -8px;
+        margin-bottom: 4px;
+    }
+
+    .banner-edit {
+        position: absolute;
+        background-color: var(--primary-color);
+        color: #ffffff;
+        padding: 26px 8px 4px 34px;
+        left: -30px;
+        top: -27px;
+        border-radius: 50%;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    .banner-image {
+        margin-top: 20px;
+    }
+
+    .banner-image img {
+        display: block;
+        max-width: 100%;
+    }
+
+    .default-image img {
+        object-fit: contain;
+    }
+
+    .default-image {
+        height: 400px;
+    }
+
+    .bx .banner-input {
+        opacity: 0;
+        position: absolute;
+        width: 35px;
+        top: 27px;
+        cursor: pointer;
+        z-index: 1;
+        height: 40px;
+        border-radius: 10px;
+    }
+
+    .bx.banner_box {
+        min-height: 290px;
+    }
+</style>

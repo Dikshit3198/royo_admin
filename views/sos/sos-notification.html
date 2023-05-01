@@ -1,0 +1,119 @@
+<div class="container-fluid back">
+    <button class="btn text-right m-top-10 mt-4" ui-sref="profile.users()">
+        <i class="fa fa-arrow-left mr-2" aria-hidden="true"></i>{{'Back' | translate}}</button>
+</div>
+
+
+<div class="container">
+    <div class="row profile">
+        <div class="col-4">
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'SOS Notification' | translate}}</h1>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <div class="topfil">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SOS ID</th>
+                                <th>{{'USER ID' | translate}}</th>
+                                <th>{{'EMAIL' | translate}}</th>
+                                <th>{{'PHONE NO.' | translate}}</th>
+                                <th>{{'USER NAME' | translate}}</th>
+                                <th>{{'ADDRESS' | translate}}</th>
+                                <th>{{'LATITUDE' | translate}}</th>
+                                <th>{{'LONGITUDE' | translate}}</th>
+                                <th>{{'NOTIFICATION' | translate}}</th>
+                                <th>{{'DEVICE' | translate}}</th>
+                                <th>{{'STATUS' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="sos in sosList">
+                                <td>{{sos.id}}</td>
+                                <td>{{sos.user_id}}</td>
+                                <td>{{sos.email}}</td>
+                                <td>{{sos.mobile_no}}</td>
+                                <td>{{sos.user_name}}</td>
+                                <td>{{sos.address || 'N/A'}}</td>
+                                <td>{{sos.latitude || 'N/A'}}</td>
+                                <td>{{sos.longitude || 'N/A'}}</td>
+                                <td>{{sos.notification_message}}</td>
+                                <td>
+                                    <span ng-if="sos.device_type==0">{{'Android'}}</span>
+                                    <span ng-if="sos.device_type==1">{{'IOS'}}</span>
+                                    <span ng-if="sos.device_type==3">{{'Website'}}</span>
+                                </td>
+                                <td>
+                                    <span class="noAction" ng-click="changeSOSStatus(sos,'1')"
+                                        ng-if="sos.notification_status==0">
+                                        {{'Pending'}}
+                                    </span>
+                                    <span class="actionTaken" ng-if="sos.notification_status=='1'">
+                                        {{'Action Taken'}}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="sosList.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+
+                    <div ng-if="sosList.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<success-modal message="message"></success-modal>
+
+<style>
+    .noAction {
+        cursor: pointer;
+        text-decoration: underline;
+        font-weight: 600;
+    }
+
+    .actionTaken {
+        text-decoration: underline;
+        font-weight: 600;
+        color: green;
+    }
+</style>

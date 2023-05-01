@@ -1,0 +1,35 @@
+<div class="wrapper">
+  <div class="category">
+    <div class="toptabs">
+      <ul class="nav nav-tabs ">
+        <li class="nav-item" ng-if="is_single_vendor === 0"> <a class="nav-link"
+            ng-class="active_account_tab == 1 ? 'active' : ''" ng-click="changeTab(1)"
+            ui-sref="account.accountSettings.supPayable">{{'ACCOUNT STATEMENT' | translate}}</a>
+        </li>
+        <li ng-if="(is_single_vendor === 0 && profile === 'ADMIN') || profile === 'SUPPLIER'" ng-click="changeTab(2)"
+          class="nav-item"> <a class="nav-link" ng-class="active_account_tab == 2 ? 'active' : ''"
+            ui-sref="account.accountSettings.accountSettelment.payable">{{'ACCOUNT SETTLEMENT' | translate}}</a> </li>
+        <li class="nav-item"
+          ng-if="(app_type != 2 || (app_type == 2 && ecom_agent_module == 1)) && hide_agent_module == 0
+        && (profile == 'ADMIN' || (profile == 'SUPPLIER' && no_driver_detail_supplier == 0 && hide_agent_supplier == 0))"> <a
+            class="nav-link" 
+            ng-class="active_account_tab == 3 ? 'active' : ''" ng-click="changeTab(3)"
+            ui-sref="account.accountSettings.driversStatement">{{localisation.agent | capitalLetters | translate}} {{'STATEMENT' | translate }}</a> </li>
+        <li class="nav-item"
+          ng-if="(app_type != 2 || (app_type == 2 && ecom_agent_module == 1)) && hide_agent_module == 0
+        && (profile == 'ADMIN' || (profile == 'SUPPLIER' && no_driver_detail_supplier == 0 && hide_agent_supplier == 0))"> <a
+            class="nav-link" ng-class="active_account_tab == 4 ? 'active' : ''" ng-click="changeTab(4)"
+            ui-sref="account.accountSettings.driversSettelment">{{localisation.agent | capitalLetters | translate }} {{'SETTLEMENT' | translate}}</a> </li>
+        <li class="nav-item" ng-if="(is_single_vendor === 0 && profile === 'ADMIN')"> <a class="nav-link"
+            ng-class="active_account_tab == 5 ? 'active' : ''" ng-click="changeTab(5)"
+            ui-sref="account.accountSettings.supplierPayoutRequest">{{localisation.supplier | capitalLetters | translate}} {{'PAYOUT REQUEST' | translate}}</a> </li>
+        <li class="nav-item" ng-if="profile === 'ADMIN' && hide_agent_module == 0"> <a class="nav-link"
+            ng-class="active_account_tab == 6 ? 'active' : ''" ng-click="changeTab(6)"
+            ui-sref="account.accountSettings.agentPayoutRequest">{{localisation.agent | capitalLetters | translate}} {{'PAYOUT REQUEST'| translate}}</a> </li>
+      </ul>
+    </div>
+
+    <div ui-view></div>
+
+  </div>
+</div>

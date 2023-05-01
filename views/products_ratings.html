@@ -1,0 +1,76 @@
+<div>
+    <div class="">
+        <div class="tableouter">
+            <table>
+                <thead>
+                    <tr>
+                        <th>{{localisation.order | translate}} {{'ID' | translate}}</th>
+                        <th ng-if="profile == 'ADMIN' && is_single_vendor == 0">{{localisation.supplier | translate}}</th>
+                        <th>{{localisation.product | translate}}</th>
+                        <th>{{'CUSTOMER' | translate}}</th>
+                        <th>{{'DATE' | translate}}</th>
+                        <th>{{'RATE' | translate}}</th>
+                        <th>{{'TITLE' | translate}}</th>
+                        <th>{{'REVIEW' | translate}}</th>
+                        <th>{{'STATUS' | translate}}</th>
+                        <th>{{'ACTION' | translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="ratedProduct in productRatingList">
+                        <td>{{ratedProduct.order_id}}</td>
+                        <td ng-if="profile == 'ADMIN' && is_single_vendor == 0">{{ratedProduct.supplier_name}}</td>
+                        <td>{{ratedProduct.product_name}}</td>
+                        <td>{{ratedProduct.user_name}}</td>
+                        <td> <span>
+                                {{ratedProduct.created_on | date: 'MMM d, y'}}
+                            </span> <br>
+                            <span>
+                                {{ratedProduct.created_on | date: 'hh:mm a'}}
+                            </span></td>
+                        <td>{{ratedProduct.value}}</td>
+                        <td>{{ratedProduct.title || 'NA'}}</td>
+                        <td>{{ratedProduct.reviews || 'NA'}}</td>
+                        <td>{{ratedProduct.is_approved == 0 ? 'UNBLOCK' : 'BLOCK' | translate}} </td>
+                        <td>
+                            <button ng-click="blockUnblockRating(ratedProduct)"
+                                class="btn  btn-sm">{{ratedProduct.is_approved == 0 ? 'BLOCK' : 'UNBLOCK' | translate}}
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="no-data-found" ng-if="productRatingList.length == 0 && dataLoaded">
+                {{'NO DATA FOUND' | translate}}
+            </div>
+
+            <div ng-if="productRatingList.length > 0 && dataLoaded" class="row pagination">
+                <ul ng-if="pager.pages && pager.pages.length">
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                    </li>
+                    <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                        <a ng-click="setPage(page)">{{page}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .tableouter button {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+</style>

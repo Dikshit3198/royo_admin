@@ -1,0 +1,665 @@
+<div class="registraction_page_outter" ng-if="show_login">
+    <div class="bck">
+        <a href="" class="backbtn" ui-sref="login"><img src="img/v1_images/ic_dropdown.svg">{{'Back' | translate}}</a>
+        <div class="text-right" ng-if="languages.length > 1 && is_secondary_language_enable">
+            <label>{{'Language'}}</label>
+            <select class="app" ng-model="lang" ng-change="changeLanguage(lang)">
+                <option value="{{lang.code}}" ng-repeat="lang in languages">{{lang.name | translate}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="logo">
+        <div style="text-align: center;">
+            <div class="registraction_logo col-md-12">
+                <img ng-if="login_app_image" src="{{login_app_image}}">
+            </div>
+            <!-- <img ng-if="login_app_image" style="border-radius: 8px; object-fit: contain;" width="120px" height="90px"
+                src="{{login_app_image}}"> -->
+            <div class="registraction_user_name" ng-if="business_name"
+                ng-style="{'backgroundColor': logo_data.background}" style="text-align: center">
+                <p ng-style="{'color': logo_data.theme_color, 'fontFamily': logo_data.font_family}"
+                    style="padding: 0px; margin-top: 0px;">{{business_name}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="wrapper" ng-if="show_login && view == 0">
+        <div class="category">
+            <div class="addban">
+                <div class="persinfo">
+                    <form role="form" prevent-enter-press class="supplier-reg" id="addDeliveryCompanyForm"
+                        name="addDeliveryCompanyForm" ng-submit="registerSupplier(addDeliveryCompanyForm)" novalidate>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h1 class="bold">{{localisation.delivery_company | translate}}
+                                    {{'REGISTRATION' | translate}}
+                                </h1>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{localisation.delivery_company | translate}} {{'NAME' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input type="text" name="name" ng-model="deliveryCompany.name"
+                                        placeholder="{{localisation.delivery_company | translate}} {{'Name' | translate}}"
+                                        required>
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.name.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.name.$error.required">{{'PLEASE ENTER' | translate}}
+                                            {{localisation.delivery_company | translate}}
+                                            {{'NAME' | translate}}.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{localisation.delivery_company | translate}} {{'EMAIL' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input type="email" name="email" ng-model="deliveryCompany.email"
+                                        placeholder="{{localisation.delivery_company | translate}} {{'Email' | translate}}"
+                                        required>
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.email.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.email.$error.required">{{'PLEASE ENTER' | translate}}
+                                            {{localisation.delivery_company | translate}}
+                                            {{'EMAIL' | translate}}.</small>
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.email.$error.email">{{'PLEASE ENTER A VALID' | translate}}
+                                            {{localisation.delivery_company | translate}}
+                                            {{'EMAIL' | translate}}.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{'FIRST NAME' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="first_name" ng-model="deliveryCompany.first_name"
+                                        placeholder="{{'First Name' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.first_name.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.first_name.$error.required">{{'PLEASE ENTER' | translate}}
+                                            {{'First Name' | translate}}.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{'LAST NAME' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="last_name" ng-model="deliveryCompany.last_name"
+                                        placeholder="{{'Last Name' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.last_name.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.last_name.$error.required">{{'PLEASE ENTER' | translate}}
+                                            {{'Last Name' | translate}}.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{localisation.license_number | translate}}<span
+                                            class="star">*</span></label>
+                                    <input type="text" name="license_number" ng-model="deliveryCompany.license_number"
+                                        placeholder="{{localisation.license_number | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.license_number.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.license_number.$error.required">{{'PLEASE ENTER' | translate}}
+                                            {{localisation.license_number | translate}}.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{'DESIGNATION' | translate}}</label>
+                                    <input type="text" name="designation" ng-model="deliveryCompany.designation"
+                                        placeholder="{{'Designation' | translate}}">
+                                </div>
+                            </div>
+
+                            <!-- <div class="col-md-6" ng-if="languages.length > 1 && is_secondary_language">
+                                <div class="form-group select-category">
+                                    <label>{{'PREFERRED LANGUAGES' | translate}}</label>
+                                    <select data-placeholder="Choose Language" class="app" tabindex=""
+                                        ng-model="deliveryCompany.preferred_language">
+                                        <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                        <option value="{{lang.code}}" ng-repeat="lang in languages">
+                                            {{lang.name | translate}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div> -->
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{localisation.delivery_company | translate}} {{'PHONE' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input id="supp_phone" type="tel" production-qty name="phone"
+                                        ng-model="deliveryCompany.mobile" ng-minlength="6" ng-maxlength="15"
+                                        placeholder="{{localisation.delivery_company | translate}} {{'Phone' | translate}}"
+                                        required>
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.phone.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.phone.$error.required">{{'PLEASE ENTER' | translate}}
+                                            {{localisation.delivery_company | translate}}
+                                            {{'Phone' | translate}}.</small>
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.phone.$error.minlength">{{'PHONE NO. MUST BE MORE THAN 6 DIGITS' | translate}}.</small>
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.phone.$error.maxlength">{{'PHONE NO. MUST BE LESS THAN 15 DIGITS' | translate}}.</small>
+                                    </div>
+                                    <div class="error"
+                                        ng-show="!addDeliveryCompanyForm.phone.$invalid && addDeliveryCompanyForm.$submitted && invalid_phone_no">
+                                        <small>{{'INVALID PHONE NUMBER' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{localisation.delivery_company | translate}} {{'ADDRESS' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input type="text" name="address" ng-model="deliveryCompany.address"
+                                        id="addressSearchTextField" required>
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.address.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.address.$error.required">{{'PLEASE ENTER' | translate}}
+                                            {{localisation.delivery_company | translate}}
+                                            {{'ADDRESS' | translate}}.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{'COVERAGE CITIES' | translate}}<span class="star">*</span></label>
+                                    <textarea type="text" name="coverage_cities"
+                                        ng-model="deliveryCompany.coverage_cities"
+                                        placeholder="{{'Coverage Cities' | translate}}" rows="3" style="height: auto;"
+                                        required></textarea>
+
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.coverage_cities.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.coverage_cities.$error.required">{{'PLEASE ENTER' | translate}}
+                                            {{'Coverage Cities' | translate}}.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{'MORE INFORMATION' | translate}}</label>
+                                    <textarea type="text" name="more_information"
+                                        ng-model="deliveryCompany.more_information"
+                                        placeholder="{{'More Information' | translate}}" rows="3"
+                                        style="height: auto;"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group select-category">
+                                    <label>{{'BOOKING TYPE' | translate}}<span class="star">*</span></label>
+                                    <select data-placeholder="Choose Language" class="app" tabindex=""
+                                        ng-model="deliveryCompany.booking_type" name="booking_type" required>
+                                        <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                        <option value="1">{{'Same Day Delivery' | translate}}</option>
+                                        <option value="2">{{'Next Day Delivery' | translate}}</option>
+                                        <option value="3">{{'On-Demand (within 1 HR)' | translate}}</option>
+                                        <option value="4">{{'On-Demand (within 2-3 HRS)' | translate}}</option>
+                                    </select>
+
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.booking_type.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.booking_type.$error.required">{{'PLEASE SELECT' | translate}}
+                                            {{'Booking Type' | translate}}.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{'NO. OF MOTORBIKE CONTROLLED TEMPERATURE' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input type="number" name="no_of_motorbike_controlled_temp" integers
+                                        ng-model="deliveryCompany.no_of_motorbike_controlled_temp" ng-min="0"
+                                        placeholder="{{'No. of motorbike controlled temperature' | translate}}"
+                                        required>
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.no_of_motorbike_controlled_temp.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.no_of_motorbike_controlled_temp.$error.required">{{'PLEASE ENTER' | translate}} {{'No. of motorbike controlled temperature' | translate}}.</small>
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.no_of_motorbike_controlled_temp.$error.min">{{'No. of motorbike controlled temperature' | translate}}
+                                            must be greater than or equal to 0.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{'NO. OF MOTORBIKE NON CONTROLLED TEMPERATURE' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input type="number" name="no_of_motorbike_non_controlled_temp" integers
+                                        ng-model="deliveryCompany.no_of_motorbike_non_controlled_temp" ng-min="0"
+                                        placeholder="{{'No. of motorbike non controlled temperature' | translate}}"
+                                        required>
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.no_of_motorbike_non_controlled_temp.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.no_of_motorbike_non_controlled_temp.$error.required">{{'PLEASE ENTER' | translate}} {{'No. of motorbike non controlled temperature' | translate}}.</small>
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.no_of_motorbike_non_controlled_temp.$error.min">{{'No. of motorbike non controlled temperature' | translate}}
+                                            must be greater than or equal to 0.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{'NO. OF VANS CONTROLLED TEMPERATURE' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input type="number" name="no_of_vans_controlled_temp" integers
+                                        ng-model="deliveryCompany.no_of_vans_controlled_temp" ng-min="0"
+                                        placeholder="{{'No. of vans controlled temperature' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.no_of_vans_controlled_temp.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.no_of_vans_controlled_temp.$error.required">{{'PLEASE ENTER' | translate}} {{'No. of vans non controlled temperature' | translate}}.</small>
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.no_of_vans_controlled_temp.$error.min">{{'No. of vans non controlled temperature' | translate}}
+                                            must be greater than or equal to 0.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{'NO. OF VANS NON CONTROLLED TEMPERATURE' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input type="number" name="no_of_vans_non_controlled_temp" integers
+                                        ng-model="deliveryCompany.no_of_vans_non_controlled_temp" ng-min="0"
+                                        placeholder="{{'No. of vans non controlled temperature' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.no_of_vans_non_controlled_temp.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.no_of_vans_non_controlled_temp.$error.required">{{'PLEASE ENTER' | translate}} {{'No. of vans non controlled temperature' | translate}}.</small>
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.no_of_vans_non_controlled_temp.$error.min">{{'No. of vans non controlled temperature' | translate}}
+                                            must be greater than or equal to 0.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{'NO. OF CARS' | translate}}<span class="star">*</span></label>
+                                    <input type="number" name="no_of_cars" integers
+                                        ng-model="deliveryCompany.no_of_cars" ng-min="0"
+                                        placeholder="{{'No. of cars' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.no_of_cars.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.no_of_cars.$error.required">{{'PLEASE ENTER' | translate}} {{'No. of cars' | translate}}.</small>
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.no_of_cars.$error.min">{{'No. of cars' | translate}}
+                                            must be greater than or equal to 0.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+<!-- 
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>{{'NO. OF' | translate}} {{localisation.agents | translate}}<span
+                                            class="star">*</span></label>
+                                    <input type="number" name="delivery_boys_count" integers
+                                        ng-model="deliveryCompany.delivery_boys_count" ng-min="1"
+                                        placeholder="{{'No. of' | translate}} {{localisation.agents | translate}}"
+                                        required>
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.delivery_boys_count.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.delivery_boys_count.$error.required">{{'PLEASE ENTER' | translate}} {{'No. of' | translate}} {{localisation.agents | translate}}.</small>
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.delivery_boys_count.$error.min">{{localisation.agents | translate}}
+                                            must be greater than 0.</small>
+                                    </div>
+                                </div>
+                            </div> -->
+
+                            <!-- 
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{'TYPE OF DELIVERIES OFFERED' | translate}}<span
+                                            class="star">*</span></label>
+                                    <input type="text" name="type_of_deliveries_offered"
+                                        ng-model="deliveryCompany.type_of_deliveries_offered"
+                                        placeholder="{{'Type of Deliveries Offered' | translate}}" required>
+
+                                    <div class="error"
+                                        ng-show="addDeliveryCompanyForm.type_of_deliveries_offered.$invalid && addDeliveryCompanyForm.$submitted">
+                                        <small
+                                            ng-show="addDeliveryCompanyForm.type_of_deliveries_offered.$error.required">{{'PLEASE ENTER' | translate}}
+                                            {{'TYPE OF DELIVERIES OFFERED' | translate}}.</small>
+                                    </div>
+                                </div>
+                            </div> -->
+
+                            <!-- <div class="col-md-12" style="margin-top: 20px;">
+                                <div class="form-control select-category" style="border-radius: 8px;">
+                                    <label>{{'UPLOAD DOCUMENTS' | translate}}</label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="area">
+                                                <input type="file" id="upload" multiple="false"/>
+                                                <label class="upload-text"
+                                                    for="upload"><strong>{{'CHOOSE A FILE' | translate}}</strong><span
+                                                        class="box__dragndrop">
+                                                        {{'OR DRAG IT HERE' | translate}}</span>.</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="gallery" ng-repeat="file in files">
+                                                <a>
+                                                    <img src="{{file.url}}" alt="Cinque Terre" width="600" height="400">
+                                                </a>
+                                                <div class="desc">{{file.name}}</div>
+                                                <div class="remove-file"><a ng-click="removeFile(file.id)"><i
+                                                            class="fa fa-times" aria-hidden="true"></i></a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div> -->
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="form-group registration_docs">
+                                    <div class="row">
+                                        <div class="col-md-6 file">
+                                            <label>{{'UPLOAD LICENSE' | translate}}</label>
+                                            <span style="height: 104px; width: 160px;">
+                                                <img ng-if="!License_url_toView" src="img/v1_images/ic_dummy.png">
+                                                <img ng-if="License_url_toView"
+                                                    style="height: 100%; width: 100%; object-fit: cover;"
+                                                    src="{{License_url_toView}}">
+                                            </span>
+                                            <input filestyle="" type="file" accept="image/*" name="image2"
+                                                ng-model="License_url" class="form-control"
+                                                onchange="angular.element(this).scope().file_to_upload_for_doc(this.files, 1)"
+                                                data-button-text="Single" data-class-button="btn btn-default"
+                                                data-classinput="form-control inline" nv-file-select=""
+                                                uploader="uploader" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group registration_docs">
+                                    <div class="row">
+                                        <div class="col-md-9 file">
+                                            <label>{{'UPLOAD LETTER OF INTENT' | translate}}</label>
+                                            <span style="height: 104px; width: 160px;">
+                                                <img ng-if="!Letter_of_intent_url_toView"
+                                                    src="img/v1_images/ic_dummy.png">
+                                                <img ng-if="Letter_of_intent_url_toView"
+                                                    style="height: 100%; width: 100%; object-fit: cover;"
+                                                    src="{{Letter_of_intent_url_toView}}">
+                                            </span>
+                                            <input filestyle="" type="file" accept="image/*" name="image2"
+                                                ng-model="Letter_of_intent_url" class="form-control"
+                                                onchange="angular.element(this).scope().file_to_upload_for_doc(this.files, )"
+                                                data-button-text="Single" data-class-button="btn btn-default"
+                                                data-classinput="form-control inline" nv-file-select=""
+                                                uploader="uploader" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-4 mt-4" style="text-align: center">
+                                <span>
+                                    <input type="checkbox" class="checkbx" ng-click="acceptTnC($event)">
+                                    <span class="ml-2 tnc_txt">
+                                        <a ui-sref="terms" target="_blank">{{'Accept our terms and conditions'}}</a>
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="col-md-12" style="text-align: right">
+                                <button type="submit" style="float: none; margin: 0px; text-align: center"
+                                    class="submit">{{'REGISTER' | translate}}</button>
+                            </div>
+                        </div>
+
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="success" ng-if="show_login && view == 1">
+        <p>Your application has been successfully submitted</p>
+        <a href="/#!/login">{{'BACK' | translate}}</a>
+    </div>
+</div>
+<success-modal message="message"></success-modal>
+
+<style>
+    .registraction_user_name p {
+        margin-bottom: 20px;
+        text-transform: capitalize;
+    }
+
+    .registraction_logo img {
+        width: 100%;
+        height: 100px;
+        /* background: #000; */
+        max-width: 100%;
+        object-fit: contain;
+        margin-bottom: 20px;
+    }
+
+    /* .registraction_page_outter {
+        width: 62%;
+        margin: 40px auto;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.5);
+        padding: 40px;
+    } */
+
+    .save {
+        color: #ffffff;
+        border-radius: 4px;
+        background-color: var(--primary-color);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+        border: none;
+        font-size: 14px;
+        padding: 9px 25px;
+    }
+
+    .area {
+        margin: 5px;
+        width: 100%;
+        height: 200px;
+        position: relative;
+        border: 2px dashed #000;
+        background-image: url("../../img/import.png");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 64px 64px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        filter: alpha(opacity=50);
+        -khtml-opacity: 0.5;
+        -moz-opacity: 0.5;
+        opacity: 0.5;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .area:hover,
+    .area.dragging,
+    .area.uploading {
+        filter: alpha(opacity=100);
+        -khtml-opacity: 1;
+        -moz-opacity: 1;
+        opacity: 1;
+    }
+
+    /* div.gallery {
+        margin: 5px;
+        border: 1px solid #ccc;
+        float: left;
+        width: 46%;
+        position: relative;
+    } */
+
+    div.gallery:hover {
+        border: 1px solid #777;
+    }
+
+    div.gallery img {
+        width: 100%;
+        height: 145px;
+    }
+
+    /* div.desc {
+        padding: 10px;
+        text-align: center;
+        font-size: 10px;
+    } */
+
+    /* .remove-file {
+        position: absolute;
+        top: -6px;
+        right: -9px;
+        color: red;
+        background: #fff;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        text-align: center;
+        line-height: 25px;
+        box-shadow: 0px 6px 6px 1px rgba(0, 0, 0, 0.2);
+    } */
+
+    .upload-text {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .area input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        cursor: pointer;
+        text-indent: 800px;
+        padding: 0px;
+        opacity: 0;
+    }
+
+
+
+
+
+
+    div.gallery {
+        margin: 5px;
+        border: 1px solid #ccc;
+        float: left;
+        width: 210px;
+        position: relative;
+        height: 200px;
+        max-width: 100%;
+    }
+
+    div.desc {
+        padding: 10px 15px;
+        text-align: center;
+        font-size: 12px;
+        overflow: hidden;
+    }
+
+    .remove-file {
+        position: absolute;
+        top: -6px;
+        right: -9px;
+        color: red;
+        background: #fff;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        text-align: center;
+        line-height: 25px;
+        box-shadow: 0px 2px 6px 1px rgb(0 0 0 / 14%);
+    }
+
+    .registraction_page_outter {
+        width: 850px;
+        margin: 40px auto;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px 0px rgb(0 0 0 / 22%);
+        padding: 40px;
+        max-width: 100%;
+    }
+
+    .checkbx {
+        appearance: auto;
+        right: 8px;
+        bottom: 16px;
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    .persinfo form .form-group .file {
+        position: relative;
+    }
+
+    .persinfo form .form-group .file span {
+        height: 72px;
+        width: 128px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 4px;
+        background-color: #f7f7f7;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .persinfo form .form-group .file input {
+        width: 128px;
+        height: 96;
+        position: absolute;
+        left: 15px;
+        bottom: 0;
+        padding: 0;
+        height: 72px;
+        opacity: 0;
+        cursor: pointer;
+    }
+</style>

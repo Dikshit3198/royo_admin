@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}" ng-app="Royo">
+
+<head>
+
+    <meta charset="utf-8">
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link id="favicon" rel="icon" type="image/x-icon" href="img/emptyFav.ico" />
+
+    <!-- <title></title> -->
+    <title ng-bind="META_TITLE"></title>
+    <meta name="meta_description" content="" />
+    <meta name="meta_image" property="og:image" content="">
+
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+    <link rel="manifest" id="my-manifest-placeholder">
+
+    <!-- Main Royo CSS files -->
+    <link href="css/v1_css/style.css" rel="stylesheet">
+    <link href="css/v1_css/custom.css" rel="stylesheet">
+    <link href="js/components/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <!-- <script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyBiBi-y-jreGQjQfu1M1Fnr8WYZxIZIrxw&amp;libraries=places,visualization,drawing,geometry"></script> -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="js/components/Lightpick-master/css/lightpick.css">
+    <link rel="stylesheet" type="text/css" href="js/components/clockpicker/dist/bootstrap-clockpicker.min.css">
+    <link rel="stylesheet" type="text/css" href="js/components/autocomplete/auto-complete.css">
+    <link rel="stylesheet" type="text/css" href="js/components/jQuery-tagEditor-master/jquery.tag-editor.css">
+
+    <link href="js/components/pickr-master/dist/themes/classic.min.css" rel="stylesheet">
+    <link href="js/components/pickr-master/dist/themes/monolith.min.css" rel="stylesheet">
+    <link href="js/components/pickr-master/dist/themes/nano.min.css" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.6/cropper.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.6/cropper.min.css" rel="stylesheet">
+
+    <link href="js/components/angular-calendar-master/dist/css/angular-bootstrap-calendar.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="js/components/intl-input/css/intlTelInput.css">
+
+    <!-- <link href="bower_components/angular-bootstrap-calendar/dist/css/angular-bootstrap-calendar.min.css" -->
+    <!-- rel="stylesheet"> -->
+    <!-- <script src="bower_components/angular-bootstrap-calendar/dist/js/angular-bootstrap-calendar-tpls.min.js"></script> -->
+
+    <link rel="stylesheet" href="js/components/angular-multi-select-master/isteven-multi-select.css">
+
+    <!-- <script type="text/javascript"
+        src="https://maps.google.com/maps/api/js?key=AIzaSyCKTIRWeRBVN3KDhLTNGmmV9qQNdrxLJq4&amp;libraries=places,visualization,drawing,geometry"></script> -->
+
+</head>
+
+<body ng-controller="LayoutCtrl">
+
+    <!-- Main view  -->
+    <div ui-view></div>
+
+    <!-- jQuery and Bootstrap -->
+    <script src="js/components/jquery/jquery-2.1.1.min.js"></script>
+    <script src="js/components/jquery-ui/jquery-ui.js"></script>
+    <script src="js/components/bootstrap.min.js"></script>
+
+    <!-- SlimScroll -->
+    <!-- <script src="js/components/slimscroll/jquery.slimscroll.min.js"></script> -->
+
+    <!-- Main Angular scripts-->
+    <!-- <script src="js/components/angular/angular.min.js"></script> -->
+    <!-- <script src="js/components/angular/angular-sanitize.min.js"></script> -->
+    <!-- <script src="js/components/ui-router/ui-router.min.js"></script> -->
+
+    <!-- stripe gateway   -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src  = "https://js.paystack.co/v1/inline.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular-sanitize.min.js"></script>
+    <!-- <script src="https://unpkg.com/@uirouter/angularjs/release/angular-ui-router.min.js"></script> -->
+    <script src="https://unpkg.com/@uirouter/angularjs@1.0.7/release/angular-ui-router.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/1.0.29/stateEvents.min.js"
+        integrity="sha512-mTCodivQZ3UHaSJWYtGPicKHIsTVxiiS7hiIiN+bNC1VT3VyLTGlIri0JMeDO98XyfqWX3sfKHY7lMBSkrfHWw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="js/components/oclazyload/dist/ocLazyLoad.min.js"></script>
+    <script src="js/components/bootstrap/ui-bootstrap-tpls-0.12.0.min.js"></script>
+
+    <script src="js/components/underscore/underscore-min.js"></script>
+
+    <!-- Custom scripts-->
+    <script src="js/components/sweetalert/sweetalert.min.js"></script>
+    <script src="js/components/parsleyjs/dist/parsley.min.js"></script>
+
+    <script src="js/components/ng-csv.js"></script>
+
+    <script src="js/components/angular-multi-select-master/isteven-multi-select.js"></script>
+
+    <!-- Angular App Script -->
+    <script src="js/app.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/api_endpoints.js"></script>
+    <script src="js/translations/translations.js"></script>
+    <script src="js/directives/directives.js"></script>
+    <script src="js/services/services.js"></script>
+    <script src="js/filters/filters.js"></script>
+
+    <!-- Royo Layout Script -->
+    <script src="js/controllers/layout.js"></script>
+
+    <!-- Royo Dashboard Script -->
+    <script src="js/controllers/dashboard/dashboard.js"></script>
+    <script src="js/controllers/dashboard/shipping_dashboard.js"></script>
+
+    <!-- Royo Production Scripts -->
+    <script src="js/controllers/production/production.js"></script>
+    <script src="js/controllers/production/kpi.js"></script>
+    <script src="js/controllers/production/category.js"></script>
+    <script src="js/controllers/production/product.js"></script>
+    <script src="js/controllers/production/sub_category.js"></script>
+    <script src="js/controllers/production/supplier_product.js"></script>
+    <script src="js/controllers/production/variant.js"></script>
+    <script src="js/controllers/production/banners.js"></script>
+    <script src="js/controllers/production/addon.js"></script>
+    <script src="js/controllers/production/package.js"></script>
+    <script src="js/controllers/production/brands.js"></script>
+    <script src="js/controllers/production/product_assignment.js"></script>
+    <script src="js/controllers/production/questions.js"></script>
+
+    <!-- Royo Account Scripts -->
+    <script src="js/controllers/account/account.js"></script>
+    <script src="js/controllers/account/account_settlement.js"></script>
+    <script src="js/controllers/account/account_statement.js"></script>
+    <script src="js/controllers/account/drivers_settlement.js"></script>
+    <script src="js/controllers/account/drivers_statement.js"></script>
+    <script src="js/controllers/account/supplier_payout_request.js"></script>
+    <script src="js/controllers/account/agent_payout_request.js"></script>
+
+
+    <!-- Royo Ratings Scripts -->
+    <script src="js/controllers/ratings/ratings.js"> </script>
+    <script src="js/controllers/ratings/products_ratings.js"> </script>
+    <script src="js/controllers/ratings/suppliers_ratings.js"> </script>
+    <script src="js/controllers/ratings/agent_ratings.js"> </script>
+
+
+    <!-- Royo Agent Scripts -->
+    <script src="js/controllers/agent/agent_profile.js"></script>
+    <script src="js/controllers/agent/service_assignment.js"></script>
+    <script src="js/controllers/agent/agent_slots.js"></script>
+    <script src="js/controllers/agent/track-agents.js"></script>
+    <script src="js/controllers/agent/agent_in_out.js"></script>
+    <script src="js/controllers/agent/track-agents-heatmap.js"></script>
+
+    <!-- Royo Orders Scripts -->
+    <script src="js/controllers/orders/orders.js"></script>
+    <script src="js/controllers/orders/order_tracking.js"></script>
+    <script src="js/controllers/orders/order_description.js"></script>
+    <script src="js/controllers/orders/order-creation.js"></script>
+    <script src="js/controllers/orders/order_user_tracking.js"></script>
+    <script src="js/controllers/orders/order_chat.js"></script>
+    <script src="js/controllers/orders/order_video.js"></script>
+
+    <!-- Royo Orders Scripts -->
+    <script src="js/controllers/custom-orders/orders.js"></script>
+    <script src="js/controllers/custom-orders/order_desc.js"></script>
+
+
+    <!-- Royo Profile Scripts -->
+    <script src="js/controllers/profile/admin-permissions.js"></script>
+    <script src="js/controllers/profile/admin.js"></script>
+    <script src="js/controllers/profile/client.js"></script>
+
+    <!----- Royo Wallet Scripts-->
+    <script src="js/controllers/profile/wallet-details.js"></script>
+    <script src="js/controllers/profile/driver-wallet-details.js"></script>
+
+    <!-- Royo Social Ecommerce Scritps -->
+    <script src="js/controllers/social-ecommerce/post-report.js"></script>
+
+    <!-- Royo Promo Scripts -->
+    <script src="js/controllers/promo/promo.js"></script>
+
+    <!-- Royo Voucher Scripts -->
+    <script src="js/controllers/voucher/voucher.js"></script>
+
+    <!-- Royo Gift Card Scripts -->
+    <script src="js/controllers/gift-card/gift-card.js"></script>
+
+    <!-- Royo Notifications Scripts -->
+    <script src="js/controllers/notifications/notifications.js"></script>
+
+    <!-- Royo SOS Notifications Scripts -->
+    <script src="js/controllers//sos/sos-notification.list.js"></script>
+
+    <!-- Royo Wallet Withdraw List Script -->
+    <script src="js/controllers//wallet/wallet.list.js"></script>
+
+
+    <!-- Payment Gateway -->
+    <script src="js/controllers/payment-gateway/payment-gateway-ctrl.js"></script>
+
+
+    <!-- Royo Subscription Scripts -->
+    <script src="js/controllers/subscription/subscription-plan.js"></script>
+    <script src="js/controllers/subscription/supplier-subscription-plan.js"></script>
+    <script src="js/controllers/subscription/suppliers-subscription-list.js"></script>
+    <script src="js/controllers/subscription/user-subscription-plan.js"></script>
+    <script src="js/controllers/reports/subscription-reports/user-subs-revenue.report.js"></script>
+    <script src="js/controllers/reports/subscription-reports/supplier-subs-revenue.report.js"></script>
+
+
+    <!-- Royo Reports Scripts -->
+    <script src="js/controllers/reports/report.js"></script>
+    <script src="js/controllers/reports/order_report.js"></script>
+    <script src="js/controllers/reports/supplier_report.js"></script>
+    <script src="js/controllers/reports/user_report.js"></script>
+    <script src="js/controllers/reports/agent_report.js"></script>
+    <script src="js/controllers/reports/product_report.js"></script>
+    <script src="js/controllers/reports/subscription_report.js"></script>
+    <script src="js/controllers/reports/inventory_report.js"></script>
+
+
+    <!-- Royo Block Time Scripts -->
+    <script src="js/controllers/block-time/block-time.js"></script>
+
+    <!-- Royo Zone Geofence Scripts -->
+    <script src="js/controllers/zone-geofence/zone-geofence.js"></script>
+
+    <!-- Royo Vendor Approval scripts -->
+    <script src="js/controllers/vendor-approval/vendor-update-listing.js"></script>
+    <script src="js/controllers/vendor-approval/vendor-product-update-listing.js"></script>
+
+    <!-- Royo Supplier Agent Location scripts -->
+    <script src="js/controllers/show_supplier_agent_location/show_supplier_agent_location.js"></script>
+
+
+    <!-- Royo Settings Scripts -->
+    <script src="js/controllers/settings/settings.js"></script>
+    <script src="js/controllers/currency/currency.js"></script>
+    <script src="js/controllers/country-code/country-code.js"></script>
+
+    <!-- Royo Supplier Scripts -->
+    <script src="js/controllers/supplier/supplier_profile.js"></script>
+    <script src="js/controllers/supplier/supplier_setup.js"></script>
+    <script src="js/controllers/supplier/supplier_setup_one.js"></script>
+    <script src="js/controllers/supplier/supplier_setup_two.js"></script>
+    <script src="js/controllers/supplier/supplier_setup_three.js"></script>
+    <script src="js/controllers/supplier/supplier_setup_four.js"></script>
+    <script src="js/controllers/supplier/supplier_setup_five.js"></script>
+    <script src="js/controllers/supplier/scheduling.js"></script>
+    <script src="js/controllers/supplier/table-booking.js"></script>
+    <script src="js/controllers/supplier/order_distance.js"></script>
+    <script src="js/controllers/supplier/cctv_listing.js"></script>
+    <script src="js/controllers/supplier/order_weight.js"></script>
+    <script src="js/controllers/supplier/supplier-tag.js"></script>
+    <script src="js/controllers/supplier/supplier-delivery-company.js"></script>
+    <script src="js/controllers/supplier/orderwise_gateways.js"></script>
+    <script src="js/controllers/supplier/supplier_extra_product.js"></script>
+    <script src="js/controllers/product-suggestion/product-suggestion.js"></script>
+    <!-- Royo Admin Order Create  -->
+    <!-- <script src="js/controllers/create_order/book_agent.js"></script> -->
+    <script src="js/controllers/create_order/cart_summary.js"></script>
+
+    <!-- Royo Extra Service Product -->
+    <script src="js/controllers/extra_service_products/extra_service_products.js"></script>
+
+    <!-- Royo Order Calendar -->
+    <script src="js/controllers/supplier/order_calendar.js"></script>
+
+
+    <!-- Royo Delivery Company Scripts -->
+    <script src="js/controllers/delivery-company/delivery_company_profile.js"></script>
+    <script src="js/controllers/delivery-company/delivery_company_setup.js"></script>
+    <script src="js/controllers/delivery-company/delivery_company_setup_one.js"></script>
+
+    <!-- Royo Authorization Scripts -->
+    <script src="js/controllers/authorization/login.js"></script>
+    <script src="js/controllers/authorization/supplier-registration.js"></script>
+    <script src="js/controllers/authorization/delivery-company-registration.js"></script>
+
+    <!-- Royo Common Scripts -->
+    <script src="js/controllers/common/header.js"></script>
+    <script src="js/controllers/common/privacy_terms.js"></script>
+
+    <!-- Royo Loyalty Points -->
+    <script src="js/controllers/loyalty-points/loyalty.js"></script>
+
+
+    <script src="js/controllers/contact-us/contact-us.js"></script>
+
+    <!-- Royo Feedback -->
+    <script src="js/controllers/feedback/feedback.js"></script>
+    <script src="js/controllers/feedback/suggestions.js"></script>
+
+    <!-- Royo Vehicle -->
+    <script src="js/controllers/vehicle-category/vehicle-category.js"></script>
+
+    <script src="js/controllers/custom-pages/about_us.js"></script>
+    <script src="js/controllers/custom-pages/pages-setup.js"></script>
+
+    <!-- Ratings document upload-->
+    <script src="js/controllers/doc_rating_upload/doc_rating_upload.js"></script>
+    <script src="js/controllers/doc_rating_upload/supplier_rating_docs.js"></script>
+
+
+    <!-- Royo Event Scripts -->
+    <script src="js/controllers/events/event_listing.js"></script>
+    <script src="js/controllers/events/event_item_assignment.js"></script>
+
+
+    <!-- Payment Gateway -->
+    <script src="js/controllers/payment-gateway/payment-gateway-ctrl.js"></script>
+
+    <!-- Supplier document upload-->
+    <script src="js/controllers/supplier/supplier_media_upload.js"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.23/moment-timezone-with-data-2012-2022.min.js"></script>
+    <script src="https://rawgithub.com/gf3/moment-range/v0.1.7/lib/moment-range.js"></script>
+    <script src="js/components/chart.js/dist/Chart.min.js"></script>
+    <script type="text/javascript" charset="utf-8"
+        src="js/components/round-chart/Chart.roundedBarCharts.min.js"></script>
+    <script src="js/components/angular-chart.js/dist/angular-chart.min.js"></script>
+    <script src="js/components/Lightpick-master/lightpick.js"></script>
+    <script type="text/javascript" src="js/components/clockpicker/dist/bootstrap-clockpicker.min.js"></script>
+    <script src="js/components/autocomplete/auto-complete.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/caret/1.3.4/jquery.caret.js"></script>
+    <script src="js/components/jQuery-tagEditor-master/jquery.tag-editor.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-cookies.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.7/angular-route.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-translate/2.18.1/angular-translate.min.js"></script>
+    <script src="https://rawgithub.com/angular-ui/ui-sortable/master/src/sortable.js"></script>
+    <script
+        src="//cdnjs.cloudflare.com/ajax/libs/angular-translate/2.18.1/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
+    <script src="js/components/summernote/angular-summernote.min.js"></script>
+
+    <script src="js/components/pickr-master/dist/pickr.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.6/cropper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.6/cropper.min.js"></script>
+
+    <script src="js/components/intl-input/js/intlTelInput.js"></script>
+    <script src="js/components/intl-input/js/utils.js"></script>
+
+    <script src="js/components/angular-calendar-master/dist/js/angular-bootstrap-calendar-tpls.js"></script>
+
+    <script src="js/patch.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script> -->
+
+    <!-------------------------------PUSH NOTIFICATION ------------------------------------->
+    <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-messaging.js"></script>
+
+
+    <!-- survey monkey -->
+    <script src="js/controllers/survey-monkey/survey-monkey.js"></script>
+    <script src="js/controllers/survey-monkey/survey-monkey-details.js"></script>
+    <script src="js/controllers/survey-monkey/survey-monkey-templates.js"></script>
+    <script src="js/controllers/survey-monkey/survey-monkey-pages.js"></script>
+    <script src="js/controllers/survey-monkey/survey-monkey-page-details.js"></script>
+
+
+    <script>
+        $(function () {
+            $('.navbar-toggler').click(function () {
+                $('.navbar-nav').toggleClass('slide-in');
+                $('.side-body').toggleClass('body-slide-in');
+                $('#search').removeClass('in').addClass('collapse').slideUp(200);
+            });
+            $('#search-trigger').click(function () {
+                $('.navbar-nav').removeClass('slide-in');
+                $('.side-body').removeClass('body-slide-in');
+            });
+        });
+    </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script>
+    <div id="loaderDiv" loader>
+        <div class="ajax-loader" ng-if="isColorGet">
+            <img id="loadSpinner"
+                src="{{addFontHKGrotesk == 1 ? 'img/v1_images/spinnerClient.svg' : 'img/v1_images/spinner.svg'}}">
+        </div>
+    </div>
+
+
+
+    <script>
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+        }
+    </script>
+    <!--End of Tawk.to Script -->
+
+    <div class="chatmsg" id="notify">
+        <a class="cb_cafe_order blink">
+            <i class="fa fa-close notify-close" id="close_notification"></i>
+            <div class="text" id="notify_click">
+                <h1 style="display: inline-flex" id="notify_order_text"></h1>
+                <span class="new-order-status"></span>
+                <br>
+                <h6 id="notify_order_no"></h6>
+                <h6 id="notify_order_date"></h6>
+            </div>
+        </a>
+    </div>
+
+</body>
+
+
+<!--FILES USED FOR OFFLINE CACHING, USED UPUP JS----------------------------------------------------------------------->
+
+<!--<script src="requestanimframe.js"></script>-->
+<!--<script src="fireworks.js"></script>-->
+<script src="upup.min.js"></script>
+<!--<script src="js/vendor/UpUp/upup.sw.js"></script>-->
+
+<script>
+    UpUp.start({
+        'content-url': 'login.html', // show this when the user is offline
+        'assets': [                 // define additional assets needed while offline:
+            'img/v1_images/emoji.png',           // such as images,
+            // 'img/Logo_text.png',           // such as images,
+            // 'img/new/sad.png',           // such as images,
+            // 'offline.png',           // such as images,
+            // 'css/bootstrap.min.css',    // such as images,
+        ]
+    });
+</script>
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.4.6/angular-locale_es-es.js"></script> -->
+
+</html>

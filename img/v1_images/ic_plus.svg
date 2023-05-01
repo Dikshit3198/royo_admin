@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="28px" height="28px" viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_plus</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M-1.42108547e-14,5.32907052e-15 L20,5.32907052e-15 C24.418278,4.51744602e-15 28,3.581722 28,8 L28,28 C12.536027,28 0,15.463973 0,5.32907052e-15 Z" id="path-1"></path>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-14-Copy-3">
+            <g id="Group-6">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="Combined-Shape" fill="#A8A8A8" xlink:href="#path-1"></use>
+                <g id="Group" mask="url(#mask-2)" fill-rule="nonzero" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                    <g transform="translate(11.000000, 7.000000)">
+                        <path d="M5,0 L5,10" id="Line"></path>
+                        <path d="M10,5 L0,5" id="Line-Copy"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

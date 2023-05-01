@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_sortby</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="Group-15" transform="translate(2.000000, 2.000000)">
+            <g id="Group-14" transform="translate(0.000000, 0.900000)" stroke="#2CA6B1">
+                <path d="M4.11337734,0 L4.11337734,9.6" id="Line-4"></path>
+                <polyline id="Path" transform="translate(2.357143, 7.898395) rotate(-45.000000) translate(-2.357143, -7.898395) " points="2.41428571 10.3555382 2.3 5.44125253 2.3 5.44125253"></polyline>
+            </g>
+            <g id="Group-14-Copy" transform="translate(8.370520, 5.500000) scale(-1, -1) translate(-8.370520, -5.500000) translate(5.870520, 0.500000)" stroke="#9B8B5F">
+                <path d="M4.11337734,0 L4.11337734,9.6" id="Line-4"></path>
+                <polyline id="Path" transform="translate(2.357143, 7.898395) rotate(-45.000000) translate(-2.357143, -7.898395) " points="2.41428571 10.3555382 2.3 5.44125253 2.3 5.44125253"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

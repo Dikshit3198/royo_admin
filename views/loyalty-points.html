@@ -1,0 +1,386 @@
+<div class="wrapper">
+    <div class="category" ng-if="!is_add">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'LOYALTY CARDS' | translate}}</h1>
+                </div>
+            </div>
+        </div>
+        <div class="secnav m-top-20">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <!-- <input type="text" placeholder="{{'SEARCH BY NAME' | translate}}" ng-model="search"
+                        ng-keypress="search($event)"> -->
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)">
+                                <button type="button" class="bold create" ng-click="changeView(true)">+
+                                    {{'ADD LOYALTY' | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mainbanner m-top-30">
+            <div class="row">
+                <div class="col-md-3" ng-repeat="loyalty in loyalties">
+                    <div class="bx loyalty">
+                        <!-- <div class="banner-edit" ng-click="editLoyalty(loyalty)">
+                            <i class="fa fa-edit"></i>
+                        </div> -->
+                        <!-- <div class="delete" ng-click="delete(banner)"><img src="img/v1_images/ic_card_del.svg"
+                                style="width: auto; height:auto; border-radius:0; box-shadow: none"></div> -->
+                        <a style="cursor: default">
+                            <img style="cursor: default" src="{{compressImage(loyalty.image, '300x180')}}">
+                            <p class="bold">{{loyalty.name}}</p>
+                            <p ng-if="loyalty.per_point_amount_type == 0" class="sup-name">
+                                {{'Amount per point' | translate}} : {{currency}}{{loyalty.per_point_amount}}</p>
+                            <p ng-if="loyalty.per_point_amount_type == 1" class="sup-name">
+                                {{'Amount per point' | translate}} : {{loyalty.per_point_amount}}%</p>
+                            <p class="sup-name">{{'Loyalty points' | translate}} : {{loyalty.total_loyality_points}}</p>
+                        </a>
+
+                        <div class="actions">
+                            <a ng-click="editLoyalty(loyalty)"><i class="fa fa-edit"></i></a>
+                            <a ng-click="deleteLoyalty(loyalty)"><i class="fa fa-trash"></i></a>
+                            <label ng-if="profile == 'ADMIN' && enable_loyalty_status_change == 1">
+                                <div class="switch togglebtn">
+                                    <input type="checkbox" id="togBtn" ng-checked="{{!loyalty.is_block}}"
+                                        ng-click="changeLoyaltyStatus(loyalty.is_block, loyalty.id)">
+                                    <div class="slider round"> <span class="on"></span> <span class="off"></span> </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="no-data-found" ng-if="loyalties.length == 0 && dataLoaded">
+                {{'NO DATA FOUND' | translate}}
+            </div>
+
+            <div ng-if="loyalties.length > 0 && dataLoaded" class="row pagination">
+                <ul ng-if="pager.pages && pager.pages.length">
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                        <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                    </li>
+                    <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                        <a ng-click="setPage(page)">{{page}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                        <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="category" ng-if="is_add" style="width: 80%; margin: 0 auto">
+
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'ADD' | translate}} {{'LOYALTY CARD' | translate}}</h1>
+                </div>
+                <div class="col-md-6 col-sm-6" style="text-align: right">
+                    <a ng-click="changeView(false)" class="backbtn"><img src="img/v1_images/ic_dropdown.svg">{{'BACK' |
+                        translate}}</a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="addban m-top-30 innpad">
+            <div class="persinfo">
+                <form role="form" novalidate id="addLoyaltyForm" name="addLoyaltyForm" enctype="multipart/form-data"
+                    ng-submit="createLoyalty(addLoyaltyForm)">
+                    <div class="row select-category">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'NAME' | translate}}<span class="star">*</span></label>
+                                <input type="text" name="name" ng-model="loyalty.name"
+                                    placeholder="{{'NAME' | translate}}" required>
+                                <div class="error" ng-show="addLoyaltyForm.name.$invalid && addLoyaltyForm.$submitted">
+                                    <small ng-show="addLoyaltyForm.name.$error.required">{{'PLEASE ENTER NAME' |
+                                        translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'DESCRIPTION' | translate}}</label>
+                                <input type="text" name="description" ng-model="loyalty.description"
+                                    placeholder="{{'DESCRIPTION' | translate}}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'TOTAL POINTS' | translate}}<span class="star">*</span></label>
+                                <input type="number" name="points" integers ng-model="loyalty.totalLoyalityPoints"
+                                    min="0" placeholder="{{'TOTAL POINTS' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addLoyaltyForm.points.$invalid && addLoyaltyForm.$submitted">
+                                    <small ng-show="addLoyaltyForm.points.$error.required">{{'PLEASE ENTER TOTAL POINTS'
+                                        | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'AMOUNT PER POINT' | translate}}<span class="star">*</span></label>
+                                <div class="labelrad">
+                                    <label>
+                                        <input type="radio" name="discount" value="1" required convert-to-number
+                                            ng-click="loyalty.perPointAmount = ''"
+                                            ng-model="loyalty.perPointAmountType"><span></span>%
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="discount" value="0" required convert-to-number
+                                            ng-click="loyalty.perPointAmount = ''"
+                                            ng-model="loyalty.perPointAmountType"><span></span>{{'flat' | translate}}
+                                    </label>
+                                </div>
+                                <input type="number" name="price" integers ng-model="loyalty.perPointAmount" min="0"
+                                    placeholder="{{'AMOUNT PER POINT' | translate}}" required>
+                                <div class="error" ng-show="addLoyaltyForm.price.$invalid && addLoyaltyForm.$submitted">
+                                    <small ng-show="addLoyaltyForm.price.$error.required">{{'PLEASE ENTER AMOUNT' |
+                                        translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'Minimum' | translate}} {{localisation.order | translate}}
+                                    {{'Amount' | translate}}<span class="star">*</span></label>
+                                <input type="number" name="order_price" min="0" integers
+                                    ng-model="loyalty.perPointOrderAmount"
+                                    placeholder="{{'MINIMUM' | translate}} {{localisation.order | translate}} {{'AMOUNT' | translate}}" required>
+                                <div class="error"
+                                    ng-show="addLoyaltyForm.order_price.$invalid && addLoyaltyForm.$submitted">
+                                    <small ng-show="addLoyaltyForm.order_price.$error.required">{{'PLEASE ENTER AMOUNT'
+                                        | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{'FOR ALL CATEGORIES' | translate}}</label>
+                                <select ng-model="loyalty.isForAllCategory" name="forAllCat" class="app"
+                                    ng-change="changeForCategory(loyalty.isForAllCategory)" convert-to-number>
+                                    <option disabled selected value="">{{'SELECT' | translate}}</option>
+                                    <option value="0">{{'ASSIGN CATEGORIES' | translate}}</option>
+                                    <option value="1">{{'YES' | translate}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" ng-if="loyalty.isForAllCategory == 0">
+                            <div class="row" ng-repeat="data in loyalty.categoryData track by $index">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{localisation.supplier | translate}}</label>
+                                        <select class="app" name="supplier{{$index}}"
+                                            placeholder="{{localisation.supplier | translate}}" tabindex="4"
+                                            ng-model="selected_supplier[$index]"
+                                            ng-change="changeSupplier(selected_supplier[$index], $index)"
+                                            ng-options="supplier.supplier_name for supplier in suppliers">
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{localisation.category | translate}}</label>
+                                        <select class="app" name="category{{$index}}"
+                                            ng-model="selected_category[$index]"
+                                            ng-change="changeCat(selected_category[$index], $index)"
+                                            ng-options="category.name for category in categories[$index]">
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{'AMOUNT PER POINT' | translate}}</label>
+                                        <div class="labelrad">
+                                            <label>
+                                                <input type="radio" name="discount{{$index}}" value="1" required
+                                                    convert-to-number ng-click="data.discount_price = ''"
+                                                    ng-model="data.price_type"><span></span>%
+                                            </label>
+                                            <label>
+                                                <input type="radio" name="discount{{$index}}" value="0" required
+                                                    convert-to-number ng-click="data.discount_price = ''"
+                                                    ng-model="data.price_type"><span></span>{{localisation.flat |
+                                                translate}}
+                                            </label>
+                                        </div>
+                                        <input type="number" name="price{{$index}}" min="0" integers
+                                            ng-model="data.discount_price" placeholder="{{'DISCOUNT' | translate}}">
+                                    </div>
+                                </div>
+
+                                <!-- <div class="col-md-1" ng-if="$last">
+                                    <button type="button" class="submit ad" ng-click="addCat()">Add</button>
+                                </div> -->
+
+                                <div class="col-md-2" ng-if="loyalty.categoryData.length > 1">
+                                    <button type="button" class="submit ad" ng-click="removeCat($index)">{{'Remove' | translate}}</button>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <button type="button" class="submit ad" style="margin-top: 12px;"
+                                        ng-click="addCat()">{{'Add More' | translate}}</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label>{{'LOYALTY IMAGE' | translate}}<p class="star">*</p></label>
+                                <br>
+                                <button type="button" style="width: 230px;" class="button-primary"
+                                    ng-click="chooseWebBanner()">{{'CHOOSE IMAGE' | translate}}</button>
+                                <input style="display: none;" type="file" name="image" ng-model="loyalty.file"
+                                    id="loyalty_banner_input" required="{{!is_edit}}"
+                                    onchange="angular.element(this).scope().file_to_upload_for_loyalty(this.files)">
+                                <br>
+                                <div ng-if="loyalty_image" class="banner-image">
+                                    <img id="loyalty_image" style="height: 180px;"
+                                        src="{{compressImage(loyalty_image, '200x100')}}">
+                                </div>
+
+                                <div class="error" ng-show="addLoyaltyForm.image.$invalid && addLoyaltyForm.$submitted">
+                                    <small ng-show="addLoyaltyForm.image.$error.required">{{'PLEASE CHOOSE IMAGE' |
+                                        translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="submit" class="submit"
+                                style="float: none; margin: 30px 0px 0px; width: auto !important;">{{'SAVE CHANGES' |
+                                translate}}</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .calender {
+        bottom: 10px;
+        position: absolute;
+        left: 10px;
+    }
+
+    .sup-name {
+        font-size: 16px !important;
+        margin-top: -8px;
+        margin-bottom: 4px;
+    }
+
+    .banner-edit {
+        position: absolute;
+        background-color: var(--primary-color);
+        color: #ffffff;
+        padding: 26px 8px 4px 34px;
+        left: -30px;
+        top: -27px;
+        border-radius: 50%;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    .banner-image {
+        margin-top: 20px;
+    }
+
+    .banner-image img {
+        display: block;
+        max-width: 100%;
+    }
+
+    .default-image img {
+        object-fit: contain;
+    }
+
+    .default-image {
+        height: 400px;
+    }
+
+    .bx .banner-input {
+        opacity: 0;
+        position: absolute;
+        width: 35px;
+        top: 27px;
+        cursor: pointer;
+        z-index: 1;
+        height: 40px;
+        border-radius: 10px;
+    }
+
+    .ad {
+        width: 100% !important;
+        text-align: center !important;
+        margin-top: 48px;
+        margin-bottom: 0px;
+        padding: 0px !important;
+    }
+
+    .loyalty img {
+        border-radius: 8px 8px 0px 0px !important;
+    }
+
+    .loyalty .actions {
+        padding: 20px 40px 30px;
+        text-align: center;
+        position: relative;
+    }
+
+    .loyalty .actions a {
+        margin: 0px 10px;
+    }
+
+    .loyalty .actions a i {
+        font-size: 22px;
+    }
+
+    .switch {
+        top: 24px;
+        right: 40px;
+    }
+</style>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_billing</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Multiple-Vendor" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-16" transform="translate(4.000000, 4.000000)">
+            <path d="M11.6773065,15.4100698 C14.2453415,14.0785415 16,11.3959089 16,8.30345378 C16,5.09553012 14.1118615,2.32860484 11.3862914,1.0533848 C10.3579297,0.572242388 6,3.38517578 6,7.80345378 C6,12.2217318 10.5763172,15.9809336 11.6773065,15.4100698 Z" id="Mask" fill="#7CF4FF" fill-rule="nonzero"></path>
+            <g id="Group-15">
+                <circle id="Oval" stroke="#2CA6B1" cx="8" cy="8" r="8"></circle>
+                <text id="$" font-family="BrandonText-Medium, Brandon Text" font-size="10" font-weight="400" fill="#2CA6B1">
+                    <tspan x="4.99682617" y="11.6118164">$</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>

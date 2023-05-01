@@ -1,0 +1,152 @@
+<div id="accordion" style="margin-top: 20px; margin-bottom: -10px;" ng-if="profile === 'ADMIN'">
+    <div class="card">
+        <div class="card-header" id="headingOne" style="background-color: #FDFDFC; padding: 5px 10px;">
+            <a class="chev-btn" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                style="padding: 5px 10px" ng-click="notificationOpen()" aria-controls="collapseOne">
+                <i data-toggle="collapse" data-target="#collapseOne" ng-if="!notification_open"
+                    class="fa fa-chevron-down"></i>
+                <i data-toggle="collapse" data-target="#collapseOne" ng-if="notification_open"
+                    class="fa fa-chevron-up"></i>
+            </a>
+            <h5 class="mb-0 notification">
+                {{'ADD CONTENT BLOCK' | translate}}
+            </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                <!-- <div class="persinfo" style="margin-bottom: 20px;">
+                    <div class="labelrad">
+                        <label style="margin-left: 0px">
+                            <input type="radio" name="type" value="'image'" required ng-model="content.mediaType"
+                                ng-change="changeMediaType(content.mediaType)"><span></span>{{'Image' | translate}}
+                        </label>
+                        <label>
+                            <input type="radio" name="type" value="'video'" required ng-model="content.mediaType"
+                                ng-change="changeMediaType(content.mediaType)"><span></span>{{'Video' | translate}}
+                        </label>
+                    </div>
+                </div> -->
+
+
+                <div class="row">
+                    <div class="col-md-4 document-image persinfo" ng-if="pageType < 3">
+                        <div class=" col-md-12">
+                            <div class="form-group pic" style="margin-bottom: -18px">
+                                <label>{{'MEDIA' | translate}}</label>
+
+                                <input filestyle="" type="file" accept="image/*" name="media" class="cursor"
+                                    style="width: 242px;"
+                                    onchange="angular.element(this).scope().upload_trade_license(this.files)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                                <span ng-if="content.media" style="height: 135px;">
+                                    <img style="width: 100%; height: 100%; object-fit: contain;" id="media"
+                                        ng-src="{{content.media.url}}">
+                                </span>
+                                <span ng-if="!content.media">
+                                    <img src="img/v1_images/ic_dummy.png" style="width: auto; height: auto;">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="top persinfo" style="margin-bottom: 30px">
+                            <div class="form-group">
+                                <label>Title</label>
+                                <input class="form-control" ng-model="content.title" style="width: 100%"
+                                    placeholder="Title">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Description</label>
+                                <summernote config="summernote_config" ng-model="content.description"></summernote>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div style="text-align: right; margin-top: 20px;">
+                    <button class="button-primary" style="font-size: 16px"
+                        ng-click="submitContent()">{{'SEND' | translate}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="repbtm m-top-40">
+    <div class="offset-md-3 col-md-8">
+        <div class="row m-bottom-30" ng-repeat="data in contentData">
+            <div class="col-md-10">
+                <h2 class="content_title">{{data.title}}</h2>
+                <img class="content_img" ng-if="data.media && data.media != 'undefined'" src="{{data.media}}">
+                <p ng-bind-html="data.description"></p>
+            </div>
+            <div class="col-md-2">
+                <div class="Delete">
+                    <button type="button" ng-click="deleteContent(data.id)"><img src="/img/v1_images/delete.png">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .reporttop .btns {
+        margin-bottom: 0;
+        margin-top: 32px;
+        position: relative;
+    }
+
+    .chev-btn {
+        background-color: transparent;
+        float: right;
+        outline: none;
+    }
+
+    .chev-btn:active {
+        outline: none;
+    }
+
+    .notification {
+        color: #4a4a4a;
+        width: 50%;
+        margin-top: 7px;
+        font-weight: 500;
+        margin-left: 10px;
+    }
+
+    .notification-textarea {
+        padding: 10px 15px;
+        width: 100%;
+        border-radius: 4px;
+    }
+
+    .content_title {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .content_img {
+        border-radius: 4px;
+        width: 100%;
+        height: 400px;
+        margin: 10px 0 15px;
+    }
+    .Delete button {
+		border: none;
+		float: right;
+		background: transparent;
+	}
+
+	.Delete button img {
+		height: 20px;
+	}
+</style>

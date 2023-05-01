@@ -1,0 +1,63 @@
+<div class="wrapper">
+
+    <!-- <a href="" ng-if="profile === 'ADMIN' && is_single_vendor == 0" ui-sref="profile.deliveryCompany" class="backbtn"><img
+                src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a> -->
+
+    <div class="supdet m-top-20">
+        <div class="suptabs" style="position: relative;"
+            ng-style="(is_single_vendor == 0 && profile === 'ADMIN') || profile === 'SUPPLIER' ? {'margin-top': '40px'} : {'margin-top': '0px'}">
+
+            <ul class="nav nav-tabs">
+                <li class="nav-item" ng-if="enable_custom_pages == 1">
+                    <a class="nav-link" ng-class="tab == 1 ? 'active' : ''" style="text-transform: capitalize;"
+                        ui-sref="index.webContent.pages({type:1})"
+                        ng-click="tab = 1; activateTab(1)">{{(localisation.about_us | translate)}}</a>
+                </li>
+                
+                <li class="nav-item" 
+                ng-if="enable_custom_pages == 1 || custom_page_type == 2">
+                    <a class="nav-link" ng-class="tab == 2 ? 'active' : ''" style="text-transform: capitalize;"
+                        ui-sref="index.webContent.pages({type:2})"
+                        ng-click="tab = 2; activeTab =2; activateTab(2)">{{('HOW IT WORKS' | translate)}}</a>
+                </li>
+
+
+                <li class="nav-item" ng-if="enable_custom_pages == 1">
+                    <a class="nav-link" ng-class="tab == 3 ? 'active' : ''" style="text-transform: capitalize;"
+                        ui-sref="index.webContent.pages({type:3})"
+                        ng-click="activateTab(3)">{{(localisation.terms_and_conditions | translate)}}</a>
+                </li>
+
+                <li class="nav-item" ng-if="enable_custom_pages == 1">
+                    <a class="nav-link" ng-class="tab == 4 ? 'active' : ''" style="text-transform: capitalize;"
+                        ui-sref="index.webContent.pages({type:4})"
+                        ng-click="activateTab(4)">{{(localisation.privacy_policy | translate)}}</a>
+                </li>
+
+                <li class="nav-item" ng-if="enable_custom_pages == 1">
+                    <a class="nav-link" ng-class="tab == 5 ? 'active' : ''" style="text-transform: capitalize;"
+                        ui-sref="index.webContent.pages({type:5})"
+                        ng-click="activateTab(5)">{{(localisation.faq | translate)}}</a>
+                </li>
+
+                <li class="nav-item" ng-if="enable_custom_pages == 1">
+                    <a class="nav-link" ng-class="tab == 6 ? 'active' : ''" style="text-transform: capitalize;"
+                        ui-sref="index.webContent.pages({type:6})"
+                        ng-click="activateTab(6)">{{'Become A Vendor' | translate}}</a>
+                </li>
+
+                <li class="nav-item" ng-if="enable_custom_pages == 1">
+                    <a class="nav-link" ng-class="tab == 7 ? 'active' : ''" style="text-transform: capitalize;"
+                        ui-sref="index.webContent.pages({type:7})"
+                        ng-click="activateTab(7)">{{'Become A Driver' | translate}}</a>
+                </li>
+
+            </ul>
+
+            <div ui-view></div>
+
+        </div>
+    </div>
+</div>
+
+<success-modal message="msg_txt"></success-modal>

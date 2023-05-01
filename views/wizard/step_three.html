@@ -1,0 +1,396 @@
+<div ng-if="!add_branch">
+    <div class="secnav">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <h1 class="bold">{{branches.length}} {{branches.length == 1 ? 'BRANCH' : 'BRANCHES' | translate}}</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="secnav m-top-20">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <input type="text" placeholder="Search" ng-model="search">
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="topfil">
+                    <ul>
+                        <li style="filter: grayscale(0)">
+                            <button type="button" class="bold create" ng-click="changeview(true)">+
+                                {{'ADD BRANCH' | translate}}</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tableouter m-top-20" style="margin-bottom: 20px">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>{{'BRANCH NAME' | translate}}</th>
+                    <th>{{'ADDRESS' | translate}}</th>
+                    <th>{{'MOBILE' | translate}}</th>
+                    <th>{{'EMAIL' | translate}}</th>
+                    <th>{{'REVENUE' | translate}}</th>
+                    <th ng-if="is_branch_image_optional == 1">{{'IMAGE' | translate}}</th>
+                    <th style="width: 62px">{{'STATUS' | translate}}</th>
+                    <th style="width: 200px">{{'ACTION' | translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="branch in branches | filter : {branch_name: search}">
+                    <td>{{$index + 1}}</td>
+                    <td class="branch-name" ng-click="editBranch(branch)">{{branch.branch_name}}</td>
+                    <td>{{branch.address}}</td>
+                    <td>{{branch.phone}}</td>
+                    <td>{{branch.email}}</td>
+                    <td>{{branch.branch_revenue || '0'}}</td>
+                    <td ng-if="is_branch_image_optional == 1"><img src="{{compressImage(branch.logo, '90x90') || image_placeholder}}"></td>
+
+                    <td>
+                        <label>
+                            <div class="switch togglebtn">
+                                <input type="checkbox" id="togBtn" ng-checked="branch.is_live"
+                                    ng-click="changeStatus(branch.id, branch.is_live)"
+                                    ng-disabled="branch.is_head_branch == 1">
+                                <div class="slider round">
+                                    <span class="on"></span>
+                                    <span class="off"></span>
+                                </div>
+                            </div>
+                        </label>
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <button type="button" class="bg-success" 
+                                ui-sref="production.supplierProducts({id: supplier_id, b_id: branch.id, level: 0})">{{'VIEW' | translate}}
+                                {{localisation.products | translate}}</button>
+                            <!-- <button type="button" class="edit dropdown-toggle" data-toggle="dropdown">
+                                <img src="/img/v1_images/ic_more.svg"> </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" ng-click="editBranch(branch)">{{'EDIT' | translate}}</a>
+                                <a class="dropdown-item"
+                                    ng-click="deleteBranch(branch.id)">{{'DELETE BRANCH' | translate}}</a>
+                            </div> -->
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="no-data-found" ng-if="branches.length == 0 && dataLoaded">
+            {{'NO DATA FOUND' | translate}}
+        </div>
+    </div>
+</div>
+
+<div ng-if="add_branch">
+
+    <div class="row top-branch">
+        <div class="col-md-12">
+            <a ng-click="changeview(false)" class="back"><img
+                    src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+            <h2 class="bold">{{is_edit ? 'Edit' : 'Add'}} Branch</h2>
+        </div>
+    </div>
+
+    <div class="devare m-top-30" style="margin-bottom: 30px">
+        <h2 class="bold">{{'DELIVERY AREA' | translate}}</h2>
+        <form>
+            <!-- <label><input type="radio" name="name" value="0" ng-model="delivery_type"><span
+                            ng-click="changeDeliverType(0)"></span>No Restrictions for
+                        delivering Orders.
+                    </label> -->
+
+            <label>
+                <!-- <input type="radio" name="name" value="1" ng-model="delivery_type" convert-to-number><span
+                        ng-click="changeDeliverType(1)"></span>
+                    <a ng-click="changeDeliverType(1)">
+                        {{"ENTER A RADIUS FROM STORES'S CENTRAL LOCATION IN WHICH YOU WANT TO DELIVER" | translate}}
+                    </a> -->
+                <div class="devrad m-top-20" style="margin-left: 0px;">
+                    <a class="view-on-map" ng-click="viewDeliveryRadius()">{{'View On Map' | translate}}</a>
+                    <div class="from-group">
+                        <label class="bold">{{'ENTER DELIVERY RADIUS (KM)' | translate}}</label>
+                        <input type="text" ng-model="delivery_radius" integers
+                            ng-change="changeDeliveryRadius(delivery_radius)" name="radius">
+                    </div>
+                    <p class="m-top-20">{{'NOTE' | translate}}:
+                        {{'YOUR STORE WILL SRVE WITHIN THE RADIUS YOU ENTER' | translate}}
+                    </p>
+                </div>
+            </label>
+
+            <!-- <label><input type="radio" name="name" value="2" ng-model="delivery_type" convert-to-number><span
+                        ng-click="changeDeliverType(2)"></span>
+                    <a
+                        ng-click="changeDeliverType(2)">{{'CREATE GEOFENCE TO DEFINE THE AREA FOR DELIVERY' | translate}}</a>
+
+                    <div style="margin-left: 40px; margin-top: 10px;" ng-if="delivery_type == 2">
+                        <button ng-disabled="!is_geofence" ng-class="!is_geofence ? 'disabled' : ''" data-toggle="modal"
+                            class="button-primary" data-target="#geo_branch">{{'OPEN MAP' | translate}}</button>
+                        <p ng-if="!is_geofence" class="location-blocked">
+                            {{'LOCATION SERVICE IS BLOCKED IN YOUR BROWSER, PLEASE ALLOW LOCATION AND TRY AGAIN' | translate}}
+                        </p>
+                    </div>
+                </label> -->
+        </form>
+
+    </div>
+
+    <form role="form" id="addBranchForm" name="addBranchForm" ng-submit="createBranch(addBranchForm)" autocomplete="off"
+        prevent-enter-press novalidate>
+
+        <div class="persinfo">
+            <div class="bx">
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{'BRANCH NAME' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="branch_name" ng-model="branch.name"
+                                placeholder="{{'BRANCH NAME' | translate}}" required>
+                            <div class="error" ng-show="addBranchForm.branch_name.$invalid && addBranchForm.$submitted">
+                                <small
+                                    ng-show="addBranchForm.branch_name.$error.required">{{'PLEASE ENTER BRANCH NAME' | translate}}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{'BRANCH EMAIL' | translate}}<span class="star">*</span></label>
+                            <input autocomplete="off" type="email" id="branch_email" name="email"
+                                ng-model="branch.email" placeholder="{{'BRANCH EMAIL' | translate}}" required>
+                            <div class="error" ng-show="addBranchForm.email.$invalid && addBranchForm.$submitted">
+                                <small
+                                    ng-show="addBranchForm.email.$error.required">{{'PLEASE ENTER BRANCH EMAIL' | translate}}</small>
+                                <small
+                                    ng-show="addBranchForm.email.$error.email">{{'PLEASE ENTER A VALID BRANCH EMAIL' | translate}}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{'BRANCH PHONE' | translate}}<span class="star">*</span></label>
+                            <input id="phone" type="tel" name="phone" ng-minlength="6" ng-maxlength="15"
+                                ng-model="branch.phone" placeholder="{{'BRANCH PHONE' | translate}}" production-qty
+                                required>
+                            <div class="error" ng-show="addBranchForm.phone.$invalid && addBranchForm.$submitted">
+                                <small
+                                    ng-show="addBranchForm.phone.$error.required">{{'PLEASE ENTER BRANCH PHONE NO' | translate}}</small>
+                                <small
+                                    ng-show="addBranchForm.phone.$error.minlength">{{'PHONE NO. MUST BE MORE THAN 6 DIGITS' | translate}}</small>
+                                <small
+                                    ng-show="addBranchForm.phone.$error.maxlength">{{'PHONE NO. MUST BE LESS THAN 15 DIGITS' | translate}}.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{'BRANCH MOBILE' | translate}}<span class="star">*</span></label>
+                            <input type="tel" name="mobile" ng-minlength="6" ng-maxlength="15"
+                                ng-model="branch.primaryMobile" placeholder="{{'BRANCH MOBILE' | translate}}"
+                                production-qty required>
+                            <div class="error" ng-show="addBranchForm.mobile.$invalid && addBranchForm.$submitted">
+                                <small ng-show="addBranchForm.mobile.$error.required">Please enter branch
+                                    mobile No.</small>
+                                <small ng-show="addBranchForm.mobile.$error.minlength">phone No. must be more than 6
+                                    digits.</small>
+                                <small ng-show="addBranchForm.mobile.$error.maxlength">phone No. must be less than 15
+                                    digits.</small>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{'BRANCH ADDRESS' | translate}}<span class="star">*</span></label>
+                            <input type="text" name="address" ng-model="branch.address" id="searchTextFieldBranch"
+                                placeholder="{{'BRANCH ADDRESS' | translate}}" required>
+                            <div class="error" ng-show="addBranchForm.address.$invalid && addBranchForm.$submitted">
+                                <small
+                                    ng-show="addBranchForm.address.$error.required">{{'PLEASE ENTER BRANCH ADDRESS' | translate}}.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" ng-if="!is_edit">
+                        <div class="form-group">
+                            <label>{{'BRANCH PASSWORD' | translate}}<span class="star">*</span></label>
+                            <input autocomplete="off" type="password" name="password" id="branch_password"
+                                placeholder="{{'BRANCH PASSWORD' | translate}}" ng-model="branch.password" required>
+                            <div class="error" ng-show="addBranchForm.password.$invalid && addBranchForm.$submitted">
+                                <small
+                                    ng-show="addBranchForm.password.$error.required">{{'PLEASE ENTER BRANCH PASSWORD' | translate}}.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="col-md-6" ng-if="is_branch_image_optional == 1">
+                            <figure style="margin-bottom: 15px;margin-top: 25px;">
+                                <img class="branchImg"  ng-if="logo" src="{{compressImage(logo, '150x150')}}">
+                                <img class="branchImg" ng-if="!logo" src="img/default_user.png">
+                            </figure>
+                            <label >
+                                <input filestyle="" type="file" accept="image/*" ng-model="branch.logo"
+                                    class="logo_img_upload"
+                                    onchange="angular.element(this).scope().file_to_upload_for_image(this.files)"
+                                    data-button-text="Single" data-class-button="btn btn-default"
+                                    data-classinput="form-control inline" nv-file-select="" uploader="uploader" />
+                            </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="save">
+            <button type="submit">{{'SAVE' | translate}}</button>
+        </div>
+    </form>
+
+</div>
+
+<div class="modal " id="geo_branch">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                    <h2 class="bold" style="text-align: center;">{{'ADD GEOFENCE' | translate}}</h2>
+                    <button type="button" class="close" data-dismiss="modal" id="close_geofence_branch"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="geo" style="padding: 0px">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div id="geo_map" style="height: 400px; width: 100%"></div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="btns" style="width: 46%;float: right;margin-bottom: 20px">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <button type="button" class=" bold" style="background-color: #BEBEBE;"
+                                            data-dismiss="modal">{{'CANCEL' | translate}}</button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button ng-click="setGeolocation()" type="button"
+                                            class="bg-success bold">{{'SAVE' | translate}}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal " id="view_delivery_area">
+    <div class="modal-dialog" style="max-width: 60%">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="modhead" style="border: none; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                    <h2 class="bold" style="text-align: center;">{{'SELECT DELIVERY RADIUS' | translate}}</h2>
+                    <button type="button" class="close" data-dismiss="modal" id="close_geofence"><img
+                            src="img/v1_images/ic_cross.svg"></button>
+                </div>
+
+                <div class="modbody" style="border: none;">
+                    <div class="geo" style="padding: 0px">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="delivery_geo_map" style="height: 600px; width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modfooter">
+                    <button type="button" data-dismiss="modal" ng-click="saveSelectedSupplierLocation()"
+                        class="bg-success bold">{{'DONE' | translate}}</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+    .save {
+        text-align: left;
+        margin-top: 20px;
+    }
+
+    .save button {
+        color: #ffffff;
+        border-radius: 4px;
+        background-color: var(--primary-color);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+        border: none;
+        font-size: 14px;
+        padding: 9px 25px;
+    }
+
+    .modal-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: #565656;
+    }
+
+    .top-branch {
+        margin-bottom: 20px;
+    }
+
+    .top-branch a {
+        float: right;
+    }
+
+    .top-branch img {
+        transform: rotate(90deg);
+        margin-top: -2px;
+    }
+
+    .branch-name {
+        cursor: pointer;
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    .branch-name:hover {
+        color: #188a94;
+    }
+
+    .view-on-map {
+        color: #ffffff !important;
+        font-size: 14px;
+        border: none;
+        padding: 5px 14px;
+        border-radius: 4px;
+        vertical-align: middle;
+        border: 1px solid var(--primary-color);
+        font-size: 14px;
+        background-color: var(--primary-color);
+        float: right;
+    }
+    .branchImg {
+        height: 132px;
+        width: 132px;
+        border: 2px solid var(--primary-color);
+        border-radius: 8px;
+        margin-left: 0px;
+    }
+</style>

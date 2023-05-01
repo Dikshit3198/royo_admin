@@ -1,0 +1,244 @@
+<div class="wrapper">
+
+    <a class="backbtn" ui-sref="surveyMonkey.survey-monkey"><img
+            src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+
+    <div class="orddet">
+        <div class="top">
+            <h1 class="bold" style="text-transform: capitalize;">{{'Survey Details' | translate}} :
+                #{{surveyDetails.id}}
+                <!-- <a href=""><img src="img/v1_images/ic_dropdown_fill.svg"></a> -->
+            </h1>
+        </div>
+
+        <div class="row  m-top-20">
+            <div class="col-md-8">
+                <div class="box">
+                    <div class="right" style="width: 100%" ng-if="dataLoaded">
+                        <ul>
+                            <li><label style="text-transform: capitalize;">{{'Created On' | translate}}
+                                </label>{{surveyDetails.date_created |  date: 'medium' : 'UTC'}}
+                            </li>
+                            <li><label
+                                    style="text-transform: capitalize;">{{'Modifiy Date' | translate}}</label>{{surveyDetails.date_modified |  date: 'medium' : 'UTC'}}
+                            </li>
+                            <li>
+                                <label>{{'Title' | translate}}</label>
+                                {{surveyDetails.title | translate}}
+                            </li>
+
+                        </ul>
+                        <ul class="m-top-20" ng-if="profile === 'ADMIN'">
+                            <li><label>{{'Is Owner' | translate}}
+                                </label>{{surveyDetails.is_owner}}</li>
+                            <li class="ellipsis">
+                                <label>{{'Category' | translate}}</label>
+                                <span data-toggle="tooltip" title="{{surveyDetails.category}}">
+                                    {{surveyDetails.category || 'N/A'}}
+                                </span>
+                            </li>
+                            <li class="ellipsis">
+                                <label>{{'Nick Name' | translate}}</label>
+                                <span data-toggle="tooltip" title="{{surveyDetails.nickname}}">
+                                    {{surveyDetails.nickname || 'N/A'}}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="right" style="width: 100%" ng-if="dataLoaded">
+                        <ul>
+                            <li><label style="text-transform: capitalize;">{{'Analyze' | translate}}
+                                </label>
+                                <a target="_blank" href="{{surveyDetails.analyze_url}}">Analyze</a>
+                            </li>
+                            <li><label style="text-transform: capitalize;">{{'Collect' | translate}}</label>
+                                <a target="_blank" href="{{surveyDetails.collect_url}}">Collect</a>
+                            </li>
+                            <li><label style="text-transform: capitalize;">{{'Edit' | translate}}</label>
+                                <a target="_blank" href="{{surveyDetails.edit_url}}">Edit</a>
+                            </li>
+
+                        </ul>
+                        <ul class="m-top-20" ng-if="profile === 'ADMIN'">
+                            <li><label style="text-transform: capitalize;">{{'Preview' | translate}}</label>
+                                <a target="_blank" href="{{surveyDetails.preview}}">Preview</a>
+                            </li>
+                            <li><label style="text-transform: capitalize;">{{'Summary' | translate}}</label>
+                                <a target="_blank" href="{{surveyDetails.summary_url}}">Summary</a>
+                            </li>
+                            <li><label style="text-transform: capitalize;">{{'Pages' | translate}}</label>
+                                <a ui-sref="surveyMonkey.survey-monkey-pages({surveyId:surveyDetails.id})">Pages</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bx-top">
+                    <label>{{'TOTAL QUESTION' | translate}}</label>
+                    <p>{{surveyDetails.question_count}}</p>
+
+                    <label>{{'TOTAL RESPONSE' | translate}}</label>
+                    <p>{{surveyDetails.response_count}}</p>
+                    <label>{{'TOTAL PAGES' | translate}}</label>
+                    <p>{{surveyDetails.page_count}}</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<success-modal message="msg_description"></success-modal>
+
+<style>
+    .refund {
+        font-size: 16px !important;
+    }
+
+    .refund strong {
+        float: right;
+    }
+
+    .questions {
+        margin: 8px 0px;
+    }
+
+    .questions h5 {
+        text-transform: capitalize;
+        color: #000000cf;
+        font-weight: 500;
+    }
+
+    .questions h5 span {
+        color: #2097a2;
+        font-weight: 600;
+        margin-right: 8px;
+    }
+
+    .questions p {
+        font-weight: 500;
+        color: #000000ad;
+        margin-left: 22px;
+        margin-top: 5px;
+    }
+
+    .questions ul {
+        margin-left: 36px;
+        margin-top: 5px;
+    }
+
+    .questions li {
+        font-weight: 500;
+        color: #000000ad;
+        list-style: disc;
+    }
+
+    .questions li span,
+    .questions p span {
+        float: right;
+        font-weight: 500;
+    }
+
+    .addon-charges {
+        color: #000000c7;
+        font-weight: 500;
+    }
+
+    .variants {
+        margin-top: 10px;
+    }
+
+    .variants li {
+        display: block !important;
+        padding: 3px 0px;
+    }
+
+    .variants li span {
+        font-weight: 500;
+        margin-left: 5px;
+        font-size: 14px;
+    }
+
+    .variants li .v-color {
+        height: 17px;
+        width: 22px;
+        border: 1px solid #0000006b;
+        padding: 3px;
+        display: inline-block;
+        vertical-align: middle;
+        border-radius: 2px;
+        margin-left: 5px;
+    }
+
+    .receipt {
+        text-align: center;
+    }
+
+    .receipt img {
+        width: 100%;
+        height: 480px;
+        object-fit: contain;
+    }
+
+    .prescription {
+        padding: 15px;
+    }
+
+    .prescription li img {
+        height: 70px;
+        width: 70px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .prescription ul {
+        display: inline-flex;
+    }
+
+    .prescription li {
+        margin-right: 15px;
+    }
+
+    .instructions {
+        padding: 15px;
+    }
+
+    .product-update-btns {
+        position: absolute;
+        right: 0px;
+        top: -15px;
+    }
+
+    .remove-product {
+        text-align: right;
+    }
+
+    .remove-product button {
+        color: #ffffff;
+        border-radius: 4px;
+        background-color: rgb(226, 47, 47);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+        border: none;
+        font-size: 14px;
+        padding: 6px 20px;
+    }
+
+    .input-group {
+        width: 35%;
+    }
+
+    .input-group input {
+        text-align: center;
+        padding: 3px;
+    }
+
+    .input-group .input-group-text {
+        font-size: 12px;
+    }
+</style>

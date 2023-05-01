@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_banner</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Multiple-Vendor" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-23-Copy-2" transform="translate(3.000000, 5.000000)">
+            <g id="Group-23-Copy">
+                <g id="Group-46" transform="translate(1.800000, 9.000000)">
+                    <rect id="Rectangle" fill="#7CF4FF" x="1.2" y="9.09494702e-13" width="1" height="7" rx="0.5"></rect>
+                    <path d="M0.45,0.45 L0.45,6 C0.45,6.30375661 0.696243388,6.55 1,6.55 L2,6.55 C2.30375661,6.55 2.55,6.30375661 2.55,6 L2.55,0.45 L0.45,0.45 Z" id="Rectangle-Copy-12" stroke="#2CA6B1" stroke-width="0.9"></path>
+                </g>
+                <g id="Group-46-Copy" transform="translate(13.000000, 9.000000)">
+                    <rect id="Rectangle" fill="#7CF4FF" x="1.2" y="9.09494702e-13" width="1" height="7" rx="0.5"></rect>
+                    <path d="M0.45,0.45 L0.45,6 C0.45,6.30375661 0.696243388,6.55 1,6.55 L2,6.55 C2.30375661,6.55 2.55,6.30375661 2.55,6 L2.55,0.45 L0.45,0.45 Z" id="Rectangle-Copy-12" stroke="#2CA6B1" stroke-width="0.9"></path>
+                </g>
+                <rect id="Rectangle-Copy-38" fill="#FFFFFF" x="0" y="0" width="18" height="10" rx="1.8"></rect>
+                <path d="M9.97968614,1.72678028e-05 L16.200017,1.72678028e-05 C17.1941296,1.72678028e-05 18.000017,0.805904718 18.000017,1.80001727 L18.0000194,8.20001727 C18.0000194,9.19412982 17.194132,10.0000173 16.2000194,10.0000173 C16.2000186,10.0000173 16.2000178,10.0000173 16.200017,10.0000173 L8.64126207,9.99998912 C7.72587524,9.9999879 6.95627374,9.3129661 6.85281381,8.40344475 C6.7368043,7.3835994 6.78586636,6.24912117 7,5.00001007 C7.26373924,3.4615334 7.73615363,2.09695244 8.41724318,0.906267193 L8.41725153,0.906271969 C8.73783356,0.345828362 9.33403154,1.72678028e-05 9.97968614,1.72678028e-05 Z" id="Rectangle-Copy-25" fill="#7CF4FF"></path>
+                <rect id="Rectangle-Copy-26" stroke="#2CA6B1" stroke-width="0.9" x="0.45" y="0.45" width="17.1" height="9.1" rx="1.8"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

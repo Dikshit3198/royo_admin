@@ -1,0 +1,206 @@
+<div class="wrapper">
+
+
+    <div class="category">
+  
+      <div class="secnav"></div>
+      <div class="row">
+        <div class="col-md-4 col-sm-4">
+          <div class="toptabs">
+            <ul class="nav nav-tabs ">
+              <!-- <li class="nav-item"> <a class="nav-link active">
+                  {{'Calendar'| translate}}</a>
+              </li> -->
+
+              <li class="nav-item"> <a class="nav-link" ng-class="tabStatus == 0 ? 'active' : ''"
+                ng-click="changeTab(0)">{{0 | status | translate}}</a> </li>
+              <li class="nav-item"> <a class="nav-link" ng-class="tabStatus == 1 ? 'active' : ''"
+                ng-click="changeTab(1)">{{'ACTIVE' | translate}}</a></li>
+  
+            </ul>
+          </div>
+        </div>
+  
+  
+        <div class="col-md-4 col-sm-4">
+        </div>
+      </div>
+  
+    </div>
+  
+    <div ng-controller="SupplierOrderCalendarCtrl as vm">
+      <h2 class="text-center bold" ng-hide="calendarView !== 'day'">{{ viewDate | date }}</h2>
+      <!-- <div style="position: relative" ng-show="calendarView == 'day'">
+        <label style="position: absolute; top: -22px; left: 3px">{{'DATE' | translate}}</label>
+        <input style="width: 200px" type="text" id="datepicker_promo" placeholder="{{'DATE' | translate}}" readonly>
+        <span style="position: absolute; right: 13px; top: 3px" class="inputtag"><img
+            src="/img/v1_images/calendar.svg"></span>
+      </div> -->
+      <div class="row">
+  
+        <div class="col-md-6 text-center">
+          <div class="btn-group">
+  
+            <button class="btn btn-primary" mwl-date-modifier date="viewDate" decrement="calendarView"
+              ng-click="cellIsOpen = false">
+              Previous
+            </button>
+            <button class="btn btn-default" mwl-date-modifier date="viewDate" set-to-today ng-click="cellIsOpen = false">
+              Today
+            </button>
+            <button class="btn btn-primary" mwl-date-modifier date="viewDate" increment="calendarView"
+              ng-click="cellIsOpen = false">
+              Next
+            </button>
+            <button id="editEventmodal" data-toggle="modal" class="button-primary" style="display: none;"
+            data-target="#edit_event"></button>
+          </div>
+        </div>
+  
+        <br class="visible-xs visible-sm">
+  
+        <div class="col-md-6 text-center">
+          <div class="btn-group">
+            <label class="btn btn-primary" ng-model="calendarView" ng-click="changeCalendaView('year')">Year</label>
+            <label class="btn btn-primary" ng-model="calendarView" ng-click="changeCalendaView('month')">Month</label>
+            <!-- <label class="btn btn-primary" ng-model="calendarView" ng-click="changeCalendaView('week')">Week</label> -->
+            <label class="btn btn-primary" ng-model="calendarView" ng-click="changeCalendaView('day')">Day</label>
+          </div>
+        </div>
+  
+      </div>
+  
+      <br>
+      <!-- calendarView !== 'day' && -->
+      <div class="calendarView" ng-if="agentEvents.length">
+        <mwl-calendar events="agentEvents" view="calendarView" view-title="calendarTitle" view-date="viewDate"
+          on-event-click="eventClicked(calendarEvent)" on-day-click="dayClicked(calendarEvent)"
+          on-event-times-changed="eventTimesChanged(calendarEvent); calendarEvent.startsAt = calendarNewEventStart; calendarEvent.endsAt = calendarNewEventEnd"
+          cell-is-open="cellIsOpen" day-view-start="00:00" day-view-end="23:59" day-view-split="30"
+          cell-modifier="modifyCell(calendarCell)" cell-auto-open-disabled="true"
+          on-timespan-click="timespanClicked(calendarDate, calendarCell)"
+          on-view-change-click="cellClicked(calendarDate, calendarNextView)"
+          >
+        </mwl-calendar>
+        <!-- [clickListenerDisabled]="dayClicked.observers.length === 0" -->
+      </div>
+    </div>
+  </div>
+  </div>
+  
+  <div class="modal" id="edit_event">
+    <div class="modal-dialog" style="width: 1000px !important;">
+      <div class="modal-content">
+        <div class="modal-body">
+  
+          <div class="modhead" style="border: none;">
+            <button type="button" class="close" data-dismiss="modal"><img src="img/v1_images/ic_cross.svg"></button>
+            <h3>{{'Order Detail' | translate}} {{selectedOrderDetail.id}}</h3>
+          </div>
+          <div class="orddet">
+            <div class="box">
+              <div class="right" style="width: 100%" ng-if="selectedOrderDetail">
+                {{selectedOrderDetail}}
+                <ul>
+                  <li><label
+                      style="text-transform: capitalize;">{{localisation.order_date | translate}}</label>{{selectedOrderDetail.created_on |  date: 'medium' : 'UTC'}}
+                  </li>
+                  <li><label
+                      style="text-transform: capitalize;">{{selectedOrderDetail.is_schedule == 1 ? 'Schedule Start Date' : 
+                        localisation.order_expected_date | translate}}</label>{{selectedOrderDetail.schedule_date |  date: 'medium' : 'UTC'}}
+                  </li>
+                  <li class="m-top-20" ng-if="!!selectedOrderDetail.is_schedule"><label
+                      style="text-transform: capitalize;">{{'Schedule End Date' | translate}}</label>{{selectedOrderDetail.schedule_end_date |  date: 'medium' : 'UTC'}}
+                  </li>
+                  <li ng-class="!!selectedOrderDetail.is_schedule ? 'm-top-20' : ''">
+                    <label>{{'PAYMENT MODE' | translate}}</label>
+                    <span ng-if="selectedOrderDetail.payment_type == 1">Online
+                      ({{selectedOrderDetail.payment_source}})</span>
+                    <span ng-if="selectedOrderDetail.payment_type == 0">{{localisation.cash | translate}}</span>
+                    <span ng-if="selectedOrderDetail.payment_type == 2">Free</span>
+                    <span ng-if="selectedOrderDetail.payment_type == 3">Pending</span>
+                    <span ng-if="selectedOrderDetail.payment_type == 4">Wallet</span>
+                  </li>
+                  <li ng-if="selectedOrderDetail.paymentStatus">
+                    <label>{{localisation.payment | translate}} Status(Id)</label>
+                    <span>{{selectedOrderDetail.paymentStatus}} ({{selectedOrderDetail.paymentId}})</span>
+                  </li>
+  
+                </ul>
+                <ul class="m-top-20" ng-if="profile === 'ADMIN' && is_single_vendor == 0">
+                  <li><label>{{localisation.supplier | translate}}
+                      {{'NAME' | translate}}</label>{{selectedOrderDetail.supplier}}</li>
+                  <li class="ellipsis" ng-if="branch_flow == 0" style="width: 62%">
+                    <label>{{'BRANCH ADDRESS' | translate}}</label>
+                    <span data-toggle="tooltip"
+                      title="{{selectedOrderDetail.branch_name + ', ' + selectedOrderDetail.branch_address}}">
+                      {{selectedOrderDetail.branch_name}},
+                      {{selectedOrderDetail.branch_address}}</span></li>
+                </ul>
+                <ul class="m-top-20" ng-if="(selectedOrderDetail.agent).length > 0">
+                  <li><label>{{localisation.agent | translate}}
+                      {{'NAME' | translate}}</label>{{selectedOrderDetail.agent[0].name}}</li>
+                  <li><label>{{localisation.agent | translate}} {{'PHONE NO' |translate}}
+                    </label>{{selectedOrderDetail.agent[0].phone_number}}</li>
+                </ul>
+                <ul class="m-top-20" ng-if="selectedOrderDetail.parking_instructions">
+                  <li style="width: 100%;"><label>Parking
+                      Instructions</label>{{selectedOrderDetail.parking_instructions}}</li>
+                </ul>
+                <ul class="m-top-20" ng-if="selectedOrderDetail.area_to_focus">
+                  <li style="width: 100%;"><label>Area Of Focus</label>{{selectedOrderDetail.area_to_focus}}</li>
+                </ul>
+                <ul class="m-top-20" ng-if="[10,11].includes(selectedOrderDetail.status) && app_type == 1">
+                  <li><label>Prepration Time</label>{{selectedOrderDetail.preparation_time | prepTime}}</li>
+                </ul>
+                <ul class="m-top-20" ng-if="selectedOrderDetail.shippingData && selectedOrderDetail.shippingData.length">
+                  <li><label>{{localisation.order | translate}} shipment
+                      status</label>{{selectedOrderDetail.shippingData[0].orderStatus}}</li>
+                </ul>
+                <div class="btns" ng-if="selectedOrderDetail.status == 3 && [1,8].includes(app_type)">
+                  <button type="button" class="bg-success m-top-15"
+                    ui-sref="orders.trackOrder({order_id: orderId, user_id: userId})">{{(7 | status | translate) + ' ' + (localisation.order | translate)}}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- <div style="border: none;padding: 10px 20px;">
+            <div class="row select-category">
+              <div class="col-md-12" ng-if="agents.length" style="margin-bottom: 10px;">
+                <select data-placeholder="Choose {{'Agent'| translate}}" class="app" tabindex="4" ng-model="selectedAgent"
+                  ng-options="agent.name for agent in agents" ng-change="onSelectAgent(selectedAgent, true)">
+                  <option value="" selected disabled>{{'SELECT AGENT' | translate}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modfooter" style="padding: 15px 15px">
+            <button type="submit" class="bg-success bold" data-dismiss="modal" style="width: 250px;"
+              ng-click="">{{'Update' | translate}}</button>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  <style>
+    .calendarView {
+      padding: 40px;
+    }
+  
+    .dayViewEvents h4 {
+      padding: 10px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+  
+    .text-crop {
+      display: inline-block;
+      max-width: 98px;
+      white-space: nowrap;
+      overflow: hidden !important;
+      text-overflow: ellipsis;
+    }
+  </style>

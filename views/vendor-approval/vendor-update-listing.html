@@ -1,0 +1,189 @@
+<div class="container-fluid back">
+
+</div>
+
+
+<div class="container">
+    <div class="row profile">
+        <div class="col-4">
+
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper">
+    <div class="category">
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{'Vendor Update List' | translate}}</h1>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)" ng-if="permissions('promotions', 'create') == 1">
+                                <button type="button" class="bold create" data-toggle="modal"
+                                    ng-click="changeView(true)"
+                                    ui-sref="vendorApproval.vendorProductApproval-list">{{'View Product Updation Request' | translate}}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content m-top-30">
+            <div class="tab-pane active">
+                <div class="tableouter">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{'SUPPLIER ID' | translate}}</th>
+                                <th>{{'LOGO'| translate}}</th>
+                                <th>{{'EMAIL' | translate}}</th>
+                                <th>{{'NAME' | translate}}</th>
+                                <th>{{'COUNTRY CODE' | translate}}</th>
+                                <th>{{'ISO' | translate}}</th>
+                                <th>{{'PHONE' | translate}}</th>
+                                <th>{{'ADDRESS' | translate}}</th>
+                                <th>{{'BASE DELIVERY CHARGES' | translate}}</th>
+                                <th>{{'BRAND' | translate}}</th>
+                                <th>{{'CURRENCY EXCHAGE RATE' | translate}}</th>
+
+                                <th>{{'DELIVERY RADIUS' | translate}}</th>
+                                <th>{{'DELIVERY TYPE' | translate}}</th>
+                                <th>{{'DESCRIPTION' | translate}}</th>
+                                <th>{{'DISTANCE VALUE' | translate}}</th>
+                                <th>{{'FB LINK' | translate}}</th>
+                                <th>{{'GST' | translate}}</th>
+                                <th>{{'HANDLING SUPPLIER' | translate}}</th>
+                                <th>{{'IS DINE IN' | translate}}</th>
+                                <th>{{'FLAVOR OF THE WEEK' | translate}}</th>
+                                <th>{{'FREE DELIVERY' | translate}}</th>
+                                <th>{{'OUT NETWORK' | translate}}</th>
+                                <th>{{'OWN DELIVERY' | translate}}</th>
+                                <th>{{'PRODUCT OFFER' | translate}}</th>
+                                <th>{{'SCHEDULED' | translate}}</th>
+                                <th>{{'SERVICE FLAT CHARGES' | translate}}</th>
+                                <th>{{'LATITUTE' | translate}}</th>
+                                <th>{{'LONGITUDE' | translate}}</th>
+                                <th>{{'NATIONALITY' | translate}}</th>
+                                <th>{{'OFFER VALUE' | translate}}</th>
+                                <th>{{'PAYMENT METHOD' | translate}}</th>
+                                <th>{{'PICK-UP COMMISSION' | translate}}</th>
+                                <th>{{'RADIUS PRICE' | translate}}</th>
+                                <th>{{'SELF PICK-UP' | translate}}</th>
+                                <th>{{'SPECIALITY' | translate}}</th>
+                                <th>{{'TABLE BOOKING DISCOUNT' | translate}}</th>
+                                <th>{{'TABLE BOOKING PRICE' | translate}}</th>
+                                <th>{{'URGENT DELIVERY TIME' | translate}}</th>
+                                <th>{{'USER SERVICE CHARGES' | translate}}</th>
+                                <th>{{'IS APPROVED' | translate}}</th>
+                                <th ng-if="profile==='ADMIN'">{{'ACTION' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="request in vendorUpdateList">
+                                <td>{{request.id}}</td>
+                                <td>{{request.supplier_id}}</td>
+                                <td>
+                                    <img src="{{request.logo}}">
+                                </td>
+                                <td>{{request.email || 'N/A'}}</td>
+                                <td>{{request.name || 'N/A'}}</td>
+                                <td>{{request.country_code || 'N/A'}}</td>
+                                <td>{{request.iso || 'N/A'}}</td>
+                                <td>{{request.mobile_number_1 || 'N/A'}}</td>
+                                <td>{{request.address || 'N/A'}}</td>
+                                <td>{{request.base_delivery_charges || 'N/A'}}</td>
+                                <td>{{request.brand || 'N/A'}}</td>
+                                <td>{{request.currency_exchange_rate || 'N/A'}}</td>
+
+                                <td>{{request.delivery_radius || 'N/A'}}</td>
+                                <td>{{request.delivery_type || 'N/A'}}</td>
+                                <td>{{request.description || 'N/A'}}</td>
+                                <td>{{request.distance_value || 'N/A'}}</td>
+                                <td>{{request.facebook_link || 'N/A'}}</td>
+                                <td>{{request.gst_price || 'N/A'}}</td>
+                                <td>{{request.handling_supplier || 'N/A'}}</td>
+                                <td>{{request.is_dine_in || 'N/A'}}</td>
+                                <td>{{request.is_flavor_of_week || 'N/A'}}</td>
+                                <td>{{request.is_free_delivery || 'N/A'}}</td>
+                                <td>{{request.is_out_network || 'N/A'}}</td>
+                                <td>{{request.is_own_delivery || 'N/A'}}</td>
+                                <td>{{request.is_products_offer || 'N/A'}}</td>
+                                <td>{{request.is_scheduled || 'N/A'}}</td>
+                                <td>{{request.is_user_service_charge_flat || 'N/A'}}</td>
+                                <td>{{request.latitude || 'N/A'}}</td>
+                                <td>{{request.longitude || 'N/A'}}</td>
+                                <td>{{request.nationality || 'N/A'}}</td>
+                                <td>{{request.offerValue || 'N/A'}}</td>
+                                <td>{{request.payment_method || 'N/A'}}</td>
+                                <td>{{request.pickup_commission || 'N/A'}}</td>
+                                <td>{{request.radius_price || 'N/A'}}</td>
+                                <td>{{request.self_pickup || 'N/A'}}</td>
+                                <td>{{request.speciality || 'N/A'}}</td>
+                                <td>{{request.table_booking_discount || 'N/A'}}</td>
+                                <td>{{request.table_booking_price || 'N/A'}}</td>
+                                <td>{{request.urgent_delivery_time || 'N/A'}}</td>
+                                <td>{{request.user_service_charge || 'N/A'}}</td>
+                                <td>{{request.update_request_approved==1?'YES':'NO'}}</td>
+
+                                <td>
+                                    <span ng-if="profile==='ADMIN' && request.update_request_approved==0" class="delete"
+                                        ng-click="approveUpdation(request)">
+                                        {{'Approve Changes'}}
+                                    </span>
+                                    <span ng-if="profile==='ADMIN' && request.update_request_approved==1"
+                                        class="delete">
+                                        {{'Approved'}}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-data-found" ng-if="vendorUpdateList.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+                    <div ng-if="vendorUpdateList.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+
+
+
+<style>
+    .delete {
+        cursor: pointer;
+    }
+
+    .delete:hover {
+        text-decoration: underline;
+        font-weight: 600;
+    }
+</style>

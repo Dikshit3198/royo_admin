@@ -1,0 +1,1402 @@
+<div class="wrapper" style=" position: absolute;">
+  <div class="category" ng-if="!addAgent">
+    <div class="secnav">
+      <div class="row">
+        <div class="col-md-6 col-sm-6">
+          <h1 class="bold">{{localisation.agents | translate}}</h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="secnav m-top-20">
+      <div class="row">
+        <div class="col-md-3 col-sm-4">
+          <input type="text" placeholder="{{'SEARCH' | translate}}" name="search" ng-model="search_agent"
+            ng-keypress="searchAgent($event)">
+        </div>
+        <div class="col-md-9 col-sm-8">
+          <div class="topfil">
+            <ul>
+              <li style="filter: grayscale(0)"
+                ng-if="profile === 'ADMIN' && is_single_vendor == 0 && ([1].includes(app_type) || (app_type == 2 && ecom_agent_module == 1) || flow_data_values.includes(1))"
+                style="position: relative" class="select-category">
+                <label class="rprt" style="opacity: 1;"> {{'ADMIN LEVEL' | translate}}
+                  <div class="switch togglebtn"
+                    style="display: inline-block; margin-left: 10px; vertical-align: middle;">
+                    <input type="checkbox" id="togBtn" ng-checked="is_admin" ng-click="toggleAdmin(is_admin)">
+                    <div class="slider round">
+                      <span class="on"></span>
+                      <span class="off"></span>
+                    </div>
+                  </div>
+                </label>
+              </li>
+              <li ng-if="profile === 'ADMIN' && is_single_vendor == 0 && is_admin == 0" style="position: relative"
+                class="select-category">
+                <label style="position: absolute;top: -25px;">{{'FILTER BY' | translate}}
+                  {{localisation.supplier | translate}}</label>
+                <select style="width: 260px" class="app" ng-model="selected_supplier_filter"
+                  ng-options="supplier.name for supplier in suppliers"
+                  ng-change="changeSupplier(selected_supplier_filter)">
+                  <option selected value="">{{'ALL' | translate}}</option>
+                  <!-- supplier_name -->
+                </select>
+              </li>
+              <li
+                ng-if="profile === 'ADMIN' && is_single_vendor == 0 && is_admin == 0 && is_agent_stripe_split_enabled == 1"
+                style="position: relative" class="select-category">
+                <label style="position: absolute; top: -22px">{{'STRIPE CONNECTION' | translate}}</label>
+                <select style="width: 150px" ng-model="isStripeConnected" name="isStripeConnected"
+                  ng-change="filterByStripe(isStripeConnected)" convert-to-number>
+                  <option value="0">{{'ALL' | translate}}</option>
+                  <option value="2">{{'NO' | translate}}</option>
+                  <option value="1">{{'YES' | translate}}</option>
+                </select>
+              </li>
+              <li style="filter: grayscale(0)">
+                <button type="button" class="simple" ng-click="refresh()"><img
+                    src="img/v1_images/ic_rotate.svg">{{'REFRESH' | translate}}</button>
+              </li>
+              <li style="filter: grayscale(0)"
+                ng-if="permissions('agents', 'create') == 1 && (profile == 'ADMIN' || disbale_add_sgent_supplier == 0) && enable_driver_details == 0">
+                <button style="text-transform: uppercase" type="button" class="bold create" ng-click="changeView(true)">
+                  + {{localisation.add_agent | capitalLetters | translate}} </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row" style="margin-top: 15px;">
+        <div class="col-md-12">
+          <div class="topfil">
+            <ul>
+              <li ng-if="profile === 'ADMIN' && is_vehicle_category_enable==1" class="nav-item" ui-sref-active="active">
+                <button style="text-transform: uppercase;" type="button" class="bold create"
+                  ui-sref="vehicle.vehicle-category">{{'Vehicle Category' | translate}}</button>
+              </li>
+              <li style="filter: grayscale(0);"
+                ng-if="profile === 'ADMIN' && (app_type == 1 || agent_tip == 1) && hide_agent_tip == 0">
+                <button style="text-transform: uppercase;" type="button" class="bold create" ng-click="getTips()">
+                  {{localisation.agent_tips |capitalLetters | translate}}</button>
+              </li>
+              <li style="filter: grayscale(0);"
+                ng-if="profile === 'ADMIN' || ( profile === 'SUPPLIER' && !enable_google_heatmap)">
+                <button style="text-transform: uppercase;" type="button" class="bold create"
+                  ui-sref="profile.trackAgents()">
+                  {{localisation.track_all_agents | capitalLetters| translate}}</button>
+              </li>
+
+              <li style="filter: grayscale(0);" ng-if="(profile === 'SUPPLIER' && enable_google_heatmap == 1)">
+                <button style="text-transform: uppercase;" type="button" class="bold create"
+                  ui-sref="profile.trackAgentsHeatMap()">
+                  {{'track agent through heatmap'|translate}}</button>
+              </li>
+
+              <li style="filter: grayscale(0)" ng-if="profile === 'ADMIN' && enable_block_time=='1'">
+                <button type="button" class="bold create" ui-sref="block.block-time">{{'Block-Time' |
+                  translate}}</button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="accordion" style="margin-top: 20px; margin-bottom: -10px;"
+        ng-if="profile === 'ADMIN' && enable_agent_email_notification==1">
+        <div class="card">
+          <div class="card-header" id="headingOne" style="background-color: #FDFDFC; padding: 5px 10px;">
+            <a class="chev-btn" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+              style="padding: 5px 10px" ng-click="notificationOpen()" aria-controls="collapseOne">
+              <i data-toggle="collapse" data-target="#collapseOne" ng-if="!notification_open"
+                class="fa fa-chevron-down"></i>
+              <i data-toggle="collapse" data-target="#collapseOne" ng-if="notification_open"
+                class="fa fa-chevron-up"></i>
+            </a>
+            <h5 class="mb-0 notification">
+              {{'SEND NOTIFICATION/EMAIL TO' | translate}} {{localisation.users | translate}}
+            </h5>
+          </div>
+
+          <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+              <div class="persinfo" style="margin-bottom: 20px;">
+                <div class="labelrad">
+                  <label style="margin-left: 0px">
+                    <input type="radio" name="type" value="1" required convert-to-number ng-model="message_type"
+                      ng-change="changeMsgType(message_type)"><span></span>{{'SEND AS NOTIFICATION' | translate}}
+                  </label>
+                  <label>
+                    <input type="radio" name="type" value="2" required convert-to-number ng-model="message_type"
+                      ng-change="changeMsgType(message_type)"><span></span>{{'SEND AS EMAIL' | translate}}
+                  </label>
+                </div>
+              </div>
+
+              <textarea ng-if="message_type == 1" class="notification-textarea"
+                placeholder="{{'Enter Notification Content'|translate}}" rows="4"
+                ng-model="notification.msg"></textarea>
+
+              <div ng-if="message_type == 2" sty>
+                <div class="top" style="margin-bottom: 30px">
+                  <div class="row">
+                    <div class="col-md-2" style="padding-top: 8px">
+                      <span>{{'SUBJECT'|translate}} : </span>
+                    </div>
+                    <div class="col-md-10">
+                      <input class="form-control" ng-model="email.subject" style="width: 100%"
+                        placeholder="{{'SUBJECT'|translate}}">
+                    </div>
+                  </div>
+                </div>
+                <summernote config="summernote_config" ng-model="email.body"></summernote>
+                <!-- <div summernote class="summernote" ng-model="email.email_msg"></div> -->
+              </div>
+
+              <div style="text-align: right; margin-top: 20px;">
+                <button class="button-primary" style="font-size: 16px" ng-click="sendNotificationOrEmail()">{{'SEND' |
+                  translate}}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+    <div class="tableouter m-top-30">
+      <table class="">
+        <thead>
+          <tr>
+            <th ng-if="notification_open && agents.length">
+              <label class="check"><input type="checkbox" ng-click="checkAll()"><span
+                  style="margin-top: 5px"></span></label>
+            </th>
+            <th ng-if="diplay_agentID_instead_of_employeeID !== 1">{{'ID'|translate}}</th>
+            <th ng-if="diplay_agentID_instead_of_employeeID == 1">{{'Driver No.'|translate}}</th>
+            <th ng-if="diplay_agentID_instead_of_employeeID == 1">{{'Driver ID'|translate}}</th>
+            <th>{{'IMAGE' | translate}}</th>
+            <th ng-if="enable_agent_id_proof==1">{{'ID PROOF' | translate}}</th>
+            <th>{{'NAME' | translate}}</th>
+            <th>{{'EMAIL' | translate}}</th>
+            <th ng-if="profile =='ADMIN' || hide_agent_info_supplier == 0">{{'PHONE' | translate}}</th>
+            <th ng-if="no_agent_occupation == 0">{{'OCCUPATION'| translate}}</th>
+            <th ng-if="profile === 'ADMIN' && is_single_vendor == 0">
+              {{localisation.supplier | translate}}</th>
+            <th style="width: 130px" class="cursor" ng-click="sortBy(1)">{{'COMMISSION' | translate}} <i
+                class="fa fa-sort"></i></th>
+            <th class="cursor" ng-click="sortBy(2)">{{'REVENUE' | translate}} <i class="fa fa-sort"></i></th>
+            <th>{{(localisation.order) | capitalLetters | translate}}&nbsp;{{'ACCEPTED COUNT' | translate }}</th>
+            <th>{{(localisation.order) | capitalLetters | translate}}&nbsp;{{'REJECTED COUNT' | translate }}</th>
+            <th ng-if="selected_template == 2 && app_type == 1">Car Model</th>
+            <th ng-if="selected_template == 2 && app_type == 1">Car Color</th>
+            <!-- ng-if="selected_template == 2 && app_type == 1" for license no -->
+            <th>{{'LICENSE NUMBER' | translate}}</th>
+            <th ng-if="enable_driver_date_of_birth==1">{{'DATE OF BIRTH' | translate}}</th>
+            <th ng-if="enable_driver_social_security_no==1">{{'SOCIAL SECURITY NUMBER' | translate}}</th>
+            <th ng-if="is_agent_rating == 1">{{'RATING' | translate}}</th>
+            <th ng-if="enable_account_number == 1">{{'ACCOUNT NUMBER' | translate}}</th>
+            <th ng-if="enable_transist_number == 1">{{'TRANSIST NUMBER' | translate}}</th>
+            <th ng-if="enable_institution_number == 1">{{'INSTITUTE NUMBER' | translate}}</th>
+
+            <th ng-if="enable_agent_vehicle_model==1">{{'VEHICLE MODEL' | translate}}</th>
+            <th ng-if="enable_agent_vehicle_maker==1">{{'VEHICLE MAKERS' | translate}}</th>
+            <th ng-if="enable_agent_vehicle_year==1">{{'VEHICLE YEAR' | translate}}</th>
+            <th ng-if="enable_agent_vehicle_vin==1">{{'VEHICLE VIN' | translate}}</th>
+            <th ng-if="enable_agent_address==1">{{'ADDRESS' | translate}}</th>
+
+
+            <th ng-if="profile =='ADMIN' || !hide_agent_info_from_vendor">{{'STATUS' | translate}}</th>
+            <th ng-if="is_agent_stripe_split_enabled == 1">{{'STRIPE CONNECTION STATUS' | translate}}</th>
+            <th>{{'AVAILABILITY' | translate}}</th>
+            <th ng-if="is_vehicle_category_enable==1">{{'VEHICLE'}}</th>
+            <th ng-if="profile =='ADMIN' || !hide_agent_info_from_vendor">{{'ACTION' | translate}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="agent in agents">
+            <td ng-if="notification_open && agents.length"><label class="check"><input type="checkbox"
+                  ng-checked="selected_users.includes(agent.employee_id ? agent.employee_id : agent.id)"
+                  ng-click="check(agent)"><span style="margin-top: 5px"></span></label>
+            </td>
+            <td>
+              <span ng-if="enable_id_number_in_agent==0">{{agent.employee_id ? agent.employee_id :
+                agent.id}}</span>
+              <span ng-if="enable_id_number_in_agent==1">{{agent.id_number ? agent.id_number :
+                agent.id}}</span>
+            </td>
+            <td ng-if="diplay_agentID_instead_of_employeeID == 1">{{agent.id}}</td>
+            <td>
+              <img class="agent-img" ng-if="agent.image" src="{{compressImage(agent.image, '80x80')}}">
+              <img class="agent-img" ng-if="!agent.image" src="/img/default_user.png">
+            </td>
+            <td ng-if="enable_agent_id_proof==1">
+              <img class="agent-img cursor" ng-if="agent.id_proof" ng-click="viewSingleImage(agent.id_proof)"
+                src="{{compressImage(agent.id_proof, '80x80')}}">
+              <img class="agent-img" ng-if="!agent.id_proof" src="/img/default_user.png">
+            </td>
+            <td>{{agent.name}}</td>
+            <td>{{agent.email}}</td>
+            <td ng-if="profile =='ADMIN' || hide_agent_info_supplier == 0">
+              {{agent.country_code.charAt(0) != '+' ? '+' : ''}} {{agent.country_code}} {{agent.phone_number}}</td>
+            <!-- <td>{{agent.experience}}</td> -->
+            <td ng-if="no_agent_occupation == 0">{{agent.occupation ? agent.occupation : 'NA'}}</td>
+            <td ng-if="profile === 'ADMIN' && is_single_vendor == 0">
+              {{agent.supplier_name && agent.supplier_id ? agent.supplier_name : ('ALL' | translate)}}</td>
+            <td>{{agent.agent_commission_type == 1 ? currency : ''}} {{agent.commission | number : addon_decimal_value}}
+              ({{agent.agent_commission_type == 1 ? localisation.flat : '%' | translate}})</td>
+            <td>{{currency}} {{(agent.revenue).toFixed(price_decimal_length) | number : addon_decimal_value}}</td>
+            <td>{{agent.order_accepted_count ? agent.order_accepted_count : '0'}}</td>
+            <td>{{agent.order_rejected_count ? agent.order_rejected_count : '0'}}</td>
+            <td ng-if="selected_template == 2 && app_type == 1">{{agent.car_model ? agent.car_model : 'NA'}}</td>
+            <td ng-if="selected_template == 2 && app_type == 1">{{agent.car_color ? agent.car_color : 'NA'}}</td>
+            <td>
+              {{agent.driver_license_number ? agent.driver_license_number : 'NA'}}
+            </td>
+            <td ng-if="enable_driver_date_of_birth==1">
+              {{(agent.birthday | date: 'dd/MM/yyyy hh:mm a' : 'UTC') || 'N/A'}}
+            </td>
+            <td ng-if="enable_driver_social_security_no==1">
+              {{agent.social_security_number || 'N/A'}}
+            </td>
+            <td ng-if="is_agent_rating == 1">{{agent.avg_rating ? (agent.avg_rating).toFixed(price_decimal_length) :
+              zero_value.toFixed(price_decimal_length)}}</td>
+
+            <td ng-if="enable_account_number==1">
+              {{agent.account_number || 'N/A'}}
+            </td>
+            <td ng-if="enable_transist_number==1">
+              {{agent.transit_number || 'N/A'}}
+            </td>
+            <td ng-if="enable_institution_number==1">
+              {{agent.institution_number || 'N/A'}}
+            </td>
+
+
+            <td ng-if="enable_agent_vehicle_model==1">
+              {{agent.vehicle_model || 'N/A'}}
+            </td>
+            <td ng-if="enable_agent_vehicle_maker==1">
+              {{agent.vehicle_make || 'N/A'}}
+            </td>
+            <td ng-if="enable_agent_vehicle_year==1">
+              {{agent.vehicle_year || 'N/A'}}
+            </td>
+            <td ng-if="enable_agent_vehicle_vin==1">
+              {{agent.vehicle_vin || 'N/A'}}
+            </td>
+            <td ng-if="enable_agent_address==1">
+              {{agent.city || 'N/A'}},{{agent.state || 'N/A'}},{{agent.country || 'N/A'}}
+            </td>
+
+
+
+
+            <td ng-if="profile =='ADMIN' || !hide_agent_info_from_vendor">
+              <label>
+                <div class="switch togglebtn" ng-class="permissions('agents', 'block') == 0 ? 'toggle-disabled' : ''">
+                  <input type="checkbox" id="togBtn" ng-checked="agent.is_active" ng-click="blockAgent(agent)"
+                    ng-disabled="permissions('agents', 'block') == 0">
+                  <div class="slider round">
+                    <span class="on"></span>
+                    <span class="off"></span>
+                  </div>
+                </div>
+              </label>
+            </td>
+            <td ng-if="is_agent_stripe_split_enabled == 1">{{(agent.stripe_account !== '' && agent.stripe_account !==
+              undefined) ? 'CONNECTED' : 'NOT CONNECTED'}}
+            </td>
+            <td>
+              <label ng-style="(profile !== 'ADMIN' && !!hide_agent_info_from_vendor) ? {'pointer-events':'none'} : ''">
+                <div class="switch togglebtn" ng-class="permissions('agents', 'block') == 0 ? 'toggle-disabled' : ''">
+                  <input type="checkbox" id="togBtn" ng-checked="agent.is_available"
+                    ng-click="updateAvailability(agent)" ng-disabled="permissions('agents', 'block') == 0">
+                  <div class="slider round">
+                    <span class="on"></span>
+                    <span class="off"></span>
+                  </div>
+                </div>
+              </label>
+            </td>
+            <td ng-if="is_vehicle_category_enable==1">{{agent.agent_category_name}}</td>
+            <td ng-if="profile =='ADMIN' || !hide_agent_info_from_vendor">
+              <div class="dropdown">
+                <button ng-if="allow_agentwallet_to_pay_for_cashorder == 1 && profile == 'ADMIN'" type="button"
+                  class="bg-success" ui-sref="profile.driverWallet({user_id: agent.id})">{{'VIEW WALLET' |
+                  translate}}</button>
+
+                <button ng-if="permissions('agents', 'update') == 1 && hide_driver_edit_option==0" type="button"
+                  class="bg-success" ng-click="agentEdit(agent)">{{'EDIT' | translate}}</button>
+                <button type="button" class="edit dropdown-toggle" data-toggle="dropdown"> <img
+                    src="img/v1_images/ic_more.svg">
+                </button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item"
+                    ng-if="[8].includes(app_type) || (flow_data_values.includes(8) && app_type > 10 && agent.supplier_id && agent.supplier_id != 0)"
+                    ui-sref="profile.agentServiceAssignment({id: agent.id, name: agent.name, sup_id: agent.supplier_id})">Assign
+                    {{localisation.product | translate}} to the {{localisation.agent | translate}}
+                  </a>
+                  <a class="dropdown-item"
+                    ng-if="profile!= 'SHIPPING' && ([8].includes(app_type) || (flow_data_values.includes(8) && app_type > 10 && agent.supplier_id && agent.supplier_id != 0) || agent_product_slot_assignment == 1) || enable_driver_details == 1"
+                    ui-sref="profile.agent_slots({id: agent.id, name: agent.name})">{{localisation.agent | translate}}
+                    Slots</a>
+                  <a ng-if="permissions('agents', 'delete') == 1" class="dropdown-item"
+                    ng-click="deleteAgent(agent)">{{'DELETE' | translate}} {{localisation.agent | translate}}</a>
+                  <a class="dropdown-item" ng-if="permissions('agents', 'update') == 1 && enable_agent_pwd_reset==1"
+                    data-toggle="modal" data-target="#reset_password" ng-click="selectAgent(agent)">{{'RESET' |
+                    translate}}
+                    {{localisation.agent | translate}}
+                    {{'PASSWORD' | translate}}</a>
+                  <a ng-if="enable_extra_product_service == 1 && profile == 'ADMIN'" class="dropdown-item"
+                    data-toggle="modal" data-target="#assign_inventory"
+                    ng-click="getExtraProductList(agent)">{{'INVENTORY' | translate}}</a>
+                  <a class="dropdown-item"
+                    ng-if="agent.drivingLicenseUrl && (!hide_driver_license_details || hide_driver_license_details==0)"
+                    ng-click="viewDocuments(agent.drivingLicenseUrl, agent.drivingLicenseBackUrl)">{{'DRIVING LICENSE' |
+                    translate}}</a>
+                  <a class="dropdown-item"
+                    ng-if="agent.vehicleRegisterationUrl && (!hide_driver_vehicle_details || hide_driver_vehicle_details==0)"
+                    ng-click="viewDocuments(agent.vehicleRegisterationUrl, agent.vehicleRegisterationBackUrl)">{{'VEHICLE
+                    REG. NO.' | translate}}</a>
+                  <a class="dropdown-item" ng-if="addDocumentsInAgent==1 && agent.documents.length"
+                    ng-click="viewAllDocuments(agent.documents)">{{'DOCUMENTS' | translate}}</a>
+                  <a class="dropdown-item" ng-if="profile!= 'SHIPPING' && enable_in_out_network == 1"
+                    ui-sref="profile.agent-in-out({id: agent.id})">{{localisation.agents | translate}}{{' In Out'}}</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="no-data-found" ng-if="agents.length == 0 && dataLoaded">
+        {{'NO DATA FOUND' | translate}}
+      </div>
+
+      <div ng-if="agents.length > 0 && dataLoaded" class="row pagination">
+        <ul ng-if="pager.pages && pager.pages.length">
+          <li ng-class="{disabled:pager.currentPage === 1}">
+            <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+          </li>
+          <li ng-class="{disabled:pager.currentPage === 1}">
+            <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+          </li>
+          <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+            <a ng-click="setPage(page)">{{page}}</a>
+          </li>
+          <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+            <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+          </li>
+          <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+            <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="category" style="width: 70%; margin: 0 auto" ng-if="addAgent">
+    <div class="secnav">
+
+      <div class="row">
+        <div class="col-md-6 col-sm-6">
+          <h1 class="bold">{{'ADD' | translate}} {{localisation.agent | translate}}</h1>
+        </div>
+        <div class="col-md-6 col-sm-6" style="text-align: right">
+          <a href="" class="backbtn" ng-click="changeView(false)"><img src="img/v1_images/ic_dropdown.svg">{{'BACK' |
+            translate}}</a>
+
+          <!-- <div class="topfil">
+            <ul>
+              <li style="filter: grayscale(0)">
+                <button type="button" class="bold create" ng-click="submitAdd()">SAVE</button>
+              </li>
+            </ul>
+          </div> -->
+        </div>
+      </div>
+    </div>
+
+    <div class="addagent agent-inner">
+      <form role="form" id="addAgentForm" name="addAgentForm" ng-submit="submitAdd(addAgentForm)" autocomplete="off"
+        novalidate>
+
+        <div class="form-group img text-center">
+          <input filestyle="" type="file" accept="image/*" ng-model="outputs.file" class="form-control"
+            style="height: 140px; cursor: pointer"
+            onchange="angular.element(this).scope().file_to_upload_for_image(this.files)" data-button-text="Single"
+            data-class-button="btn btn-default" data-classinput="form-control inline" nv-file-select=""
+            uploader="uploader" />
+          <img class="cursor" ng-if="!agent_image" src="img/default_user.png">
+          <img class="cursor" ng-if="agent_image" src="{{compressImage(agent_image, '150x150')}}">
+          <span class="cursor" ng-if="is_edit">{{'CHANGE PROFILE PICTURE' | translate}}</span>
+          <span class="cursor" ng-if="!is_edit">{{'ADD PROFILE PICTURE' | translate}}</span>
+        </div>
+
+        <div class="row m-top-30 select-category">
+          <div class="col-md-6"
+            ng-if="profile == 'ADMIN' && is_single_vendor == 0 && ([1].includes(app_type) || (app_type == 2 && ecom_agent_module == 1) || flow_data_values.includes(1))">
+            <div class="form-group persinfo" style="margin-top: 20px;">
+              <label>{{localisation.agent | translate}} {{'ACCESS' | translate}}<span class="star">*</span></label>
+              <div class="radio">
+                <label ng-if="profile == 'ADMIN' && !hide_all_restaurant_option_for_agent" style="margin-right: 20px;">
+                  <input ng-model="agent_access" value="1" type="radio" name="type" ng-click="agentAccess(1)"
+                    convert-to-number><span style="margin-right: 8px"></span>{{'ALL' | translate}}
+                  {{localisation.suppliers | translate}}
+                </label>
+                <label style="margin-left: 0px;">
+                  <input ng-model="agent_access" value="0" type="radio" name="type" ng-click="agentAccess(0)"
+                    convert-to-number><span style="margin-right: 8px"></span>{{'CHOOSE' | translate}}
+                  {{localisation.supplier | translate}}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6"
+            ng-if="profile == 'ADMIN' && is_single_vendor == 0 && agent_access == 0 && app_type == 8">
+            <div class="form-group ">
+              <label>{{localisation.supplier | translate}}<span class="star">*</span></label>
+              <select data-placeholder="Choose {{localisation.supplier | translate}}" name="supplier" class="app"
+                tabindex="4" ng-model="selected_supplier" ng-options="supplier.name for supplier in suppliers"
+                ng-change="onSupplierChange(selected_supplier)" required>
+                <option value="" selected disabled>Select {{localisation.supplier | translate}}</option>
+              </select>
+              <div class="error" ng-show="addAgentForm.supplier.$invalid && addAgentForm.$submitted">
+                <small ng-show="addAgentForm.supplier.$error.required">{{'PLEASE SELECT' | translate}}
+                  {{localisation.supplier | translate}}.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="is_edit">
+            <div class="form-group ">
+              <label>{{'ASSIGN ID' | translate}}</label>
+              <input type="text" name="assigned_id" ng-model="outputs.assigned_id"
+                placeholder="{{'Assign Id' | translate}}">
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group ">
+              <label>{{'NAME' | translate}}<span class="star">*</span></label>
+              <input type="text" name="name" ng-model="outputs.name" placeholder="{{'NAME' | translate}}" required>
+              <div class="error" ng-show="addAgentForm.name.$invalid && addAgentForm.$submitted">
+                <small ng-show="addAgentForm.name.$error.required">{{'PLEASE ENTER NAME' | translate}}</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group ">
+              <label>{{'EMAIL' | translate}}<span class="star">*</span></label>
+              <input type="email" name="email" ng-model="outputs.email" placeholder="{{'EMAIL' | translate}}" required>
+              <div class="error" ng-show="addAgentForm.email.$invalid && addAgentForm.$submitted">
+                <small ng-show="addAgentForm.email.$error.required">{{'PLEASE ENTER EMAIL' | translate}}</small>
+                <small ng-show="addAgentForm.email.$error.email">{{'PLEASE ENTER VALID EMAIL' | translate}}</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group ">
+              <label>{{'PHONE NUMBER' | translate}}<span class="star">*</span></label>
+              <input id="agent_phone" type="tel" name="phone" production-qty ng-model="outputs.phone_number"
+                ng-minlength="6" ng-maxlength="15" placeholder="{{'PHONE NUMBER' | translate}}" required>
+              <div class="error" ng-show="addAgentForm.phone.$invalid && addAgentForm.$submitted">
+                <small ng-show="addAgentForm.phone.$error.required">{{'PLEASE ENTER PHONE NO.' | translate}}</small>
+                <small ng-show="addAgentForm.phone.$error.minlength">{{'PHONE NO. MUST BE MORE THAN 6 DIGITS' |
+                  translate}}</small>
+                <small ng-show="addAgentForm.phone.$error.maxlength">{{'PHONE NO. MUST BE LESS THAN 15 DIGITS' |
+                  translate}}</small>
+              </div>
+              <div class="error" ng-show="!addAgentForm.phone.$invalid && addAgentForm.$submitted && invalid_phone_no">
+                <small>{{'INVALID PHONE NUMBER' | translate}}</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="no_agent_occupation == 0 && enable_driver_details == 0">
+            <div class="form-group">
+              <label>{{'OCCUPATION' | translate}}<span class="star">*</span></label>
+              <input type="text" name="occupation" ng-model="outputs.occupation"
+                placeholder="{{'OCCUPATION' | translate}}" required>
+              <div class="error" ng-show="addAgentForm.occupation.$invalid && addAgentForm.$submitted">
+                <small ng-show="addAgentForm.occupation.$error.required">{{'PLEASE ENTER OCCUPATION' |
+                  translate}}</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="hide_commission_field_for_Supplier == 0 || profile == 'ADMIN' ">
+            <div class="form-group persinfo ">
+              <label>{{'COMMISSION' | translate}}</label>
+              <div class="labelrad">
+                <label ng-if="hide_agent_percentage_commission==0">
+                  <input type="radio" name="discount" value="0" required convert-to-number
+                    ng-click="outputs.commission = ''" ng-model="outputs.agent_commission_type"><span></span>%
+                </label>
+                <label>
+                  <input type="radio" name="discount" value="1" required convert-to-number
+                    ng-click="outputs.commission = ''"
+                    ng-model="outputs.agent_commission_type"><span></span>{{localisation.flat |
+                  translate}}
+                </label>
+              </div>
+              <input type="text" name="commission" integers ng-model="outputs.commission"
+                placeholder="{{'COMMISSION' | translate}}">
+            </div>
+          </div>
+
+          <div class="col-md-6"
+            ng-if="(hide_commission_field_for_Supplier == 0 || profile == 'ADMIN') && enable_distancewise_agent_commission == 1">
+            <div class="form-group">
+              <label>{{'BASE COMMISSION DISTANCE (KM)' | translate}}</label>
+              <input type="text" name="commission" integers ng-model="outputs.base_commission_charge_distance"
+                placeholder="{{'COMMISSION' | translate}}">
+            </div>
+          </div>
+
+          <div class="col-md-6"
+            ng-if="(hide_commission_field_for_Supplier == 0 || profile == 'ADMIN') && enable_distancewise_agent_commission == 1">
+            <div class="form-group">
+              <label>{{'COMMISSION (PER KM)' | translate}}</label>
+              <input type="text" name="commission" integers ng-model="outputs.commision_per_distance"
+                placeholder="{{'COMMISSION' | translate}}">
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="enable_id_number_in_agent==0">
+            <div class="form-group">
+              <label>{{localisation.id_no | capitalLetters| translate}}</label>
+              <input type="text" name="employee_id" ng-model="outputs.employee_id"
+                placeholder="{{localisation.id_no | capitalLetters| translate}}">
+              <div class="error" ng-show="addAgentForm.employee_id.$invalid && addAgentForm.$submitted">
+                <small ng-show="addAgentForm.employee_id.$error.required">{{'PLEASE ENTER' | translate}}
+                  {{localisation.id_no | translate}}</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6" ng-if="enable_id_number_in_agent==1">
+            <div class="form-group">
+              <label>{{localisation.id_no | capitalLetters| translate}}</label>
+              <input type="text" name="id_number" ng-model="outputs.id_number"
+                placeholder="{{localisation.id_no | capitalLetters| translate}}">
+              <div class="error" ng-show="addAgentForm.id_number.$invalid && addAgentForm.$submitted">
+                <small ng-show="addAgentForm.id_number.$error.required">{{'PLEASE ENTER' | translate}}
+                  {{localisation.id_no | translate}}</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="enable_driver_details == 1">
+            <div class="form-group persinfo" style="margin-top: 20px;">
+              <label> {{'ID Type' | translate}}<span class="star"></span></label>
+              <div class="radio">
+                <label style="margin-right: 20px;">
+                  <input value="0" type="radio" name="id_type" ng-model="outputs.id_type" ng-click="IdType(1)"
+                    convert-to-number><span style="margin-right: 8px"></span>{{'Saudi ID' | translate}}
+                </label>
+                <label style="margin-left: 0px;text-transform: none;">
+                  <input value="1" type="radio" name="id_type" ng-model="outputs.id_type" ng-click="IdType(0)"
+                    convert-to-number><span style="margin-right: 8px"></span>{{'lqama' | translate }}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="enable_driver_details == 1">
+            <div class="form-group">
+              <label>{{'Car type' | translate}}</label>
+              <input type="text" name="car_type" ng-model="outputs.car_type" placeholder="{{'Car type' | translate}}">
+              <!-- <div class="error" ng-show="addAgentForm.occupation.$invalid && addAgentForm.$submitted">
+                <small ng-show="addAgentForm.occupation.$error.required">{{'PLEASE ENTER OCCUPATION' |
+                  translate}}</small>
+              </div> -->
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="enable_driver_details == 1">
+            <div class="form-group">
+              <label>{{'Car Model' | translate}}</label>
+              <input type="text" name="car_model" ng-model="outputs.car_model"
+                placeholder="{{'Car modal' | translate}}">
+              <!-- <div class="error" ng-show="addAgentForm.occupation.$invalid && addAgentForm.$submitted">
+                <small ng-show="addAgentForm.occupation.$error.required">{{'PLEASE ENTER OCCUPATION' |
+                  translate}}</small>
+              </div> -->
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="enable_driver_details == 1">
+            <div class="form-group">
+              <label>{{'Plate Number' | translate}}</span></label>
+              <input type="text" name="plate_number" ng-model="outputs.plate_number"
+                placeholder="{{'Car modal' | translate}}">
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="enable_driver_details == 1">
+            <div class="form-group">
+              <label>{{'Car Insurance Number' | translate}}</span></label>
+              <input type="text" name="occupation" ng-model="outputs.car_insurnce_number"
+                placeholder="{{'Car Insurence Number' | translate}}">
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="enable_driver_details == 1">
+            <div class="form-group">
+              <label>{{'Driver Age' | translate}}</span></label>
+              <input type="text" name="occupation" ng-model="outputs.driver_age"
+                placeholder="{{'Driver Age' | translate}}">
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="enable_driver_details == 1">
+            <div class="form-group persinfo" style="margin-top: 20px;">
+              <label>{{'Driver Type' | translate}}</span></label>
+              <div class="radio">
+                <label style="margin-right: 20px;">
+                  <input value="0" type="radio" name="driver_type" ng-model="outputs.driver_type"
+                    ng-click="driverType(1)" convert-to-number><span style="margin-right: 8px"></span>{{'Employee' |
+                  translate}}
+
+                </label>
+                <label style="margin-left: 0px;">
+                  <input value="1" type="radio" name="driver_type" ng-model="outputs.driver_type"
+                    ng-click="driverType(0)" convert-to-number><span style="margin-right: 8px"></span>{{'Unemployment' |
+                  translate}}
+                </label>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-md-6" ng-if="enable_driver_details == 1">
+            <div class="form-group">
+              <label>{{'License Expire Date' | translate}}</span></label>
+              <!-- <label>{{'SELECT DATE' | translate}}</label> -->
+              <input type="text" id="datepicker_lincense" ng-model="outputs.license_expr_date"
+                placeholder="{{'SELECT DATE' | translate}}">
+
+            </div>
+          </div>
+          <div class="col-md-6" ng-if="enable_driver_details == 1">
+            <div class="form-group">
+              <label>{{'Driver Id Date' | translate}}</span></label>
+              <input type="text" id="datepicker_driver" ng-model="outputs.driver_expr_date"
+                placeholder="{{'SELECT DATE' | translate}}">
+            </div>
+          </div>
+
+          <!-- <div class="col-md-6">
+            <div class="form-group">
+              <label>{{'Driver Id Date' | translate}}</span></label>
+              <input type="text" id="datepicker_driver" placeholder="{{'SELECT DATE' | translate}}">
+              <span class="inputtag"><img src="/img/v1_images/calendar.svg"></span>          
+            </div>
+          </div> -->
+
+          <div class="col-md-6" ng-if="is_enabled_agent_base_price == 1">
+            <div class="form-group ">
+              <label>Delivery Charge (%)</label>
+              <input type="text" name="delivery_charge_share" ng-model="outputs.delivery_charge_share"
+                placeholder="Delivery Charge (%)">
+              <div class="error" ng-show="addAgentForm.delivery_charge_share.$invalid && addAgentForm.$submitted">
+                <small ng-show="addAgentForm.delivery_charge_share.$error.required">{{'PLEASE ENTER' | translate}}
+                  Delivery Charge (%)</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="is_enabled_agent_base_price == 1">
+            <div class="form-group ">
+              <label>Base Price</label>
+              <input type="text" name="base_price" ng-model="outputs.base_price" placeholder="Base Price">
+              <div class="error" ng-show="addAgentForm.base_price.$invalid && addAgentForm.$submitted">
+                <small ng-show="addAgentForm.base_price.$error.required">{{'PLEASE ENTER' | translate}} Base
+                  Price</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="is_vehicle_category_enable==1">
+            <div class="form-group">
+              <label>Select Vehicle</label>
+              <select class="app" name="agent_category_id" ng-model="outputs.agent_category_id"
+                ng-change="vehicleChange(outputs.agent_category_id)" required>
+                <option value="">{{'SELECT VEHICLE' | translate}}</option>
+                <option ng-repeat="vehicle in vehicleCatList" value="{{vehicle.id}}">{{vehicle.name}}
+                </option>
+              </select>
+              <div class="error" ng-show="addAgentForm.agent_category_id.$invalid && addAgentForm.$submitted">
+                <small ng-show="addAgentForm.agent_category_id.$error.required">{{'PLEASE SELECT' | translate}}.</small>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-md-6" ng-if="addABNInAgent == 1">
+            <div class="form-group ">
+              <label>ABN No.</label>
+              <input type="text" name="abn_num" ng-model="outputs.abn_num" placeholder="ABN" required>
+              <div class="error" ng-show="addAgentForm.abn_num.$invalid && addAgentForm.$submitted">
+                <small ng-show="addAgentForm.abn_num.$error.required">Please enter ABN.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="enable_driver_social_security_no == 1">
+            <div class="form-group ">
+              <label>SOCIAL SECURITY NUMBER</label>
+              <input type="text" name="social_security_number" ng-model="outputs.social_security_number"
+                placeholder="SOCIAL SECURITY NUMBER" required>
+              <div class="error" ng-show="addAgentForm.social_security_number.$invalid && addAgentForm.$submitted">
+                <small ng-show="addAgentForm.social_security_number.$error.required">Please enter social security
+                  no.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6" ng-if="enable_driver_date_of_birth == 1">
+            <div class="form-group">
+              <label>{{'DATE OF BIRTH' | translate}}</span></label>
+              <input type="text" id="datepicker_driver_dob" ng-model="outputs.birthday"
+                placeholder="{{'SELECT DATE' | translate}}">
+            </div>
+          </div>
+
+
+          <div class="row col-md-12">
+            <div class="col-md-6" ng-if="enable_account_number==1">
+              <div class="form-group ">
+                <label>{{'ACCOUNT NUMBER' | translate}}</label>
+                <input type="text" name="account_number" ng-model="outputs.account_number"
+                  placeholder="{{'ACCOUNT NUMBER' | translate}}">
+                <div class="error" ng-show="addAgentForm.account_number.$invalid && addAgentForm.$submitted">
+                  <small ng-show="addAgentForm.account_number.$error.required">{{'PLEASE ENTER ACCOUNT No.' |
+                    translate}}</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6" ng-if="enable_transist_number==1">
+              <div class="form-group ">
+                <label>{{'TRANSIST NUMBER' | translate}}</label>
+                <input type="text" name="transit_number" ng-model="outputs.transit_number"
+                  placeholder="{{'TRANSIST NUMBER' | translate}}">
+                <div class="error" ng-show="addAgentForm.transit_number.$invalid && addAgentForm.$submitted">
+                  <small ng-show="addAgentForm.transit_number.$error.required">{{'PLEASE ENTER TRANSIST No.' |
+                    translate}}</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6" ng-if="enable_institution_number==1">
+              <div class="form-group">
+                <label>{{'INSTITUTE NUMBER' | translate}}</label>
+                <input type="text" name="institution_number" ng-model="outputs.institution_number"
+                  placeholder="{{'INSTITUTE NUMBER' | translate}}">
+                <div class="error" ng-show="addAgentForm.institution_number.$invalid && addAgentForm.$submitted">
+                  <small ng-show="addAgentForm.institution_number.$error.required">{{'PLEASE ENTER INSTITUTE No.' |
+                    translate}}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6" ng-if="enable_agent_vehicle_model==1">
+              <div class="form-group">
+                <label>{{'VEHICLE MODEL' | translate}}</label>
+                <input type="text" name="vehicle_model" ng-model="outputs.vehicle_model"
+                  placeholder="{{'VEHICLE MODEL' | translate}}">
+              </div>
+            </div>
+            <div class="col-md-6" ng-if="enable_agent_vehicle_maker==1">
+              <div class="form-group">
+                <label>{{'VEHICLE MAKERS' | translate}}</label>
+                <input type="text" name="vehicle_make" ng-model="outputs.vehicle_make"
+                  placeholder="{{'VEHICLE MAKERS' | translate}}">
+              </div>
+            </div>
+            <div class="col-md-6" ng-if="enable_agent_vehicle_year==1">
+              <div class="form-group">
+                <label>{{'VEHICLE YEAR' | translate}}</label>
+                <input type="text" name="vehicle_year" ng-model="outputs.vehicle_year"
+                  placeholder="{{'VEHICLE YEAR' | translate}}">
+              </div>
+            </div>
+            <div class="col-md-6" ng-if="enable_agent_vehicle_vin==1">
+              <div class="form-group">
+                <label>{{'VEHICLE VIN' | translate}}</label>
+                <input type="text" name="vehicle_vin" ng-model="outputs.vehicle_vin"
+                  placeholder="{{'VEHICLE VIN' | translate}}">
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="col-md-12" ng-if="addDocumentsInAgent_DL == 1 || enable_driver_details == 1">
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group ">
+                  <label>{{'LICENSE NUMBER' | translate}}</label>
+                  <input type="text" name="drivingLicenseNumber" ng-model="uplaodAgentDOCS_DL.drivingLicenseNumber"
+                    placeholder="{{'LICENSE NUMBER' | translate}}">
+                  <div class="error" ng-show="addAgentForm.drivingLicenseNumber.$invalid && addAgentForm.$submitted">
+                    <small ng-show="addAgentForm.drivingLicenseNumber.$error.required">{{'PLEASE ENTER LICENSE No.' |
+                      translate}}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row" ng-if="addDocumentsInAgent_DL_Images==1">
+              <div class="col-md-6">
+                <div class="form-group pdf-dwnld">
+                  <label>{{'UPLOAD VEHICLE REGISTERATION FRONT' | translate}}</label>
+                  <br>
+                  <button type="button">{{'Choose file' | translate}}</button>
+                  <input type="file" name="documents"
+                    onchange="angular.element(this).scope().uplaodAgentDOCS(this.files,'RC_FRONT')"
+                    accept="image/*, .doc, .docx, .pdf" multiple
+                    placeholder="{{'VEHICLE REGISTERATION FRONT' | translate}}" nv-file-select="" uploader="uploader">
+
+                  <div class="m-top-20" ng-if="uplaodAgentDOCS_DL.vehicleRegisterationUrl">
+                    <p class="docs_dl">{{uplaodAgentDOCS_DL.vehicleRegisterationUrl}}</p>
+                    <i class="fa fa-times" ng-click="uplaodAgentDOCS_DL.vehicleRegisterationUrl=''"></i>
+                    <div>
+                      <img class="docs_img" src="{{uplaodAgentDOCS_DL.vehicleRegisterationUrl}}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group pdf-dwnld">
+                  <label>{{'UPLOAD VEHICLE REGISTERATION BACK' | translate}}</label>
+                  <br>
+                  <button type="button">{{'Choose file' | translate}}</button>
+                  <input type="file" name="documents"
+                    onchange="angular.element(this).scope().uplaodAgentDOCS(this.files,'RC_BACK')"
+                    accept="image/*, .doc, .docx, .pdf" multiple
+                    placeholder="{{'VEHICLE REGISTERATION BACK' | translate}}" nv-file-select="" uploader="uploader">
+
+                  <div class="m-top-20" ng-if="uplaodAgentDOCS_DL.vehicleRegisterationBackUrl">
+                    <p class="docs_dl">{{uplaodAgentDOCS_DL.vehicleRegisterationBackUrl}}</p>
+                    <i class="fa fa-times" ng-click="uplaodAgentDOCS_DL.vehicleRegisterationBackUrl=''"></i>
+                    <div>
+                      <img class="docs_img" src="{{uplaodAgentDOCS_DL.vehicleRegisterationBackUrl}}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group pdf-dwnld">
+                  <label>{{'UPLOAD DRIVING LICENSE FRONT' | translate}}</label>
+                  <br>
+                  <button type="button">{{'Choose file' | translate}}</button>
+                  <input type="file" name="documents"
+                    onchange="angular.element(this).scope().uplaodAgentDOCS(this.files,'DL_FRONT')"
+                    accept="image/*, .doc, .docx, .pdf" multiple placeholder="{{'DRIVING LICENSE BACK' | translate}}"
+                    nv-file-select="" uploader="uploader">
+
+                  <div class="m-top-20" ng-if="uplaodAgentDOCS_DL.drivingLicenseUrl">
+                    <p class="docs_dl">{{uplaodAgentDOCS_DL.drivingLicenseUrl}}</p>
+                    <i class="fa fa-times" ng-click="uplaodAgentDOCS_DL.drivingLicenseUrl=''"></i>
+                    <div>
+                      <img class="docs_img" src="{{uplaodAgentDOCS_DL.drivingLicenseUrl}}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group pdf-dwnld">
+                  <label>{{'UPLOAD DRIVING LICENSE BACK' | translate}}</label>
+                  <br>
+                  <button type="button">{{'Choose file' | translate}}</button>
+                  <input type="file" name="documents"
+                    onchange="angular.element(this).scope().uplaodAgentDOCS(this.files,'DL_BACK')"
+                    accept="image/*, .doc, .docx, .pdf" multiple placeholder="{{'DRIVING LICENSE BACK' | translate}}"
+                    nv-file-select="" uploader="uploader">
+
+                  <div class="m-top-20" ng-if="uplaodAgentDOCS_DL.drivingLicenseBackUrl">
+                    <p class="docs_dl">{{uplaodAgentDOCS_DL.drivingLicenseBackUrl}}</p>
+                    <i class="fa fa-times" ng-click="uplaodAgentDOCS_DL.drivingLicenseBackUrl=''"></i>
+                    <div>
+                      <img class="docs_img" src="{{uplaodAgentDOCS_DL.drivingLicenseBackUrl}}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-md-12" ng-if="addDocumentsInAgent == 1 && !is_edit">
+            <div class="form-group pdf-dwnld">
+              <label>{{'DOCUMENT UPLOAD' | translate}}</label>
+              <br>
+              <!-- this.files -->
+              <button type="button">{{'Choose files' | translate}}</button>
+              <input type="file" name="documents" onchange="angular.element(this).scope().readUrlMultiple(event)"
+                ng-model="documents" accept="image/*, .doc, .docx, .pdf" multiple
+                placeholder="{{'DOCUMENT UPLOAD' | translate}}" nv-file-select="" uploader="uploader">
+
+              <div class="row m-top-20">
+                <!-- <div class="col-md-3" ng-repeat="image in multipleImage">
+                  <img class="uploaded" src="{{image.url}}">
+                  <span class="cross_icon"><img src="img/v1_images/ic_cross.svg"></span>
+                </div> -->
+
+                <ul style="margin-left: 20px;">
+                  <li ng-repeat="fileObj in docArr">{{fileObj.name}}
+                    <i class="fa fa-times" ng-click="docArr.splice($index, 1)"></i>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="col-md-12" ng-if="enable_agent_id_proof == 1">
+            <div class="form-group pdf-dwnld">
+              <label>{{'UPLOAD ID PROOF' | translate}}</label>
+              <br>
+              <!-- this.files -->
+              <button type="button">{{'Choose files' | translate}}</button>
+              <input type="file" name="documents" onchange="angular.element(this).scope().upload_id_proof(this.files)"
+                ng-model="documents" accept="image/*, .doc, .docx, .pdf" multiple
+                placeholder="{{'DOCUMENT UPLOAD' | translate}}" nv-file-select="" uploader="uploader">
+
+              <div class="row m-top-20">
+                <span ng-if="outputs.id_proof">
+                  <div class="col-md-6">
+                    <img class="img-fluid" src="{{outputs.id_proof}}">
+                  </div>
+                </span>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+          <div ng-if="is_single_vendor == 0 && profile == 'ADMIN' && agent_access == 0 && app_type != 8"
+            class="col-md-6 addban">
+            <div class="persinfo">
+              <div class="form-group " style="margin-top: 20px;">
+                <label>{{localisation.supplier | translate}}<span class="star">*</span></label>
+              </div>
+              <div class="row suppro" ng-style=" app_type==1 ? {'margin-top': '-15px' } : ''">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <div class="box">
+                      <div class="top">
+                        <h2 class="bold">{{(localisation.supplier | translate)}}</h2>
+                        <label style="margin-right: 13px">{{'MARK ALL' | translate}}<input type="checkbox"
+                            name="mark_all" ng-click="markAll(!mark_all)" ng-model="mark_all">
+                          <span style="margin-left: 8px; top: 2px;"></span></label>
+                      </div>
+
+                      <ul class="items" ng-if="suppliers.length">
+                        <li ng-repeat="supplier in  suppliers">{{supplier.supplier_name || supplier.name}}
+                          <label><input type="checkbox" name="{{supplier.supplier_name}}"
+                              ng-click="selectSupplier(supplier)" ng-checked="supplier.checked">
+                            <span></span></label>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="error" ng-if="!selected_count && addPromoForm.$submitted">
+                      <small>{{'PLEASE SELECT' | translate}}
+                        {{ (localisation.supplier | translate)}}.</small>
+                    </div>
+                  </div>
+                  <div class="supprobtmtxt">
+                    <p>{{selected_count}}
+                      {{ (localisation.supplier | translate)}}
+                      {{'Selected'|translate}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+
+        <button ng-if="!is_edit && app_type === 8" type="submit" class="submit" style="width: 200px !important">
+          {{'SAVE & CONTINUE' | translate}}</button>
+        <button ng-if="(is_edit && app_type === 8) || app_type != 8" type="submit" class="submit"
+          style="width: 200px !important">{{'SAVE' | translate}}</button>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal" id="reset_password">
+  <div class="modal-dialog" style="max-width: 400px">
+    <div class="modal-content">
+
+      <div class="modal-body">
+        <div class="modhead" style="padding: 20px 30px">
+          <h2 class="bold" style="display: inline-block;">{{'RESET' | translate}} {{localisation.agent | translate}}
+            {{'PASSWORD' | translate}}</h2>
+          <button type="button" class="close" data-dismiss="modal"><img src="img/v1_images/ic_cross.svg"></button>
+        </div>
+
+        <form role="form" id="resetPassForm" name="resetPassForm" ng-submit="resetPassword(resetPassForm)" novalidate>
+          <div class="modbody" style="padding: 20px 30px">
+            <div class="form-group" style="position: relative">
+              <label>{{'NEW PASSWORD' | translate}}<p class="star">*</p></label>
+              <input type="password" name="new_pass" ng-model="new_pass" placeholder="{{'NEW PASSWORD' | translate}}"
+                ng-minlength="6" required>
+              <div class="error" ng-show="resetPassForm.new_pass.$invalid && resetPassForm.$submitted">
+                <small ng-show="resetPassForm.new_pass.$error.required">{{'Please enter new password.' |
+                  translate}}</small>
+                <small ng-show="resetPassForm.new_pass.$error.minlength">{{'Password Length Must Be More Than 5
+                  Characters.' | translate}}</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="modfooter" style="padding: 15px 15px">
+            <button type="submit" class="bg-success bold">{{'SUBMIT' | translate}}</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="assign_inventory">
+  <div class="modal-dialog" style="max-width: 600px">
+    <div class="modal-content">
+
+      <div class="modal-body">
+        <div class="modhead" style="padding: 20px 30px">
+          <h2 class="bold" style="display: inline-block;">{{'ASSIGN INVENTORY' | translate}}</h2>
+          <button type="button" class="close" data-dismiss="modal"><img src="img/v1_images/ic_cross.svg"></button>
+        </div>
+
+        <form role="form" id="stepOneForm" name="stepOneForm" ng-submit="getInventory()" novalidate>
+          <div class="modbody" style="padding: 20px 30px">
+            <div class="form-group" style="position: relative">
+              <div class="bx">
+
+                <label>{{'ASSIGN INVENTORY' | translate}}</label>
+                <div isteven-multi-select input-model="products" id="category" output-model="selected_product"
+                  max-height="250px" button-label="name total_active_orders" item-label="name" tick-property="ticked">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modfooter" style="padding: 15px 15px">
+            <button type="submit" class="bg-success bold">{{'SUBMIT' | translate}}</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="tip_modal">
+  <div class="modal-dialog" style="max-width: 400px">
+    <div class="modal-content">
+
+      <div class="modal-body">
+        <div class="modhead" style="padding: 20px 30px">
+          <h2 class="bold" style="display: inline-block;">{{localisation.agent_tips | translate}}</h2>
+          <button type="button" class="close" data-dismiss="modal"><img src="img/v1_images/ic_cross.svg"></button>
+        </div>
+
+        <form role="form" id="tipForm" name="tipForm" ng-submit="submitTips(tipForm)" novalidate>
+          <div class="modbody" style="padding: 20px 30px">
+            <small>{{'MAX. TIPS. ALLOWED' | translate}} : {{max_tips}}</small>
+            <div class="form-group" style="position: relative" ng-repeat="tip in tips track by $index">
+              <div class="checkbox" ng-if="enable_default_agent_tip == 1">
+                <label>
+                  <input type="checkbox" name="{{$index}}" ng-click="markDefaultAgentTip(tip, $index)"
+                    ng-checked="tip.is_default"><span style="margin-right: 8px"></span>
+                </label>
+              </div>
+
+              {{currency}}<input type="number" min="1" step="1"
+                onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                ng-style="enable_default_agent_tip == 1 ? {'width': '80%'}: {'width': '88%'}" name="tip{{$index}}"
+                ng-model="tip.price " placeholder="{{'Tip' | translate}}" required>
+              <img style="height: 18px; margin-left: 12px;position: absolute;bottom: 12px;"
+                ng-if="permissions('agents', 'update') == 1" class="cursor" src="/img/v1_images/ic_cross.svg"
+                ng-click="removeTips($index)">
+              <div class="error" ng-show="tipForm.tip{{$index}}.$invalid && tipForm.$submitted">
+                <small ng-show="tipForm.tip{{$index}}.$error.required">{{'PLEASE ENTER TIP.' | translate}}</small>
+              </div>
+            </div>
+            <div class="add-tip">
+              <button ng-class="tips.length >= max_tips ? 'disabled' : ''" ng-click="addMoreTips()" type="button">
+                <img style="height: 18px; margin-right: 8px; vertical-align: sub"
+                  ng-if="permissions('agents', 'update') == 1" class="cursor" src="/img/v1_images/add.png">{{'ADD' |
+                translate}}
+              </button>
+            </div>
+          </div>
+
+          <div class="modfooter" style="padding: 15px 15px" ng-if="permissions('agents', 'update') == 1">
+            <button type="submit" class="bg-success bold">{{'SUBMIT' | translate}}</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="document_verification">
+  <div class="modal-dialog" style="max-width: 560px">
+    <div class="modal-content">
+
+      <div class="modal-body">
+        <div class="modhead" style="padding: 5px 30px">
+          <button type="button" class="close" data-dismiss="modal"><img src="img/v1_images/ic_cross.svg"></button>
+        </div>
+
+        <div class="document-image">
+          <img ng-if="document.front" src={{document.front}} height="340px" width="100%">
+
+          <img ng-if="document.back" style="margin-top: 20px;" src={{document.back}} height="340px" width="100%">
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="document_view">
+  <div class="modal-dialog" style="max-width: 560px">
+    <div class="modal-content">
+
+      <div class="modal-body">
+        <div class="modhead" style="padding: 5px 30px">
+          <button type="button" class="close" data-dismiss="modal"><img src="img/v1_images/ic_cross.svg"></button>
+        </div>
+
+        <div class="document-image">
+          <h3>{{'DOCUMENTS' | translate}}</h3>
+          <div class="row">
+            <div class="col-md-6 m-bottom-15" ng-repeat="data in imgUrls">
+              <img src={{data.docUrl}} height="250px" width="100%">
+            </div>
+          </div>
+
+          <div class="row m-top-15">
+            <div class="col-md-3 m-bottom-15" ng-repeat="data in pdfUrls">
+              <a href="{{data.docUrl}}" target="_blank"><img src="/img/v1_images/pdf.png" height="100px"
+                  width="100%"></a>
+            </div>
+          </div>
+
+          <div class="row  m-top-15">
+            <div class="col-md-3 m-bottom-15" ng-repeat="data in docUrls">
+              <a href="{{data.docUrl}}" target="_blank"><img src="/img/v1_images/doc.png" height="100px"
+                  width="100%"></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="modal" id="single_image_view">
+  <div class="modal-dialog" style="max-width: 560px">
+    <div class="modal-content">
+
+      <div class="modal-body">
+        <div class="modhead" style="padding: 5px 30px">
+          <button type="button" class="close" data-dismiss="modal"><img src="img/v1_images/ic_cross.svg"></button>
+        </div>
+
+        <div class="document-image">
+          <div class="row">
+            <div class="col-md-12 m-bottom-15">
+              <img src={{singleImage}} class="single_img">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+  .agent-inner {
+    border-radius: 0px 0px 8px 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+    padding: 35px 65px 90px;
+    margin-top: 25px;
+  }
+
+  #parsley-id-multiple-type {
+    display: inline-block;
+  }
+
+  .disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  table td .agent-img {
+    border-radius: 50%;
+    height: 45px;
+    width: 45px;
+  }
+
+  .document-image {
+    /* width: 600px;
+    height: 450px; */
+    margin: 14px 20px 20px;
+  }
+
+  .document-image img {
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .add-tip button {
+    color: var(--primary-color);
+    font-size: 14px;
+    border: none;
+    padding: 6px 13px 5px;
+    border-radius: 4px;
+    vertical-align: middle;
+    border: 1px solid var(--primary-color);
+    font-weight: 600;
+    font-size: 15px;
+    border: 1px solid var(--primary-color);
+    background-color: #ffffff;
+  }
+
+
+  .pdf-dwnld input {
+    position: absolute;
+    left: 0px;
+    padding: 0;
+    height: 36px;
+    opacity: 0;
+    cursor: pointer;
+    top: 29px;
+    width: 142px !important;
+  }
+
+  .pdf-dwnld button,
+  .pdf-dwnld a {
+    border-radius: 4px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+    background-image: none;
+    text-align: center;
+    color: #ffffff !important;
+    background-color: var(--primary-color);
+    border: none;
+    padding: 8px 20px;
+    font-size: 18px;
+  }
+
+  .pdf-dwnld img.uploaded {
+    width: 100%;
+    margin: 10px 0;
+    height: 100px;
+  }
+
+  .pdf-dwnld .cross_icon {
+    position: absolute;
+    top: 0;
+    right: 4px;
+    cursor: pointer;
+  }
+
+  .chev-btn {
+    background-color: transparent;
+    float: right;
+    outline: none;
+  }
+
+  .chev-btn:active {
+    outline: none;
+  }
+
+  .notification {
+    color: #4a4a4a;
+    width: 50%;
+    margin-top: 7px;
+    font-weight: 500;
+    margin-left: 10px;
+  }
+
+  .notification-textarea {
+    padding: 10px 15px;
+    width: 100%;
+    border-radius: 4px;
+  }
+
+  .docs_dl {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .docs_img {
+    height: 120px;
+    width: 60%;
+  }
+
+  .pdf-dwnld input {
+    height: 44px !important;
+    /* cursor: pointer; */
+  }
+
+  .multiSelect>button {
+    width: 100% !important;
+
+  }
+
+  #category .multiSelect .checkboxLayer {
+    height: auto !important;
+    min-height: 1px;
+    /* max-height: 210px; */
+    overflow-y: auto;
+  }
+
+  .multiSelect .tickMark {
+    right: 16px;
+  }
+
+  .multiSelect .multiSelectItem {
+    width: 100%;
+  }
+
+  .multiSelect .checkboxLayer button {
+    background: none;
+    width: auto;
+  }
+
+  .single_img {
+    width: 100%;
+    height: 400px;
+    object-fit: fill !important;
+  }
+</style>

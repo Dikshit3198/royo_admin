@@ -1,0 +1,435 @@
+<div class="wrapper">
+
+  <div class="category">
+
+    <div class="toptabs">
+      <ul class="nav nav-tabs ">
+        <li class="nav-item"> <a class="nav-link active">{{localisation.product | translate}}
+            {{'CUSTOMIZATION' | translate}}</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="secnav">
+      <div class="row">
+        <div class="col-md-4 col-sm-4">
+          <input style="width: 252px" type="text" placeholder="{{'SEARCH' | translate}}" ng-model="search">
+        </div>
+        <div class="col-md-8 col-sm-8">
+          <div class="topfil">
+            <ul>
+              <li style="filter: grayscale(0)">
+                <button type="button" class="simple" ng-click="refresh()"><img
+                    src="img/v1_images/ic_rotate.svg">{{'REFRESH' | translate}}</button>
+              </li>
+              <li ng-if="addonsList.length" style="filter: grayscale(0)"
+                ng-if="permissions('catalogue', 'create') == 1">
+                <button type="button" class="bold create"
+                  ng-click="assignAddon()">{{addonAssignment ? 'Abort Assignment' : 'Assign ' + ('CUSTOMIZATION' | translate) + ' to ' + (localisation.products | translate)}}</button>
+              </li>
+              <li style="filter: grayscale(0)" ng-if="permissions('catalogue', 'create') == 1">
+                <button type="button" class="bold create" data-toggle="modal" data-target="#addOnModal"
+                  ng-click="init()">{{'ADD' | translate}} {{'CUSTOMIZATION' | translate}}</button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF;">
+      <div class="row" ng-if="addonAssignment">
+        <div class="col-md-12">
+          <small>{{'Mark all the customizations you wish to copy and then click on select' | translate}}
+            {{localisation.products | translate}}</small>
+          <br>
+          <button ng-disabled="!isAddonChecked" ng-class="!isAddonChecked ? 'btn-disabled' : ''" type="button"
+            ng-click="productSelection()" class="submit"
+            style="width: auto !important; float: none; margin-top: 10px;">Select
+            {{localisation.products | translate}}</button>
+        </div>
+      </div>
+
+      <table class="addons-table">
+        <thead>
+          <tr>
+            <th ng-if="addonAssignment"></th>
+            <th>{{'ID' | translate}}</th>
+            <th>{{'NAME' | translate}}</th>
+            <th>{{localisation.addon_types | translate}}</th>
+            <th style="width: 150px">{{'MULTIPLE SELECTION' | translate}}</th>
+            <!-- <th style="width: 140px">Min. Addons</th> -->
+            <th>{{'ACTION' | translate}}</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr ng-repeat="adn in addonsList | filter : {name: search}">
+            <td ng-if="addonAssignment"><label class="check"><input type="checkbox"
+                  ng-click="check(adn)"><span></span></label>
+            </td>
+            <td>{{adn.id}}</td>
+            <td>{{adn.name}}</td>
+            <td style="padding: 0;">
+              <table style="box-shadow: none;" class="addon-table2">
+                <tr ng-if="$index == 0" style="  background-color: #fff ">
+                  <th
+                    style="width: 45%; padding: 4px 0px 3px; border-bottom: 1px solid rgba(0, 0, 0, 0.1); background-color: #f7f7f7 !important;">
+                    {{'NAME' | translate}}</th>
+                  <th
+                    style="width: 25%; padding: 4px 0px 3px; border-bottom: 1px solid rgba(0, 0, 0, 0.1); background-color: #f7f7f7 !important;">
+                    {{'PRICE' | translate}}</th>
+                  <th
+                    style="width: 30%; padding: 4px 0px 3px; border-bottom: 1px solid rgba(0, 0, 0, 0.1); background-color: #f7f7f7 !important;">
+                    {{'IS DEFAULT' | translate}}</th>
+                  <th ng-if="addon_type_quantity == 1"
+                    style="width: 30%; padding: 4px 0px 3px; border-bottom: 1px solid rgba(0, 0, 0, 0.1); background-color: #f7f7f7 !important;">
+                    {{'Quantity' | translate}}</th>
+                </tr>
+                <tr ng-repeat="option in adn.bData" style="border: none;">
+                  <td style="width: 50%;">{{option.name}}</td>
+                  <td style="width: 25%;">{{currency}}{{(option.price).toFixed(price_decimal_length)}}</td>
+                  <td style="width: 25%;">{{(option.is_default == 1 ? 'YES' : 'NO') | translate}}</td>
+                  <td style="width: 20%;" ng-if="addon_type_quantity == 1">{{option.quantity}}</td>
+                </tr>
+              </table>
+            </td>
+            <td>{{(adn.is_multiple == 1 ? 'YES' : 'NO') | translate}}</td>
+            <!-- <td>{{addon.min_adds_on}}</td> -->
+
+            <td>
+              <button ng-if="permissions('catalogue', 'update') == 1" type="button" class="bg-success"
+                ng-click="addOnEdit(adn)" data-toggle="modal" data-target="#addOnModal">{{'EDIT' | translate}}</button>
+              <button ng-if="permissions('catalogue', 'delete') == 1" type="button" class="bg-success"
+                ng-click="deleteAddOn(adn)">{{'DELETE' | translate}}</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+
+      <div class="no-data-found" ng-if="addonsList.length == 0 && dataLoaded">
+        {{'NO DATA FOUND' | translate}}
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!--- Customization Modal ---->
+<div class="modal" id="addOnModal" ng-if="is_add">
+  <div class="modal-dialog" style="max-width: 60%;">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="modbody" style="border: none;">
+          <button type="button" class="close" data-dismiss="modal"><img src="img/v1_images/ic_cross.svg"></button>
+          <div class="addcust">
+            <h2 class="bold">{{'ADD CUSTOMIZATION' | translate}}</h2>
+
+            <form role="form" id="addOnForm" name="addOnForm" ng-submit="createAddOn(addOnForm)" autocomplete="off"
+              novalidate>
+
+              <div class="wrapper">
+                <div class="repeatmore">
+                  <div class="form-group">
+                    <label>{{localisation.addon_title | translate}}<span style="position: unset" class="star">*</span></label>
+                    <input type="text" name="title" limit-to="50" placeholder="{{'TITLE' | translate}}"
+                      ng-model="addon.name" required>
+                    <div class="error" ng-show="addOnForm.title.$invalid && submitted">
+                      <small ng-show="addOnForm.title.$error.required">{{'PLEASE ENTER TITLE' | translate}}</small>
+                    </div>
+                  </div>
+
+                  <div class="form-group" ng-if="is_secondary_language == 1">
+                    <label>{{localisation.addon_title | translate}} ({{languages[1].name}})<span style="position: unset" class="star">*</span></label>
+                    <input type="text" name="name_ml" limit-to="50" placeholder="{{'TITLE' | translate}} ({{languages[1].name}})"
+                      ng-model="addon.name_ml" required>
+                    <div class="error" ng-show="addOnForm.name_ml.$invalid && submitted">
+                      <small ng-show="addOnForm.name_ml.$error.required">{{'PLEASE ENTER TITLE' | translate}} ({{languages[1].name}}).</small>
+                    </div>
+                  </div>
+
+                  <div style="float: right; margin-top: 10px;" ng-if="addon.is_multiple == 0">
+                    <span style="display: inline-block; margin-top: -4px" class="mandatory">
+                      {{'Mandatory' | translate}}
+                    </span>
+
+                    <div class="checkbox" style="display: inline-block;">
+                      <label>
+                        <input type="checkbox" name="mandatory" id="mandatory" checked="{{addon.isMandatory}}"
+                          ng-model="addon.isMandatory" style="display: none;">
+                        <span></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div ng-if="is_edit" style="height: 45px;"></div>
+
+                  <div class="form-group radiobx" style="display: flex" ng-if="!is_edit">
+                    <label>
+                      <input type="radio" name="name1" ng-click="resetSelection(0)" ng-model="addon.is_multiple"
+                        value="0">
+                      <span></span>{{'SINGLE SELECTION' | translate}}
+                    </label>
+
+                    <label>
+                      <input type="radio" name="name1" ng-click="resetSelection(1)" ng-model="addon.is_multiple"
+                        value="1">
+                      <span></span>{{'MULTI SELECTION' | translate}}
+                    </label>
+                    
+                  </div>
+
+                  <div class="row" ng-if="addon.is_multiple == 1">
+                    <div class="form-group col-md-6">
+                      <label>{{'MIN SELECTION' | translate}}<span style="position: unset" class="star">*</span></label>
+                      <input type="number" name="min" min="0" limit-to="50" placeholder="{{'MIN SELECTION' | translate}}"
+                        ng-model="addon.min_adds_on" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label>{{'MAX SELECTION' | translate}}<span style="position: unset" class="star">*</span></label>
+                      <input type="number" name="max" min="0" limit-to="50" placeholder="{{'Max Selection' | translate}}"
+                        ng-model="addon.max_adds_on" required>
+                      <div class="error" ng-show="addOnForm.max.lenght > addon.max_adds_on && submitted">
+                        <small>{{'MAX SELECTION > TYPES' | translate}}</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group lastsec">
+                    <label>{{localisation.addon_types | translate}}<span style="position: unset" class="star">*</span></label>
+                    <div class="row">
+                      <div class="col-md-3"><label class="text-center"><b>{{'NAME' | translate}}</b></label></div>
+                      <div ng-if="is_secondary_language == 1" class="col-md-3"><label class="text-center"><b>{{'NAME' | translate}} ({{languages[1].name}})</b></label></div>
+                      <div class="col-md-2"><label class="text-center"><b>{{'PRICE' | translate}}</b></label></div>
+                      <div class="col-md-2" ng-if="addon.is_multiple == 1 && addon_type_quantity == 1"><label
+                          class="text-center"><b>{{'QUANTITY' | translate}}</b></label></div>
+                      <div class="col-md-3" ng-if="enable_liquor_popup == 1 && is_liquor && addon.is_multiple == 0"><label
+                          class="text-center"><b>{{'BOTTLE COUNT' | translate}}</b></label></div>
+                      <div class="col-md-2" ng-if="addon.is_multiple == 1"><label
+                          class="text-center"><b>{{'ACTION' | translate}}</b></label></div>
+                    </div>
+                    <div style="padding: 10px 0px; position: relative" class="row"
+                      ng-repeat="type in addon.types track by $index">
+                      <div class="col-md-3">
+                        <input type="text" name="type_name{{$index}}" limit-to="50" placeholder="{{'NAME' | translate}}"
+                          ng-model="type.name" required>
+                        <div class="error" ng-show="addOnForm.type_name{{$index}}.$invalid && submitted">
+                          <small ng-show="addOnForm.type_name{{$index}}.$error.required">{{'PLEASE ENTER NAME' | translate}}</small>
+                        </div>
+                      </div>
+
+                      <div class="col-md-3" ng-if="is_secondary_language == 1">
+                        <input type="text" name="name_ml_type{{$index}}" limit-to="50" placeholder="{{'NAME' | translate}} ({{languages[1].name}})"
+                          ng-model="type.name_ml" required ng-disabled="type.is_default">
+                        <div class="error" ng-show="addOnForm.name_ml_type{{$index}}.$invalid && submitted">
+                          <small ng-show="addOnForm.name_ml_type{{$index}}.$error.required">{{'PLEASE ENTER NAME' | translate}} ({{languages[1].name}}).</small>
+                        </div>
+                      </div>
+
+                      <!-- integers -->
+                      <div class="col-md-2"
+                      ng-class="{'col-md-3': (enable_liquor_popup == 0 || !is_liquor || addon.is_multiple == 1)}">
+                        <input type="text" name="type_price{{$index}}" placeholder="{{'PRICE' | translate}}"
+                          ng-model="type.price" required ng-disabled="type.is_default">
+                        <div class="error" ng-show="addOnForm.type_price{{$index}}.$invalid && submitted">
+                          <small ng-show="addOnForm.type_price{{$index}}.$error.required">{{'PLEASE ENTER PRICE' | translate}}</small>
+                        </div>
+                      </div>
+
+                      <div class="col-md-2" ng-if="addon.is_multiple == 1 && addon_type_quantity == 1">
+                        <input type="number" name="type_quatity{{$index}}" integers placeholder="{{'QUANTITY' | translate}}"
+                          ng-model="type.quantity" min="1" required ng-disabled="type.is_default">
+                        <div class="error" ng-show="addOnForm.quatity{{$index}}.$invalid && submitted">
+                          <small ng-show="addOnForm.quatity{{$index}}.$error.required">{{'PLEASE ENTER QUANTITY' | translate}}</small>
+                        </div>
+                      </div>
+
+                      <div class="col-md-3" ng-if="enable_liquor_popup == 1 && is_liquor && addon.is_multiple == 0">
+                        <input type="number" name="bottle_count{{$index}}" integers placeholder="{{'BOTTLE COUNT' | translate}}"
+                          ng-model="type.bottle_count" min="0" required>
+                        <div class="error" ng-show="addOnForm.bottle_count{{$index}}.$invalid && submitted">
+                          <small ng-show="addOnForm.bottle_count{{$index}}.$error.required">{{'PLEASE ENTER BOTTLE COUNT' | translate}}</small>
+                        </div>
+                      </div>
+
+                      <div class="col-md-2">
+                        <div class="checkbx" ng-if="addon.is_multiple == 1">
+                          <label>
+                            <input type="checkbox" ng-checked="{{type.is_default}}" ng-model="type.is_default" ng-change="setTypeDefaultQuantiy(type)">
+                            <span></span>{{'MAKE DEFAULT' | translate}}
+                          </label>
+                        </div>
+
+                        <!-- <div class="checkbx" ng-if="addon.is_multiple == 0">
+                          <label>
+                            <input type="checkbox" ng-click="checkIsDefault(addon.types, $index)"
+                              ng-checked="{{type.is_default}}" ng-model="type.is_default">
+                            <span></span>{{'MAKE DEFAULT' | translate}}
+                          </label>
+                        </div> -->
+                      </div>
+                      <img ng-if="(!$first && addon.types.length < 2) || addon.types.length > 1"
+                        src="img/v1_images/delete.png" style="right: 16px; top: 19px" class="delete"
+                        ng-click="deleteType(type, $index)">
+                    </div>
+                    <a>
+                      <img style="top: auto" ng-click="addType()" src="img/v1_images/add.png">
+                    </a>
+                  </div>
+
+                </div>
+              </div>
+              <button type="submit" class="addm">{{(is_edit ? 'UPDATE' : 'ADD') | translate}}</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="add_products">
+  <div class="modal-dialog" style="max-width: 72%; width: 80%;">
+    <div class="modal-content">
+      <div class="modal-body">
+
+        <div class="modhead" style="border: none;">
+          <button type="button" class="close" data-dismiss="modal"><img src="img/v1_images/ic_cross.svg"></button>
+          <h3>{{'CHOOSE' | translate}} {{localisation.products | translate}} {{'TO ADD' | translate}}</h3>
+        </div>
+
+        <div class="modbody" style="border: none;">
+
+          <div class="wrapper" style="margin-bottom: 30px;">
+
+            <div class="category">
+
+              <div class="secnav">
+                <div class="row">
+                  <div class="col-md-9">
+                    <div class="row select-category" style="margin-top: -30px">
+                      <div class="col-md-3" ng-if="categories.length" style="margin-bottom: 10px;">
+                        <label class="cat-label">{{'SELECT' | translate}}
+                          {{localisation.category | translate}}</label>
+                        <select data-placeholder="Choose {{localisation.category | translate}}" class="app" tabindex="4"
+                          ng-model="selected_cat" ng-options="category.name for category in categories"
+                          ng-change="onSelectCategory(selected_cat, true)">
+                          <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                        </select>
+                      </div>
+
+                      <div class="col-md-3" style="margin-bottom: 10px;"
+                        ng-repeat="cat in dynamicSubCategories track by $index" ng-init="parentIndex = $index">
+                        <label class="cat-label" ng-if="parentIndex == 0">{{selected_cat.name}}</label>
+                        <label class="cat-label" ng-if="parentIndex > 0">{{selectedCategory[childIndex-1].name}}</label>
+                        <select data-placeholder="Choose Category" tabindex="4" class="app"
+                          ng-model="selectedCategory[childIndex]" ng-init="childIndex = $index"
+                          ng-options="subCat.name for subCat in cat"
+                          ng-change="changeSubCatId(selectedCategory[childIndex], parentIndex + 1, true)">
+                          <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <input style="width: 252px" type="text" placeholder="{{'SEARCH' | translate}}"
+                      ng-keypress="searchProduct($event)" ng-model="search">
+                  </div>
+                </div>
+              </div>
+
+              <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF;">
+                <div class="catbox">
+                  <div class="addcatbr">
+                    <div class="row">
+                      <div class="col-md-2" ng-repeat="product in product_list">
+                        <div class="product-assign">
+                          <label style="margin-bottom: 0px">
+                            <input type="checkbox" ng-click="selectProduct(product)">
+                            <span></span>
+                            <img ng-style="product.price ? {'cursor': 'pointer'} : {'cursor': 'default'}"
+                              src="{{product.images[0].image_path}}" style="height: 110px;">
+                          </label>
+                          <div class="text">
+                            <strong class="bold ellipsis" style="width: 100%; font-size: 14px;" data-toggle="tooltip"
+                              title="{{product.name_en}}">{{product.name_en}}</strong>
+                            <p class="price" style="cursor: default; font-size: 14px">
+                              {{product.price ? (currency + (product.price).toFixed(price_decimal_length)) : 'Price Not Added'}}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="no-data-found" ng-if="product_list.length == 0 && dataLoaded">
+                  {{'NO DATA FOUND' | translate}}
+                </div>
+
+                <div class="no-data-found" ng-if="!dataLoaded">
+                  {{'PLEASE SELECT CATEGOY' | translate}}
+                </div>
+
+                <div ng-if="product_list.length > 0 && dataLoaded" class="row pagination">
+                  <ul ng-if="pager.pages && pager.pages.length">
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                      <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === 1}">
+                      <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                    </li>
+                    <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                      <a ng-click="setPage(page)">{{page}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                      <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                    </li>
+                    <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                      <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                    </li>
+                  </ul>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modfooter" style="padding: 15px 15px">
+          <button type="button" class="bg-success" style="width: auto; padding: 2px 20px;" ng-click="addProducts()">{{'ADD CUSTOMIZATION TO SELECTED' | translate}}
+            {{localisation.products | translate}}</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<success-modal message="message"></success-modal>
+
+<style>
+  .delete {
+    height: 17px;
+    top: 50px;
+    right: 0px;
+  }
+
+  .toptabs .nav-tabs .nav-link.active:after {
+    background: none;
+  }
+
+  .mandatory {
+    font-size: 14px;
+    float: left;
+    margin-right: 12px;
+  }
+
+  .btn-disabled {
+    opacity: 0.7;
+    cursor: default;
+  }
+</style>

@@ -1,0 +1,1111 @@
+<div class="wrapper">
+    <div class="category" ng-if="!is_add">
+
+        <div class="toptabs">
+            <ul class="nav nav-tabs ">
+                <li class="nav-item">
+                    <a class="nav-link" style="text-transform: capitalize;" ng-class="is_active ? 'active' : ''"
+                        ng-click="changeTab(1)">
+                        {{localisation.approved_suppliers | translate}}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" style="text-transform: capitalize;" ng-class="!is_active ? 'active' : ''"
+                        ng-click="changeTab(0)">
+                        {{localisation.unapproved_suppliers | translate}}</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="secnav">
+            <div class="row">
+                <div class="col-md-4 col-sm-4">
+                    <input type="text" placeholder="{{'SEARCH' | translate}}" ng-model="search"
+                        ng-keypress="searchSupplier($event)">
+                </div>
+                <div class="col-md-8 col-sm-8">
+                    <div class="topfil">
+                        <ul>
+                            <li ng-if="disable_import == 0">
+                                <button type="button" class="simple" data-toggle="modal" data-target="#csvModel"><img
+                                        src="img/v1_images/ic_import.svg">{{'IMPORT' | translate}}</button>
+                            </li>
+                            <li style="filter: grayscale(0)">
+                                <button type="button" class="simple" ng-click="refresh()"><img
+                                        src="img/v1_images/ic_rotate.svg">{{'REFRESH' | translate}}</button>
+                            </li>
+                            <!-- <li>
+                                <button type="button" class="simple"><img src="img/v1_images/ic_sortby.svg">Sort
+                                    By</button>
+                            </li> -->
+                            <li ng-if="is_supplier_stripe_split_enabled == 1">
+                                <label style="position: absolute; top: -22px">{{'STRIPE CONNECTION' |
+                                    translate}}</label>
+                                <select style="width: 150px" ng-model="isStripeConnected" name="isStripeConnected"
+                                    ng-change="filterByStripe(isStripeConnected)" convert-to-number>
+                                    <option value="0">{{'ALL' | translate}}</option>
+                                    <option value="2">{{'NO' | translate}}</option>
+                                    <option value="1">{{'YES' | translate}}</option>
+                                </select>
+                            </li>
+                            <li ng-if="enable_in_out_network==1">
+                                <label style="position: absolute; top: -22px">{{'Out Network' | translate}}</label>
+                                <select style="width: 150px" ng-model="is_out_network" name="is_out_network"
+                                    ng-change="filterByInOutNetwork(is_out_network)" convert-to-number>
+                                    <option value="0">{{'NO' | translate}}</option>
+                                    <option value="1">{{'YES' | translate}}</option>
+                                </select>
+                            </li>
+
+                            <li style="filter: grayscale(0)"
+                                ng-if="profile === 'ADMIN' && show_tags_for_suppliers=='1'">
+                                <button type="button" class="bold create"
+                                    ui-sref="tags.supplier-tags({supplierId: supplier_id})">{{localisation.tags |
+                                    translate}}</button>
+                            </li>
+
+                            <li style="filter: grayscale(0)"
+                                ng-if="profile === 'ADMIN' && is_schdule_order == 1 && enable_all_supplier_scheduling_status_update=='1'">
+                                <button type="button" class="bold create"
+                                    ng-click="updateSupplierStatus(!is_suppliers_schedule, 1)">{{is_suppliers_schedule ?
+                                    'DEACTIVATE' : 'ACTIVATE' | translate}} {{'SCHEDULING' | translate}}</button>
+                            </li>
+
+                            <li style="filter: grayscale(0)"
+                                ng-if="profile === 'ADMIN' && enable_all_supplier_block_status_update=='1'">
+                                <button type="button" class="bold create"
+                                    ng-click="updateSupplierStatus(is_active, 2)">{{is_active ? 'DEACTIVATE' :
+                                    'ACTIVATE' | translate}} {{localisation.suppliers | translate}}</button>
+                            </li>
+
+                            <li style="filter: grayscale(0)" ng-if="permissions('suppliers', 'create') == 1">
+                                <button type="button" class="bold create" ng-click="changeView(true)">+
+                                    {{'ADD' | translate}}
+                                    {{localisation.supplier | translate}}</button>
+                            </li>
+
+
+
+                            <li style="filter: grayscale(0)" ng-if="enable_sequence_wise_supplier==1"
+                                style="margin-right: 12px;">
+                                <button type="button" ng-click="setSupplierOrder()" data-target="#orderCatModal"
+                                    class="bold create" ng-click="changeView(true)">
+                                    <i class="fa fa-sort" aria-hidden="true" style="color: #f1f1f1;"></i>
+                                    {{'SET SEQUENCE' | translate}}
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+        <div id="accordion" style="margin-top: 20px; margin-bottom: -10px;"
+            ng-if="profile === 'ADMIN' && enable_agent_email_notification==1">
+            <div class="card">
+                <div class="card-header" id="headingOne" style="background-color: #FDFDFC; padding: 5px 10px;">
+                    <a class="chev-btn" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                        style="padding: 5px 10px" ng-click="notificationOpen()" aria-controls="collapseOne">
+                        <i data-toggle="collapse" data-target="#collapseOne" ng-if="!notification_open"
+                            class="fa fa-chevron-down"></i>
+                        <i data-toggle="collapse" data-target="#collapseOne" ng-if="notification_open"
+                            class="fa fa-chevron-up"></i>
+                    </a>
+                    <h5 class="mb-0 notification">
+                        {{'SEND NOTIFICATION/EMAIL TO' | translate}} {{localisation.users | translate}}
+                    </h5>
+                </div>
+
+                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="persinfo" style="margin-bottom: 20px;">
+                            <div class="labelrad">
+                                <label style="margin-left: 0px">
+                                    <input type="radio" name="type" value="1" required convert-to-number
+                                        ng-model="message_type"
+                                        ng-change="changeMsgType(message_type)"><span></span>{{'SEND AS NOTIFICATION' |
+                                    translate}}
+                                </label>
+                                <label>
+                                    <input type="radio" name="type" value="2" required convert-to-number
+                                        ng-model="message_type"
+                                        ng-change="changeMsgType(message_type)"><span></span>{{'SEND AS EMAIL' |
+                                    translate}}
+                                </label>
+                            </div>
+                        </div>
+
+                        <textarea ng-if="message_type == 1" class="notification-textarea"
+                            placeholder="Enter Notification Content" rows="4" ng-model="notification.msg"></textarea>
+
+                        <div ng-if="message_type == 2" sty>
+                            <div class="top" style="margin-bottom: 30px">
+                                <div class="row">
+                                    <div class="col-md-2" style="padding-top: 8px">
+                                        <span>Subject : </span>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <input class="form-control" ng-model="email.subject" style="width: 100%"
+                                            placeholder="Subject">
+                                    </div>
+                                </div>
+                            </div>
+                            <summernote config="summernote_config" ng-model="email.body"></summernote>
+                            <!-- <div summernote class="summernote" ng-model="email.email_msg"></div> -->
+                        </div>
+
+                        <div style="text-align: right; margin-top: 20px;">
+                            <button class="button-primary" style="font-size: 16px"
+                                ng-click="sendNotificationOrEmail()">{{'SEND' | translate}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+        <div class="box m-top-30" style="border-radius: 8px; background-color: #FFFFFF; padding-bottom: 20px;">
+
+            <div class="tab-content">
+                <div class="tab-pane  active" id="home">
+
+                    <table class="table-striped">
+                        <thead>
+                            <tr>
+                                <th ng-if="notification_open && suppliers.length">
+                                    <label class="check"><input type="checkbox" ng-click="checkAll()"><span
+                                            style="margin-top: 5px"></span></label>
+                                </th>
+                                <th>{{'ID' | translate}}</th>
+                                <th>{{localisation.supplier | translate}} {{'NAME' | translate}}</th>
+                                <th>{{'ADDRESS' | translate}}</th>
+                                <th>{{'PHONE' | translate}}</th>
+                                <th>{{'EMAIL' | translate}}</th>
+                                <th ng-if="hide_trade_document_supplier_registration == 1"> {{localisation.trade_license
+                                    | translate}}</th>
+                                <th ng-if="hide_trade_document_supplier_registration == 1">
+                                    {{localisation.photo_identification | translate}}</th>
+                                <th style="width: 130px" class="cursor" ng-click="sortBy(1)">
+                                    {{(app_type == 1 || checkFlow([1])) ? ('DELIVERY COMMISSION' | translate) :
+                                    ('COMMISSION' | translate)}}
+                                    <i class="fa fa-sort"></i>
+                                </th>
+                                <th style="width: 130px" ng-if="app_type == 1 || checkFlow([1])">
+                                    {{'PICK-UP COMMISSION' | translate}}</th>
+                                <th style="width: 100px;" class="cursor" ng-click="sortBy(2)">{{'REVENUE' | translate}}
+                                    <i class="fa fa-sort"></i>
+                                </th>
+                                <th ng-if="display_vendor_availability == 1">Availability</th>
+                                <th ng-if="selected_template == 2 && app_type == 1">FEIN</th>
+                                <th>{{'STATUS' | translate}}</th>
+                                <th ng-if="is_supplier_stripe_split_enabled == 1">{{'STRIPE CONNECTION STATUS' |
+                                    translate}}</th>
+                                <th style="width: 200px;">{{'ACTIONS' | translate}}</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr ng-repeat="supplier in suppliers">
+                                <td ng-if="notification_open && suppliers.length"><label class="check"><input
+                                            type="checkbox" ng-checked="selected_users.includes(supplier.id)"
+                                            ng-click="check(supplier)"><span style="margin-top: 5px"></span></label>
+                                </td>
+                                <td>{{supplier.id}}</td>
+                                <td>
+                                    <a
+                                        ui-sref="profile.supplierSetup.step_one({id: supplier.id, tab: 1, multi_b: supplier.is_multibranch, b_id: supplier.default_branch_id})">{{supplier.name_arabic
+                                        ? supplier.name_arabic : supplier.supplier_name}}</a>
+                                    <a ng-if="['rajatcustom_0723','yourbutler_0029'].includes(client_code)"
+                                        class="primary-color" ng-click="showIntroduction(supplier.description)">&nbsp;
+                                        <i class="fa fa-info"></i>
+                                    </a>
+                                </td>
+                                <td>{{supplier.address}}</td>
+                                <td>{{supplier.primary_mobile}}</td>
+                                <td>{{supplier.supplier_email}}</td>
+                                <td ng-if="hide_trade_document_supplier_registration == 1">{{supplier.trade_license &&
+                                    supplier.trade_license != ""? "YES":"NA" | translate }}</td>
+                                <td ng-if="hide_trade_document_supplier_registration == 1">
+                                    {{supplier.photo_identification && supplier.photo_identification != ""? "YES":"NA" |
+                                    translate }}</td>
+                                <td>{{supplier.commission ? supplier.commission : 'NA'}}</td>
+                                <td ng-if="app_type == 1 || checkFlow([1])">
+                                    {{supplier.pickupCommission ? supplier.pickupCommission : 'NA'}}</td>
+                                <td>{{currency}} {{(supplier.total_revenue).toFixed(price_decimal_length) | number :
+                                    addon_decimal_value}}</td>
+                                <td ng-if="display_vendor_availability == 1">
+                                    <span
+                                        ng-style="{'color' : supplier.todayTimes.is_open ? 'green' : 'red'}">{{supplier.todayTimes.is_open
+                                        ? 'Open' : 'Closed'}}</span>
+                                    <span ng-if="supplier.todayTimes.is_open"><br>{{supplier.todayTimes.startTime ||
+                                        '-'}} - {{supplier.todayTimes.endTime || '-'}}</span>
+                                </td>
+                                <td ng-if="selected_template == 2 && app_type == 1">
+                                    {{supplier.federal_number ? supplier.federal_number : 'NA'}}</td>
+                                <td>
+                                    <label>
+                                        <div class="switch togglebtn"
+                                            ng-class="permissions('suppliers', 'block') == 0 ? 'toggle-disabled' : ''">
+                                            <input type="checkbox" id="togBtn" ng-checked="supplier.is_active"
+                                                ng-disabled="permissions('suppliers', 'block') == 0"
+                                                ng-click="activateRegSupplier(supplier.id, !supplier.is_active)">
+                                            <div class="slider round">
+                                                <span class="on"></span>
+                                                <span class="off"></span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </td>
+                                <td ng-if="is_supplier_stripe_split_enabled == 1">{{(supplier.stripe_account !== '') ?
+                                    'CONNECTED' : 'NOT CONNECTED'}}</td>
+                                <td ng-class="!supplier.is_active ? 'blocked' : ''">
+                                    <button type="button" class="bg-success"
+                                        ui-sref="index.dashboardSupplier({sup_id: supplier.id, name: supplier.supplier_name})">
+                                        {{'VIEW ANALYTICS' | translate}}</button>
+
+                                    <button type="button" class="bg-success" ng-if="is_flavor_of_week_enable"
+                                        ui-sref="index.settings({supplier_id: supplier.id})">
+                                        {{localisation.set_supplier_of_the_week | translate}}</button>
+
+
+                                    <button type="button" class="bg-success" ng-if="admin_to_supplier_chat == 1"
+                                        style="text-transform: capitalize;"
+                                        ui-sref="orders.orderChat({created_id: supplier.user_created_id, name: supplier.supplier_name, type: 3, message_id: supplier.message_id, id: supplier.id, receiver_type: 'supplier'})">{{localisation.chat_with_supplier
+                                        | translate}}
+                                    </button>
+
+                                    <button ng-if="profile == 'ADMIN' && enable_supplier_delete == 1" type="button"
+                                        class="bg-success" ng-click="deleteSupplier(supplier.id)">{{'DELETE' |
+                                        translate}}</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="no-data-found" ng-if="suppliers.length == 0 && dataLoaded">
+                        {{'NO DATA FOUND' | translate}}
+                    </div>
+
+                    <div ng-if="suppliers.length > 0 && dataLoaded" class="row pagination">
+                        <ul ng-if="pager.pages && pager.pages.length">
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === 1}">
+                                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+                            </li>
+                            <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                                <a ng-click="setPage(page)">{{page}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+                            </li>
+                            <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="category" ng-if="is_add" style="width: 80%; margin: 0 auto">
+
+        <div class="secnav">
+            <a href="" style="float: right" class="backbtn" ng-click="changeView(false)"><img
+                    src="img/v1_images/ic_dropdown.svg">{{'BACK' | translate}}</a>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <h1 class="bold">{{localisation.supplier | translate}} {{'REGISTRATION' | translate}}</h1>
+                </div>
+                <!-- <div class="col-md-6 col-sm-6">
+                    <div class="topfil">
+                        <ul>
+                            <li style="filter: grayscale(0)">
+                                <button type="button" class="bold create"
+                                    ng-click="registerSupplier()">Register</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="addban m-top-30 innpad">
+            <div class="persinfo">
+                <form role="form" prevent-enter-press class="supplier-reg" id="addSupplierForm" name="addSupplierForm"
+                    ng-submit="registerSupplier(addSupplierForm)" novalidate>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{localisation.supplier | translate}} {{'NAME' | translate}}<span
+                                        class="star">*</span></label>
+                                <input type="text" name="name" ng-model="supplier.name"
+                                    placeholder="{{localisation.supplier | translate}} {{'Name'|translate}}" required>
+                                <div class="error"
+                                    ng-show="addSupplierForm.name.$invalid && addSupplierForm.$submitted">
+                                    <small ng-show="addSupplierForm.name.$error.required">{{'Please enter' | translate}}
+                                        {{localisation.supplier | translate}} {{'NAME' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="is_secondary_language == 1">
+                            <div class="form-group">
+                                <label>{{localisation.supplier | translate}} {{'NAME' | translate}}
+                                    ({{languages[1].name}})<span class="star">*</span></label>
+                                <input type="text" name="nameAr" ng-model="supplier.nameAr"
+                                    placeholder="{{localisation.supplier | translate}} {{'Name'| translate}}" required>
+                                <div class="error"
+                                    ng-show="addSupplierForm.nameAr.$invalid && addSupplierForm.$submitted">
+                                    <small ng-show="addSupplierForm.nameAr.$error.required">{{'Please enter' |
+                                        translate}}
+                                        {{localisation.supplier | translate}} {{'NAME' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{localisation.supplier | translate}} {{'EMAIL' | translate}}<span
+                                        class="star">*</span></label>
+                                <input type="email" name="email" ng-model="supplier.email"
+                                    placeholder="{{localisation.supplier | translate}} {{'EMAIL' | translate}}"
+                                    required>
+                                <div class="error"
+                                    ng-show="addSupplierForm.email.$invalid && addSupplierForm.$submitted">
+                                    <small ng-show="addSupplierForm.email.$error.required">{{'Please enter' |
+                                        translate}}
+                                        {{localisation.supplier | translate}} {{'Email' | translate}}.</small>
+                                    <small ng-show="addSupplierForm.email.$error.email">{{'Please enter a valid' |
+                                        translate}}
+                                        {{localisation.supplier | translate}} {{'Email' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    <span ng-if="currentLanguage != 'ar'">{{localisation.supplier | translate}}
+                                        {{'PHONE' | translate}}</span>
+                                    <span ng-if="currentLanguage == 'ar'">{{(localisation.supplier + ' PHONE') |
+                                        translate}}</span>
+                                    <span class="star">*</span></label>
+                                <input ng-if="enable_maroof_password_supplier_reg != 1" id="supp_phone" type="tel" production-qty name="phone" ng-model="supplier.mobile"
+                                    ng-change="changePhone(supplier.mobile)" ng-minlength="6" ng-maxlength="15"
+                                    placeholder="{{localisation.supplier | translate}} {{'PHONE' | translate}}"
+                                    required>
+                                    <input ng-if="enable_maroof_password_supplier_reg == 1" id="supp_phone" type="tel" production-qty name="phone" ng-model="supplier.mobile"
+                                    ng-change="changePhone(supplier.mobile)" ng-minlength="9" limit-to="9"
+                                    placeholder="{{localisation.supplier | translate}} {{'PHONE' | translate}}"
+                                    required>
+                                <div class="error"
+                                    ng-show="addSupplierForm.phone.$invalid && addSupplierForm.$submitted">
+                                    <small ng-show="addSupplierForm.phone.$error.required">{{'Please enter' |
+                                        translate}}
+                                        {{localisation.supplier | translate}} {{'Phone' | translate}}.</small>
+                                    <small ng-if="enable_maroof_password_supplier_reg != 1" ng-show="addSupplierForm.phone.$error.minlength">{{'Phone No. Must Be More Than 6 Digits'
+                                        | translate}}.</small>
+                                    <small ng-if="enable_maroof_password_supplier_reg != 1" ng-show="addSupplierForm.phone.$error.maxlength">{{'Phone No. Must Be Less
+                                        Than 15 Digits'
+                                        | translate}}.</small>
+                                    <small ng-if="enable_maroof_password_supplier_reg == 1" ng-show="addSupplierForm.phone.$error.minlength">{{'Phone No. Must
+                                        Have 9 Digits'
+                                        | translate}}.</small>
+                                </div>
+                                <div class="error"
+                                    ng-show="!addSupplierForm.phone.$invalid && addSupplierForm.$submitted && invalid_phone_no">
+                                    <small>{{'Invalid Phone Number'|translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    <!-- {{localisation.supplier | translate}} {{'ADDRESS' | translate}} -->
+                                    <span ng-if="currentLanguage != 'ar'">{{localisation.supplier | translate}}
+                                        {{'ADDRESS' | translate}}</span>
+                                    <span ng-if="currentLanguage == 'ar'">{{(localisation.supplier + ' ADDRESS') |
+                                        translate}}</span>
+                                    <span class="star">*</span>
+                                </label>
+                                <input type="text" name="address" ng-model="supplier.address"
+                                    id="addressSearchTextField"
+                                    onfocus="this.setAttribute('autocomplete','new-address')" required>
+                                <div class="error"
+                                    ng-show="addSupplierForm.address.$invalid && addSupplierForm.$submitted">
+                                    <small ng-show="addSupplierForm.address.$error.required">{{'Please enter' |
+                                        translate}}
+                                        {{localisation.supplier | translate}} {{'Address' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="(app_type == 1 || checkFlow([1])) && (!is_hide_delivery || !is_hide_pickup)  && is_pickup == 2 && is_dine_in == 0">
+                            <div class="form-group select-category">
+                                <label>{{'DELIVERY MODE' | translate}}<span class="star">*</span></label>
+                                <select class="app" name="self_pickup" ng-model="supplier.self_pickup" convert-to-number
+                                    ng-change="changeSelfPickup(supplier.self_pickup)"
+                                    ng-disabled="disable_delivery_mode"
+                                    ng-required="!is_hide_delivery || !is_hide_pickup">
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                    <option ng-if="!is_hide_delivery" value="0">{{'DELIVERY' | translate}}</option>
+                                    <option ng-if="!is_hide_pickup" value="1">
+                                        {{'SELF PICK-UP' | translate}}</option>
+                                    <option ng-if="!is_hide_pickup && !is_hide_delivery" value="2">
+                                        {{'BOTH' | translate}}
+                                    </option>
+                                </select>
+                                <div class="error"
+                                    ng-show="addSupplierForm.self_pickup.$invalid && addSupplierForm.$submitted">
+                                    <small ng-show="addSupplierForm.self_pickup.$error.required">Please select Delivery
+                                        Mode.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="app_type == 8 && enable_service_pickup == 1">
+                            <div class="form-group select-category">
+                                <label>{{'DELIVERY MODE' | translate}}<span class="star">*</span></label>
+                                <select class="app" name="service_pickup" ng-model="supplier.service_pickup"
+                                    convert-to-number>
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                    <option value="0">{{'HOME' | translate}}</option>
+                                    <option value="1">
+                                        {{'SALOON' | translate}}</option>
+                                    <option value="2">
+                                        {{'BOTH' | translate}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        
+
+
+                        <div class="col-md-6" ng-if="app_type == 8 && enable_service_for == 1">
+                            <div class="form-group select-category">
+                                <label>{{'SERVICE FOR' | translate}}<span class="star">*</span></label>
+                                <select class="app" name="service_for" ng-model="supplier.service_for"
+                                    convert-to-number>
+                                    <option value="" disabled selected>{{'SELECT SERVICE FOR' | translate}}</option>
+                                    <option value="1">
+                                        {{'WOMEN' | translate}}</option>
+                                    <option value="2">
+                                        {{'MALE' | translate}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="col-md-6"
+                            ng-if="(app_type != 1 || ((app_type == 1 || checkFlow([1])) && [0,2].includes(supplier.self_pickup)) || checkFlow([2,8])) && !is_hide_delivery">
+                            <div class="form-group">
+                                <label>{{(app_type == 1 || checkFlow([1])) && [0,2].includes(supplier.self_pickup) ?
+                                    ('ADMIN DELIVERY COMMISSION' | translate) : ('ADMIN COMMISSION' | translate)}}
+                                    (%)<span class="star">*</span></label>
+                                <input type="number" name="commission" integers ng-model="supplier.commission"
+                                    ng-max="100" ng-min="0"
+                                    placeholder="{{(app_type == 1 || checkFlow([1])) && [0,2].includes(supplier.self_pickup) ? ('ADMIN DELIVERY COMMISSION' | translate) : ('ADMIN COMMISSION' | translate)}} (%)"
+                                    required>
+                                <div class="error"
+                                    ng-show="addSupplierForm.commission.$invalid && addSupplierForm.$submitted">
+                                    <small ng-show="addSupplierForm.commission.$error.required">{{'PLEASE ENTER ADMIN' |
+                                        translate}}
+                                        {{'COMMISSION' | translate}}.</small>
+                                    <small ng-show="addSupplierForm.commission.$error.max">{{'INVALID COMMISSION AMOUNT'
+                                        | translate}}</small>
+                                    <small ng-show="addSupplierForm.commission.$error.min">{{'INVALID COMMISSION AMOUNT'
+                                        | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6"
+                            ng-if="((app_type == 1 || checkFlow([1])) && [1,2].includes(supplier.self_pickup)) && !is_hide_pickup">
+                            <div class="form-group">
+                                <label>{{'ADMIN PICKUP COMMISSION' | translate}} (%)<span class="star">*</span></label>
+                                <input type="number" name="pickupCommision" integers ng-model="supplier.pickupCommision"
+                                    ng-max="100" ng-min="0" placeholder="{{'ADMIN PICKUP COMMISSION' | translate}} (%)"
+                                    required>
+                                <div class="error"
+                                    ng-show="addSupplierForm.pickupCommision.$invalid && addSupplierForm.$submitted">
+                                    <small ng-show="addSupplierForm.pickupCommision.$error.required">{{'PLEASE ENTER
+                                        ADMIN PICKUP COMMISSION' | translate}}</small>
+                                    <small ng-show="addSupplierForm.pickupCommision.$error.max">{{'Invalid commission
+                                        amount.' | translate}}</small>
+                                    <small ng-show="addSupplierForm.pickupCommision.$error.min">{{'Invalid commission
+                                        amount.' | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="is_supplier_slogan_add_edit == 1">
+                            <div class="form-group">
+                                <label>{{localisation.supplier | translate}} {{'SLOGAN' | translate}}<span
+                                        class="star">*</span></label>
+                                <input type="text" name="slogan_en" ng-model="supplier.slogan_en"
+                                    placeholder="{{localisation.supplier | translate}} Slogan" required>
+                                <div class="error"
+                                    ng-show="addSupplierForm.slogan_en.$invalid && addSupplierForm.$submitted">
+                                    <small ng-show="addSupplierForm.slogan_en.$error.required">Please enter
+                                        {{localisation.supplier | translate}} {{'SLOGAN' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="is_supplier_slogan_add_edit == 1 && is_secondary_language == 1">
+                            <div class="form-group">
+                                <label>{{localisation.supplier | translate}} {{'SLOGAN' | translate}}
+                                    ({{languages[1].name}})<span class="star">*</span></label>
+                                <input type="text" name="slogan_ol" ng-model="supplier.slogan_ol"
+                                    placeholder="{{localisation.supplier | translate}} Slogan" required>
+                                <div class="error"
+                                    ng-show="addSupplierForm.slogan_ol.$invalid && addSupplierForm.$submitted">
+                                    <small ng-show="addSupplierForm.slogan_ol.$error.required">Please enter
+                                        {{localisation.supplier | translate}} {{'SLOGAN' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="hide_license_number == 0">
+                            <div class="form-group">
+                                <label>{{localisation.license_number | translate}}<span ng-if="enable_maroof_password_supplier_reg == 1" class="star">*</span></label>
+                                <input ng-if="enable_maroof_password_supplier_reg != 1" type="text" name="license_number" ng-model="supplier.license_number"
+                                    placeholder="{{localisation.license_number | translate}}">
+                                    <input ng-if="enable_maroof_password_supplier_reg == 1" type="text" name="license_number" ng-model="supplier.license_number"
+                                    placeholder="{{localisation.license_number | translate}}" required>
+                                    <div class="error" ng-if="enable_maroof_password_supplier_reg == 1"
+                                    ng-show="addSupplierForm.license_number.$invalid && addSupplierForm.$submitted">
+                                    <small ng-show="addSupplierForm.license_number.$error.required">{{'PLEASE ENTER
+                                        VALID LICENSE NUMBER' | translate}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-5" ng-if="enable_maroof_password_supplier_reg == 1">
+                            <div class="form-group">
+                                <label>{{MaroofCRNumber.supplier | translate}} {{'Maroof/CR' | translate}}</label>
+                                <input type="number" name="MaroofCRNumber" ng-model="supplier.MaroofCRNumber"
+                                    placeholder="{{localisation.supplier | translate}} MAROOF/CR">
+                                <!-- <div class="error"
+                                    ng-show="addSupplierForm.MaroofCRNumber.$invalid && addSupplierForm.$submitted">
+                                    <small ng-show="addSupplierForm.MaroofCRNumber.$error.required">{{'PLEASE ENTER
+                                        VALID MAROOFCR/NUMBER' | translate}}</small>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div ng-if="!!supplier.MaroofCRNumber" class="col-md-1">
+                            <div class="form-group" style="margin-top: 56px;">
+                            </div>
+
+                            <div class="document-image persinfo">
+                                <div class="col-md-12">
+                                    <div class="form-group pic">
+                                        <i class="fa fa-upload" style="font-size: 1.5em;margin-left: -9px" aria-hidden="true"></i>
+                                        <input filestyle="" type="file" accept="image/*" name="image1"
+                                            class="cursor" style="width: 242px;"
+                                            onchange="angular.element(this).scope().file_to_upload_for_maroof_doc(this.files)"
+                                            data-button-text="Single" data-class-button="btn btn-default"
+                                            data-classinput="form-control inline" nv-file-select=""
+                                            uploader="uploader" />
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="enable_maroof_password_supplier_reg == 1">
+                            <div class="form-group">
+                                <label>{{IDNumber.supplier | translate}} {{'ID Number' | translate}}<span
+                                        class="star">*</span></label>
+                                <input type="number" name="IDNumber" ng-model="supplier.IDNumber"
+                                    placeholder=" {{localisation.supplier | translate}} ID NUMBER" ng-minlength="10" limit-to="10" required>
+                                <div class="error"
+                                    ng-show="addSupplierForm.IDNumber.$invalid && addSupplierForm.$submitted">
+                                    <small ng-show="addSupplierForm.IDNumber.$error.required">{{'PLEASE ENTER VALID ID
+                                        NUMBER' | translate}}</small>
+                                        <small ng-show="addSupplierForm.IDNumber.$error.minlength">{{'ID Number Must Have 10 Digits' | translate}}.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="supplier_gst_no">
+                            <div class="form-group">
+                                <label>GST Number</label>
+                                <input type="text" name="gst_no" ng-model="supplier.gst_price" placeholder="GST Number">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="supplier_country_of_origin == 1">
+                            <div class="form-group select-category">
+                                <label>{{'COUNTRY' | translate}}</label>
+                                <select data-placeholder="Choose Country" class="app" tabindex=""
+                                    ng-model="supplier.country_of_origin">
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                    <option value="{{country}}" selected={{supplier.country_of_origin==country}}
+                                        ng-click="selectCountry(country)" ng-repeat="country in countries">{{country}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="branch_flow == 1">
+                            <div class="form-group select-category">
+                                <label>{{'BRANCH TYPE' | translate}}<span class="star">*</span></label>
+                                <select class="app" name="is_multibranch" ng-model="supplier.is_multibranch"
+                                    convert-to-number ng-change="changeBranchType(supplier.is_multibranch)" required>
+                                    <option value="" selected disabled>{{'SELECT' | translate}}</option>
+                                    <option value="0">{{'SINGLE BRANCH' | translate}}</option>
+                                    <option value="1">{{'MULTI BRANCH' | translate}}</option>
+                                </select>
+                                <div class="error"
+                                    ng-show="addSupplierForm.is_multibranch.$invalid && addSupplierForm.$submitted">
+                                    <small ng-show="addSupplierForm.is_multibranch.$error.required">Please select Branch
+                                        Type.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="enable_in_out_network==1">
+                            <div class="form-group select-category">
+                                <label>{{'Is Out Network' | translate}}</label>
+                                <select class="app" name="is_out_network" ng-model="supplier.is_out_network"
+                                    ng-change="changeNetworkType(supplier.is_out_network)" convert-to-number>
+                                    <option value="0">{{'NO' | translate}}</option>
+                                    <option value="1">{{'YES' | translate}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row col-md-12">
+                            <div class="col-md-6" ng-if="enable_account_number==1">
+                                <div class="form-group ">
+                                    <label>{{'ACCOUNT NUMBER' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="account_number" ng-model="supplier.account_number"
+                                        placeholder="{{'ACCOUNT NUMBER' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addSupplierForm.account_number.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.account_number.$error.required">
+                                            {{'PLEASE ENTER ACCOUNT No.' |translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" ng-if="enable_transist_number==1">
+                                <div class="form-group ">
+                                    <label>{{'TRANSIST NUMBER' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="transit_number" ng-model="supplier.transit_number"
+                                        placeholder="{{'TRANSIST NUMBER' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addSupplierForm.transit_number.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.transit_number.$error.required">
+                                            {{'PLEASE ENTER TRANSIST No.' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" ng-if="enable_institution_number==1">
+                                <div class="form-group">
+                                    <label>{{'INSTITUTE NUMBER' | translate}}<span class="star">*</span></label>
+                                    <input type="text" name="institution_number" ng-model="supplier.institution_number"
+                                        placeholder="{{'INSTITUTE NUMBER' | translate}}" required>
+                                    <div class="error"
+                                        ng-show="addSupplierForm.institution_number.$invalid && addSupplierForm.$submitted">
+                                        <small ng-show="addSupplierForm.institution_number.$error.required">
+                                            {{'PLEASE ENTER INSTITUTE No.' | translate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="col-md-12"
+                            ng-if="isProductCustomTabDescEnable == 1 && data.addByAdmin && selectedTabs.includes(data.uniqueId)"
+                            ng-repeat="data in productCustomTabLabel">
+                            <div class="form-group">
+                                <label>{{data.labelText | translate}}</label>
+                                <summernote config="summernote_config" ng-model="supplier[data.labelDBColName]">
+                                </summernote>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row suppro" ng-if="supplier.is_out_network==0"
+                        style="margin-bottom: 15px; margin-top: 25px;">
+
+                        <div class="col-md-4" style="margin-bottom: 15px;"
+                            ng-repeat="catData in categoryData track by $index" ng-init="parentIndex = $index">
+                            <div class="form-group">
+                                <div class="box">
+                                    <div class="top">
+                                        <h2 class="bold">
+                                            {{parentIndex > 0 ? catData.category.name : (localisation.categories |
+                                            translate)}}<span ng-if="enable_maroof_password_supplier_reg == 1" class="star" style="top: 23px;">*</span>
+                                        </h2>
+                                        <!-- <label
+                                            ng-if="catData.category.checked || parentIndex == 0">{{'MARK ALL' | translate}}<input
+                                                type="checkbox" ng-click="markAll(parentIndex)"
+                                                ng-model="catData.mark_all">
+                                            <span style="margin-left: 8px; top: 2px;"></span>
+                                        </label> -->
+                                    </div>
+                                    <div class="scroll">
+                                        <ul class="items">
+                                            <li ng-class="(category.sub_category).length ? 'cursor' : ''"
+                                                ng-click="viewSubCat(parentIndex, category)"
+                                                ng-repeat="category in catData.arr track by $index"
+                                                ng-init="childIndex = $index">
+                                                {{category.name}}
+                                                <label ng-if="catData.category.checked || parentIndex == 0"><input
+                                                        type="checkbox" ng-click="selectCat(category)"
+                                                        ng-checked="category.checked">
+                                                    <span></span>
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" ng-if="isProductCustomTabDescEnable == 1">
+                            <div class="form-group">
+                                <div class="box">
+                                    <div class="top">
+                                        <h2 class="bold">{{'Features' | translate}}</h2>
+                                    </div>
+                                    <div class="scroll" style="height: 200px">
+                                        <ul class="items">
+                                            <li ng-repeat="data in productCustomTabLabel">{{data.labelText}}
+                                                <label><input type="checkbox" ng-click="selectTabs(data.uniqueId)"
+                                                        ng-checked="data.checked">
+                                                    <span></span></label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row suppro" style="margin-bottom: 15px; margin-top: 25px;"
+                        ng-if="show_tags_for_suppliers == 1 && supplier.is_out_network==0">
+                        <div class="container">
+                            <div class="row profile">
+                                <div class="col-md-12">
+                                    <div class="row suppro" style="margin-bottom: 15px; margin-top: 20px;">
+
+                                        <div class="col-md-6" style="margin-bottom: 15px;"
+                                            ng-init="parentIndex = $index">
+                                            <div class="form-group">
+                                                <div class="box">
+                                                    <h1 class="text-center m-4">
+                                                        {{localisation.supplier | translate}}
+                                                        {{localisation.tags | translate}}
+                                                    </h1>
+                                                    <p class="text-right cursor mr-4" ng-click="markAllTags()">
+                                                        {{!mark_all_tags?'Mark All':'Un Mark All' | translate}}
+                                                        <label class="ml-3"><input type="checkbox"
+                                                                ng-click="markAllTags()" ng-checked="mark_all_tags">
+                                                            <span></span>
+                                                        </label>
+                                                    </p>
+
+                                                    <div class="scroll">
+                                                        <ul class="items">
+                                                            <li ng-repeat="tag in supplierTagsList track by $index">
+                                                                {{tag.name}}
+                                                                <!-- <input type="checkbox" class="checkbx"
+                                                                ng-click="selectTag(tag)" ng-checked="tag.checked"> -->
+                                                                <label><input type="checkbox" ng-click="selectTag(tag)"
+                                                                        ng-checked="tag.checked">
+                                                                    <span></span>
+                                                                </label>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mt-3" style="text-align: right">
+                            <button type="submit" style="float: none; margin: 0px; text-align: center"
+                                class="submit">{{'REGISTER' | translate}}</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="csvModel" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" style="margin-top: 10%" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="csvModelLabel">{{'Import Csv' | translate}}</h5>
+                <a class="download" ng-click="downloadSampleFile()"> <span>{{'Download Sample File' | translate}}</span>
+                </a>
+            </div>
+            <div class="csv-body modal-body">
+                <div ng-show="!isCsv" class="area">
+                    <input type="file" id="upload" />
+                    <label for="upload"><strong>{{'Choose a file' | translate}}</strong><span class="box__dragndrop">
+                            {{'or drag it here' | translate}}</span>.</label>
+                </div>
+                <div ng-show="isCsv" class="area" style="opacity: 1;">
+                    <label>{{selectedCsv.name}}</label><br>
+                    <a ng-click="removeCsv()" class="remove-csv">{{'remove' | translate}}</a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="close-csv-btn" type="button" ng-click="removeCsv()" class="btn btn-secondary"
+                    data-dismiss="modal">{{'Close' | translate}}</button>
+                <button type="button" class="btn btn-primary" ng-class="{'disabled': !isCsv}"
+                    ng-click="uploadCsv()">{{'Upload' | translate}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="orderCatModal">
+    <div class="modal-dialog" style="max-width: 560px">
+        <div class="modal-content">
+
+            <div class="modal-body cat-order">
+                <div ng-app="Royo" ng-controller="SupplierProfileSetupTwoCtrl">
+                    <h2 class="text-center" style="margin: 15px 0px;">{{'DRAG N DROP TO SET ORDER' | translate}}</h2>
+                    <table class="table table-bordered" ng-if="suppliersForIndexing.length">
+                        <tr>
+                            <th>{{localisation.suppliers | translate}}</th>
+                        </tr>
+                        <tbody ui-sortable="{ 'ui-floating': true , 'axis': 'y'}" ng-model="suppliersForIndexing">
+                            <tr ng-repeat="item in suppliersForIndexing">
+                                <td>{{ item.supplier_name }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button type="button" id="closeCatOrder" class="close" data-dismiss="modal"><img
+                        src="img/v1_images/ic_cross.svg"></button>
+                <div class="submit-seq">
+                    <button ng-click="SubmitSupplierSequence()" class="asgn-btn">{{'Submit' | translate}}</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- -------------------------Supplier OTP after registration starts------------------------- -->
+
+<div class="modal fade" id="optModal" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" style="margin-top: 10%" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form role="form" prevent-enter-press class="supplier-reg" id="supplierOtpForm" name="supplierOtpForm"
+                    ng-submit="registerSupplierWithOtp(supplierOtpForm)" novalidate>
+                    <div class="form-group" style="margin-top: 45px; position: relative;display: none;" >
+                        <label class="col-md-12">{{'PHONE NUMBER' | translate}}<span class="star">*</span></label>
+                        <input id="supp_mobile" type="tel" production-qty name="mobileNo"
+                            ng-model="verifyViaOtp.mobileNo" ng-minlength="6" ng-maxlength="15" disabled
+                            placeholder="{{'PHONE NUMBER' | translate}}" style="margin-left: 15px" required>
+                        <div class="error" ng-show="supplierOtpForm.mobileNo.$invalid && supplierOtpForm.$submitted">
+                            <small ng-show="supplierOtpForm.mobileNo.$error.required"
+                                style="margin-left: 15px">{{'PLEASE ENTER' |
+                                translate}}
+                                {{localisation.supplier | translate}} {{'Phone' | translate}}.</small>
+                            <small ng-show="supplierOtpForm.mobileNo.$error.minlength"
+                                style="margin-left: 15px">{{'PHONE NO. MUST BE MORE
+                                THAN 6 DIGITS'
+                                | translate}}.</small>
+                            <small ng-show="supplierOtpForm.mobileNo.$error.maxlength"
+                                style="margin-left: 15px">{{'PHONE NO. MUST BE LESS
+                                THAN 15 DIGITS'
+                                | translate}}.</small>
+                        </div>
+                        <!-- <div class="error"
+                                    ng-show="!supplierOtpForm.mobileNo.$invalid && supplierOtpForm.$submitted">
+                                    <small>{{'INVALID PHONE NUMBER' | translate}}</small>
+                                </div> -->
+                    </div>
+                    <div class="form-group" style="position: relative">
+                        <label class="col-md-12">{{'OTP' | translate}}<span class="star">*</span></label>
+                        <input id="verify_otp" type="text" production-qty name="verifyotp"
+                            ng-model="verifyViaOtp.verifyotp" placeholder="{{'OTP' | translate}}"
+                            style="margin-left: 15px" required>
+                        <div class="error" ng-show="supplierOtpForm.verifyotp.$invalid && supplierOtpForm.$submitted">
+                            <small ng-show="supplierOtpForm.verifyotp.$error.required"
+                                style="margin-left: 15px">{{'PLEASE ENTER' |
+                                translate}} {{'OTP' | translate}}.</small>
+
+                        </div><br/>
+                       
+                        <button ng-click="resendCode()" class="btn btn-primary" ng-disabled="countdown != 0" style="margin-left: 14px;margin-top: 10px;">Resend code </button>  {{countdown > 0 ? ' in '+ countdown + ' seconds' : ''}} 
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">{{'Submit' |
+                            translate}}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- -------------------------Supplier OTP after registration ends------------------------- -->
+
+<success-modal message="message"></success-modal>
+
+<read-more text="read_more_text" label="read_more_label"></read-more>
+
+<style>
+    .save {
+        color: #ffffff;
+        border-radius: 4px;
+        background-color: var(--primary-color);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+        border: none;
+        font-size: 14px;
+        padding: 9px 25px;
+    }
+
+    .asgn-btn {
+        background: linear-gradient(180deg, #57d2d9 0%, var(--primary-color) 100%) !important;
+        border-radius: 8px !important;
+        color: #ffffff !important;
+    }
+
+    .chev-btn {
+        background-color: transparent;
+        float: right;
+        outline: none;
+    }
+
+    .chev-btn:active {
+        outline: none;
+    }
+
+    .notification {
+        color: #4a4a4a;
+        width: 50%;
+        margin-top: 7px;
+        font-weight: 500;
+        margin-left: 10px;
+    }
+
+    .notification-textarea {
+        padding: 10px 15px;
+        width: 100%;
+        border-radius: 4px;
+    }
+
+    .csv-body {
+        background-color: #e9eaeb;
+        padding: 20px !important;
+    }
+
+    .area {
+        width: 100%;
+        height: 200px;
+        position: relative;
+        border: 2px dashed #000;
+        background-image: url("../../img/import.png");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 64px 64px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        filter: alpha(opacity=50);
+        -khtml-opacity: 0.5;
+        -moz-opacity: 0.5;
+        opacity: 0.5;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .area:hover,
+    .area.dragging,
+    .area.uploading {
+        filter: alpha(opacity=100);
+        -khtml-opacity: 1;
+        -moz-opacity: 1;
+        opacity: 1;
+    }
+
+    .area input {
+        width: 400%;
+        height: 100%;
+        margin-left: -380%;
+        border: none;
+        cursor: pointer;
+    }
+
+    .area input:focus {
+        outline: none;
+    }
+
+    .download {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--primary-color) !important;
+    }
+
+    .download:hover {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .csv-body.modal-body label {
+        position: absolute;
+        bottom: 20px;
+        left: 0px;
+        width: 100%;
+    }
+
+    .remove-csv {
+        color: #ff2020 !important;
+        font-size: 12px;
+        position: absolute;
+        left: 0px;
+        bottom: 5px;
+        width: 100%;
+    }
+</style>

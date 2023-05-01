@@ -1,0 +1,6 @@
+<div ng-include="'views/common/navigation.html'" ng-if="is_vendor_app_login == 0"></div>
+<div class="side-body" ng-style="is_vendor_app_login == 1 ? {'margin-left': '0px'} : ''">
+    <div ng-include="'views/common/topnavbar.html'" ng-if="is_vendor_app_login == 0"></div>
+    <div ui-view></div>
+    <!-- <div ng-include="'views/common/footer.html'"></div> -->
+</div>

@@ -1,0 +1,336 @@
+<div class="accsettle m-top-30">
+  <div ng-if="showAccountBalance" class="account-balance" ng-class="!!filter.paymentSource ? 'active' : ''"
+    ng-click="filerPaymentSource('543')">
+    <h2>{{'Your' | translate}} {{account_type}} {{'Account Balance' | translate}}</h2>
+    <strong>{{currency}} {{account_balance ? account_balance : '0.00'}}</strong>
+    <!-- {{amount_paid}}============{{received_text}} -->
+  </div>
+
+  <ul class="nav nav-tabs">
+    <li class="nav-item"
+      ng-show="(no_online_orders == 0 || profile === 'SUPPLIER') && (no_cash_orders == 0 || profile === 'ADMIN')">
+      <a class="nav-link" ng-class="active_settelment_tab == 1 ? 'active' : ''" ng-click="changeTab(1)">
+        <div class="box">
+          <small>{{'TOTAL AMOUNT' | translate}}</small>
+          <!-- <h2>To Be Paid By {{profile === 'ADMIN' ? 'Admin' : localisation.supplier}}</h2> -->
+          <h2 style="text-transform: uppercase;">{{amount_paid | translate}}</h2>
+          <strong class="bold">{{currency}} {{amount_payable ? (amount_payable).toFixed(price_decimal_length) :
+            '0.00' | number : addon_decimal_value}}</strong>
+        </div>
+      </a>
+    </li>
+    <li class="nav-item"
+      ng-show="(no_online_orders == 0 || profile === 'ADMIN') && (no_cash_orders == 0 || profile === 'SUPPLIER')">
+      <a class="nav-link" ng-class="active_settelment_tab == 2 ? 'active' : ''" ng-click="changeTab(2)">
+        <div class="box">
+          <small>{{'TOTAL AMOUNT' | translate}}</small>
+          <!-- <h2>To Be Received By {{profile === 'ADMIN' ? 'Admin' : localisation.supplier}}</h2> -->
+          <h2 style="text-transform: uppercase;">{{received_text | translate}}</h2>
+          <strong class="bold">{{currency}} {{amount_receivable ? (amount_receivable).toFixed(price_decimal_length) :
+            '0.00' | number : addon_decimal_value}}</strong>
+        </div>
+      </a>
+    </li>
+  </ul>
+
+  <div class="reporttop m-top-30"
+    style="border: 1px solid rgba(18,17,17,0.1);	border-radius: 4px;	background-color: #FDFDFC;">
+    <form>
+
+      <div class="row">
+        <div class="col-md-8">
+          <div class="row">
+            <div class="col-md-4 mb-2">
+
+              <div class="row" ng-if="profile === 'ADMIN' || enable_free_delivery_account_filter">
+                <div class="col-md-12" ng-if="profile === 'ADMIN'">
+
+                  <div class="form-group select-category" style="margin-top: 0px">
+                    <label>{{localisation.supplier | translate}}</label>
+                    <select class="app" data-placeholder="Choose {{localisation.supplier}}" tabindex="4"
+                      ng-model="selected_supplier" ng-options="supplier.supplier_name for supplier in suppliers"
+                      ng-change="changeSupplier(selected_supplier)">
+                      <option selected disabled value="">{{'SELECT' | translate}} {{localisation.supplier | translate}}
+                      </option>
+                    </select>
+                    <span class="inputtag"><img src="/img/v1_images/ic_dropdown.svg"></span>
+                  </div>
+                </div>
+
+                <div class="col-md-12 m-top-15" ng-if="enable_free_delivery_account_filter">
+                  <div class="form-group select-category">
+                    <label>{{'Free Delivery Charge' | translate}}</label>
+                    <select class="app" ng-model="is_free_delivery" ng-change="changeDeliveryCharge(is_free_delivery)">
+                      <option selected disabled value="">{{'Select' | translate}}</option>
+                      <option value="0">{{'No' | translate}}</option>
+                      <option value="1">{{'Yes' | translate}}</option>
+                    </select>
+                    <span class="inputtag"><img src="/img/v1_images/ic_dropdown.svg"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group select-category" style="margin-top: 0px">
+                <label>{{(localisation.payment + ' STATUS') | translate}}</label>
+                <select class="app" ng-change="changepaymentStatus(filter.status)" ng-model="filter.status">
+                  <option selected disabled value="">{{'SELECT STATUS' | translate}}</option>
+                  <option value="2">{{'ALL' | translate}}</option>
+                  <option value="1">{{localisation.received | translate}}</option>
+                  <option value="0">{{localisation.outstanding | translate}}</option>
+                </select>
+                <span class="inputtag"><img src="/img/v1_images/ic_dropdown.svg"></span>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group" style="margin-top: 0px">
+                <label>{{'DATE' | translate}}</label>
+                <input type="text" id="datepicker_settelment" placeholder="{{'Date' | translate}}">
+                <span class="inputtag"><img src="/img/v1_images/calendar.svg"></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="btns" style="margin-top: 32px">
+            <button type="button" ng-click="downloadCSV()"
+              ng-if="disable_csv_download && (profile == 'ADMIN' || (profile == 'SUPPLIER' && disable_csv_download_supplier == 0))"
+              style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'DOWNLOAD
+              CSV' | translate}}</button>
+            <button type="button" ng-click="clearFilter()"
+              style="border: 1px solid var(--primary-color);	background-color: #FFFFFF; color: var(--primary-color);">{{'RESET'
+              | translate}}</button>
+            <button type="button" class="bg-success" ng-click="changeFilter()"
+              style="color: #fff; border: 1px solid var(--primary-color); margin-left: 7px;">{{'FILTER' |
+              translate}}</button>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="tab-content">
+
+    <div class="tab-pane  active">
+      <div class="repbtm m-top-40">
+        <div class="secnav ">
+          <div class="row">
+            <div class="col-md-6 col-sm-6">
+              <input style="width: 300px" type="text" placeholder="{{'SEARCH BY ORDER NO. / CLIENT NAME' | translate}}"
+                ng-model="search" ng-keypress="searchOrder($event)">
+            </div>
+            <div class="col-md-6 col-sm-6">
+              <div class="topfil">
+                <ul>
+                  <li
+                    ng-if="is_supplier_stripe_split_enabled == 1 && !(profile == 'SUPPLIER' && filter.status == 0 && active_settelment_tab == 2)"
+                    style="filter: grayscale(0)" ng-if="permissions('accounting', 'update') == 1">
+                    <select style="width: 120px; height: 40px;" ng-change="changePaymentMode(payment_type)"
+                      ng-model="payment_type" convert-to-number>
+                      <option selected disabled value="">{{'SELECT PAYMENT MODE' | translate}}</option>
+                      <option value="0">{{'CASH' | translate}}</option>
+                      <option value="1">{{'ONLINE' | translate}}</option>
+                    </select>
+                  </li>
+                  <li style="filter: grayscale(0)"
+                    ng-if="permissions('accounting', 'update') == 1 && !(profile == 'SUPPLIER' && filter.status == 0 && active_settelment_tab == 2) && (profile == 'SUPPLIER' ? client_code != 'peeparound_0104' : true) ">
+                    <button type="button" class="bold create" ng-click="payUser()">{{'PAY' | translate}}</button>
+                  </li>
+                  <li style="filter: grayscale(0)"
+                    ng-if="(active_settelment_tab == 2 && profile == 'SUPPLIER') && showWithdrawal && permissions('accounting', 'update') == 1">
+                    <button type="button" class="bold create" ng-click="withdrawalRequest()">{{'WITHDRAWAL' |
+                      translate}}</button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tableouter m-top-20">
+          <table class="table-responsive">
+            <thead>
+              <tr>
+                <th class="mark_all" ng-click="markAllRows()">{{marking_all?('Unmark'  | translate):('Mark' | translate)}} {{'All' | translate}}</th>
+                <th>{{'ORDER NO.' | translate}}</th>
+                <th>{{localisation.supplier | translate}} {{'ID' | translate}}</th>
+                <th ng-if="profile === 'ADMIN'">{{localisation.supplier | translate}} {{'NAME' | translate}}</th>
+                <th>{{'CUSTOMER NAME' | translate}}</th>
+                <th>{{localisation.order_delivery_date | translate}} </th>
+                <th>{{'DELIVERY MODE' | translate}}</th>
+                <th>{{'PROMO DISCOUNT'|translate}}</th>
+                <th ng-show="no_tax_in_category == 0">{{localisation.tax | translate}}</th>
+                <th ng-if="enable_order_desc_price_breakdown==0">
+                  {{is_dine_in ? 'DIGIDINE FEES' : 'COMMISSION' | translate}}
+                </th>
+                <th ng-show="is_dine_in == 0 && (profile == 'ADMIN' || (profile == 'SUPPLIER' && no_supplier_delivery_charge == 0)) && 
+                  (profile == 'ADMIN' || remove_delivery_charge_supplier == 0)">
+                  {{'DELIVERY CHARGES' | translate}}</th>
+                <th ng-if="client_code == 'kiwieats_0248'">{{localisation.order_amount_net | translate}} Before Discount
+                </th>
+                <th>{{localisation.order_amount | translate}}</th>
+                <th>{{localisation.order_amount_net | translate}}</th>
+
+
+                <th ng-if="enable_order_desc_price_breakdown==1">
+                  {{localisation.pay_to_restaurant | translate}}
+                </th>
+                <th ng-if="enable_order_desc_price_breakdown==1">
+                  {{localisation.pay_to_compnay | translate}}
+                </th>
+
+
+                <th>{{localisation.customer_payment_source | translate}} </th>
+                <th>{{localisation.customer_payment_id | translate}}</th>
+                <th>{{localisation.customer_payment_reference_no | translate}} </th>
+                <th ng-if="show_loyalty_amount_in_accounting == 1">{{'LOYALTY AMOUNT' | translate}}</th>
+                <th ng-if="client_code == 'peeparound_0104'">{{'Service charge' | translate}}</th>
+                <th style="width: 110px">{{'BALANCE AMOUNT' | translate}}</th>
+                <th
+                  ng-if="(active_settelment_tab == 1 && profile == 'ADMIN') || (active_settelment_tab == 2 && profile == 'SUPPLIER')">
+                  {{'REQUEST' | translate}} {{'STATUS' | translate}}</th>
+                <th>{{localisation.payment | translate}} {{'STATUS' | translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="account in account_data">
+                <td>
+                  <label
+                    ng-if="account.status == 0 && !(account.withdraw_request_status != null && active_settelment_tab == 2 && profile == 'SUPPLIER')"
+                    class="check">
+                    <input type="checkbox" style="display: none;" ng-checked="account.checked"
+                      ng-click="check(account)"><span></span>
+                  </label>
+                </td>
+                <td><span style="font-weight: 600; color: var(--primary-color); cursor: pointer;"
+                    ui-sref="orders.ordersDescription({order_id:account.order_id})">{{account.order_id}}</span></td>
+                <td>{{account.id}}</td>
+                <td ng-if="profile === 'ADMIN'">{{account.name}}</td>
+                <td>{{account.firstname ? account.firstname : 'NA'}}</td>
+                <td>
+                  <span>
+                    {{account.delivered_on | date: 'MMM d, y' : 'UTC'}}
+                  </span> <br>
+                  <span>
+                    {{account.delivered_on | date: 'hh:mm a' : 'UTC'}}
+                  </span>
+                </td>
+                <td>
+                  <span ng-if="account.self_pickup == 1">{{'Self Pickup' | translate}}</span>
+                  <span ng-if="account.self_pickup == 0">{{'Delivery' | translate}}</span>
+                  <span ng-if="account.self_pickup == 3">{{'Dine In' | translate}}</span>
+                </td>
+                <td>{{account.promo_discount ? (account.promo_discount).toFixed(price_decimal_length) : 'NA'}}</td>
+                <td ng-show="no_tax_in_category == 0">{{(account.handling_admin).toFixed(price_decimal_length)}}</td>
+                <td ng-if="enable_order_desc_price_breakdown==0">
+                  {{currency}} {{(account.commission).toFixed(price_decimal_length) | number : addon_decimal_value}}
+                </td>
+                <td ng-show="is_dine_in == 0 && (profile == 'ADMIN' || (profile == 'SUPPLIER' && no_supplier_delivery_charge == 0)) && 
+                  (profile == 'ADMIN' || remove_delivery_charge_supplier == 0)">
+                  {{currency}} {{(account.delivery_charges).toFixed(price_decimal_length) | number :
+                  addon_decimal_value}}</td>
+                <td ng-if="client_code == 'kiwieats_0248'">
+                  {{(account.total_order_price || (account.net_amount +
+                  account.promo_discount)).toFixed(price_decimal_length)}}
+                </td>
+                <td>{{currency}} {{(account.sub_total).toFixed(price_decimal_length) | number : addon_decimal_value}}
+                </td>
+                <td>
+                  <!-- {{(profile == 'ADMIN' || (profile == 'SUPPLIER' && (remove_delivery_charge_supplier == 0 && remove_service_fee_supplier == 0))) ? (account.net_amount).toFixed(price_decimal_length) : getDisplayPrice(account)}} -->
+                  {{currency}} {{(account.net_amount).toFixed(price_decimal_length)| number : addon_decimal_value}}
+                </td>
+
+                <td ng-if="enable_order_desc_price_breakdown==1">
+                  {{currency}}{{getPaytoRestaurant(account)}}
+                </td>
+                <td ng-if="enable_order_desc_price_breakdown==1">
+                 {{getPaytoCompnay(account)}} {{currency}}
+                </td>
+
+                <td>{{account.payment_source || 'N/A'}} </td>
+                <td>{{account.payment_id || 'N/A'}} </td>
+                <td>{{account.payment_reference_number || 'N/A'}} </td>
+                <td ng-if="show_loyalty_amount_in_accounting == 1">
+                  {{(account.loyality_point_discount).toFixed(price_decimal_length) | number : addon_decimal_value}}
+                </td>
+                <td ng-if="client_code =='peeparound_0104'">
+                  {{currency}}{{(account.user_service_charge).toFixed(2) || '0.00'}}
+                </td>
+                <td>
+                  <span ng-if="enable_order_desc_price_breakdown==0">
+                    {{currency}} {{show_loyalty_amount_in_accounting == 1 ? (account.order_status == 2 ||
+                    account.order_status == 8 ? '0' : (account.total_amount).toFixed(price_decimal_length) | number :
+                    addon_decimal_value) : (account.total_amount).toFixed(price_decimal_length) | number :
+                    addon_decimal_value}}
+                  </span>
+                  <span ng-if="enable_order_desc_price_breakdown==1">
+                    {{currency}}{{getPaytoRestaurant(account)}}
+                  </span>
+                </td>
+                <td
+                  ng-if="(active_settelment_tab == 1 && profile == 'ADMIN') || (active_settelment_tab == 2 && profile == 'SUPPLIER')">
+                  <span ng-if="account.withdraw_request_status == null">{{'NOT REQUESTED' | translate}}</span>
+                  <span ng-if="account.withdraw_request_status == 0" style="color: rgb(255, 163, 25)">{{'PENDING' |
+                    translate}}</span>
+                  <span ng-if="account.withdraw_request_status == 1" style="color: #7A9E50">{{'ACCEPTED' |
+                    translate}}</span>
+                  <span ng-if="account.withdraw_request_status == 2" style="color: #dc3545;">{{'REJECTED' |
+                    translate}}</span>
+                </td>
+                <td>
+                  <p ng-if="account.status == 0" style="color: rgb(255, 163, 25);">
+                    {{active_settelment_tab == 2 ? 'PENDING' : 'NOT PAID' | translate}}</p>
+                  <p ng-if="account.status == 1" style="color: #7A9E50;">
+                    {{active_settelment_tab == 2 ? 'RECEIVED' : 'PAID' | translate}}</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="no-data-found" ng-if="account_data.length == 0 && dataLoaded">
+            {{'NO DATA FOUND' | translate}}
+          </div>
+
+          <div ng-if="account_data.length > 0 && dataLoaded" class="row pagination">
+            <ul ng-if="pager.pages && pager.pages.length">
+              <li ng-class="{disabled:pager.currentPage === 1}">
+                <a ng-click="setPage(1)">{{'FIRST' | translate}}</a>
+              </li>
+              <li ng-class="{disabled:pager.currentPage === 1}">
+                <a ng-click="setPage(pager.currentPage - 1)">{{'PREVIOUS' | translate}}</a>
+              </li>
+              <li ng-repeat="page in pager.pages" ng-class="{active:pager.currentPage === page}">
+                <a ng-click="setPage(page)">{{page}}</a>
+              </li>
+              <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                <a ng-click="setPage(pager.currentPage + 1)">{{'NEXT' | translate}}</a>
+              </li>
+              <li ng-class="{disabled:pager.currentPage === pager.totalPages}">
+                <a ng-click="setPage(pager.totalPages)">{{'LAST' | translate}}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<success-modal message="message"></success-modal>
+
+
+<style>
+  .mark_all {
+    cursor: pointer;
+    min-width: 90px;
+  }
+
+  .mark_all:hover {
+    font-weight: 800;
+    text-decoration: underline;
+  }
+</style>

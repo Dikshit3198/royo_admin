@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>ic_play</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-6-Copy" transform="translate(1.000000, 1.000000)">
+            <circle id="Oval" stroke="#FFFFFF" stroke-width="2" fill="#000000" opacity="0.404296875" cx="24" cy="24" r="24"></circle>
+            <path d="M13.807682,16.4348934 L29.3552347,14.2872435 C29.9023246,14.2116717 30.4070917,14.5939125 30.4826636,15.1410024 C30.4959283,15.2370305 30.4951596,15.3344771 30.4803814,15.4302839 L28.115663,30.7607682 C28.0314691,31.3065977 27.5207342,31.6808273 26.9749047,31.5966334 C26.7648305,31.5642295 26.5705462,31.4657301 26.4202445,31.3154284 L13.2374101,18.1325941 C12.8468858,17.7420698 12.8468858,17.1089048 13.2374101,16.7183805 C13.3915276,16.5642631 13.5917771,16.4647173 13.807682,16.4348934 Z" id="Rectangle" fill="#FFFFFF" transform="translate(21.250000, 23.406854) rotate(-315.000000) translate(-21.250000, -23.406854) "></path>
+        </g>
+    </g>
+</svg>
